@@ -1,10 +1,9 @@
-import './App.css'
-import Login from '../Page/Login.jsx';
+import Registration from '../Page/Registration.jsx';
 function App() {
 
   return (
     <>
-      <Login></Login>
+      <Registration></Registration>
     </>
   )
 } 
