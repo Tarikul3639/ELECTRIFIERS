@@ -1,16 +1,21 @@
 @import "tailwindcss";
 
-html, body {
-    background-color:#072127;
+html,
+body {
+    background-color: #072127;
     height: 100%;
     margin: 0;
     padding: 0;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
 }
 
 #root {
     color: white;
-    height: 100vh;    
+    height: 100vh;
     display: flex;
     justify-content: center;
-    align-items: center; 
+    align-items: center;
 }
