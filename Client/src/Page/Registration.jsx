@@ -1,4 +1,3 @@
-import background from "../assets/Image/background.jpg";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
@@ -48,125 +47,124 @@ const Registration = () => {
   };
 
   return (
-    <div
-      className="h-screen w-screen sm:h-[90vh] sm:w-[95vw] bg-[#004355] bg-cover bg-center bg-no-repeat bg-fixed rounded-2xl flex flex-col justify-center p-2 sm:p-6 overflow-hidden"
-      style={{ backgroundImage: `url(${background})` }}
-    >
-      {/* Left side */}
-      <div className="w-full sm:w-2/3 md:w-2/3 lg:w-2/4 p-6">
-        <h1 className="text-2xl sm:text-3xl font-bold mb-4">
-          Create new account<span className="text-blue-500">.</span>
-        </h1>
-        <p className="text-gray-400 text-sm mb-6">
-          Already A Member?{" "}
-          <span
-            className="text-blue-500 cursor-pointer"
-            onClick={handleClickForLogin}
-          >
-            Login
-          </span>
-        </p>
-        <form>
-          <div className="space-y-4">
-            {/* First and Last Name Inputs */}
-            <div className="flex flex-col sm:flex-row space-x-2 space-y-4 sm:space-y-0">
-              <input
-                type="text"
-                placeholder="First name"
-                className="w-full sm:w-1/2 p-2 sm:p-3  bg-gray-700 text-white rounded-lg focus:outline-none"
-              />
-              <input
-                type="text"
-                placeholder="Last name"
-                className="w-full sm:w-1/2 p-2 sm:p-3 bg-gray-700 text-white rounded-lg focus:outline-none"
-              />
-            </div>
-
-            {/* Email and Password Inputs */}
+    <div className="w-full sm:w-2/3 md:w-2/3 lg:w-2/4 p-6 ">
+      <h1 className="text-2xl sm:text-3xl font-bold mb-4 ">
+        Create new account<span className="text-blue-500">.</span>
+      </h1>
+      <p className="text-gray-400 text-sm mb-6">
+        Already A Member?{" "}
+        <span
+          className="text-blue-500 cursor-pointer"
+          onClick={handleClickForLogin}
+        >
+          Login
+        </span>
+      </p>
+      <form>
+        <div className="space-y-4">
+          {/* First and Last Name Inputs */}
+          <div className="flex flex-col sm:flex-row space-x-2 space-y-4 sm:space-y-0">
             <input
-              type="email"
-              placeholder="Email"
-              className="w-full p-2 sm:p-3 bg-gray-700 text-white rounded-lg focus:outline-none"
+              type="text"
+              placeholder="First name"
+              className="w-full sm:w-1/2 p-2 text-sm lg:text-md  bg-gray-700 text-white rounded-lg focus:outline-none"
             />
             <input
-              type="password"
-              placeholder="Password"
-              className="w-full p-2 sm:p-3 bg-gray-700 text-white rounded-lg focus:outline-none"
+              type="text"
+              placeholder="Last name"
+              className="w-full sm:w-1/2 p-2 text-sm lg:text-md bg-gray-700 text-white rounded-lg focus:outline-none"
             />
+          </div>
 
-            {/* Address Section */}
+          {/* Email and Password Inputs */}
+          <input
+            type="email"
+            placeholder="Email"
+            className="w-full p-2 text-sm lg:text-md bg-gray-700 text-white rounded-lg focus:outline-none"
+          />
+          <input
+            type="tel"
+            placeholder="Phone"
+            className="w-full p-2 text-sm lg:text-md bg-gray-700 text-white rounded-lg focus:outline-none"
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            className="w-full p-2 text-sm lg:text-md bg-gray-700 text-white rounded-lg focus:outline-none"
+          />
 
-            <div className="w-full">
+          {/* Address Section */}
+
+          <div className="w-full">
+            <select
+              id="division"
+              value={division}
+              onChange={handleDivisionChange}
+              className="w-full p-2 text-sm lg:text-md bg-gray-700 text-white rounded-lg focus:outline-none"
+            >
+              <option value="">Select Division</option>
+              {divisions.map((div, index) => (
+                <option key={index} value={div}>
+                  {div}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="flex space-x-4">
+            <div className="w-full sm:w-1/2">
               <select
-                id="division"
-                value={division}
-                onChange={handleDivisionChange}
-                className="w-full p-2 sm:p-3 bg-gray-700 text-white rounded-lg focus:outline-none"
+                id="area"
+                value={area}
+                onChange={handleAreaChange}
+                className="w-full p-2 text-sm lg:text-md bg-gray-700 text-white rounded-lg focus:outline-none"
               >
-                <option value="">Select Division</option>
-                {divisions.map((div, index) => (
-                  <option key={index} value={div}>
-                    {div}
-                  </option>
-                ))}
+                <option value="" className="-gray-300">
+                  Select Area
+                </option>
+                {division &&
+                  areas[division]?.map((area, index) => (
+                    <option key={index} value={area}>
+                      {area}
+                    </option>
+                  ))}
               </select>
             </div>
-            <div className="flex space-x-4">
-              <div className="w-full sm:w-1/2">
-                <select
-                  id="area"
-                  value={area}
-                  onChange={handleAreaChange}
-                  className="w-full p-2 sm:p-3 bg-gray-700 text-white rounded-lg focus:outline-none"
+            {/* Port Select */}
+            <div className="w-full sm:w-1/2">
+              <select
+                id="port"
+                value={port}
+                onChange={(e) => setPort(e.target.value)}
+                className="w-full p-2 text-sm lg:text-md bg-gray-700 text-white rounded-lg focus:outline-none"
+              >
+                <option
+                  value=""
+                  className={`${
+                    !division || !area ? "text-gray-300" : "text-white"
+                  }`}
                 >
-                  <option value="" className="-gray-300">
-                    Select Area
-                  </option>
-                  {division &&
-                    areas[division]?.map((area, index) => (
-                      <option key={index} value={area}>
-                        {area}
-                      </option>
-                    ))}
-                </select>
-              </div>
-              {/* Port Select */}
-              <div className="w-full sm:w-1/2">
-                <select
-                  id="port"
-                  value={port}
-                  onChange={(e) => setPort(e.target.value)}
-                  className="w-full p-2 sm:p-3 bg-gray-700 text-white rounded-lg focus:outline-none"
-                >
-                  <option
-                    value=""
-                    className={`${
-                      !division || !area ? "text-gray-300" : "text-white"
-                    }`}
-                  >
-                    Select Port
-                  </option>
-                  {division &&
-                    area &&
-                    ports[area]?.map((port, index) => (
-                      <option key={index} value={port} className="text-white">
-                        {port}
-                      </option>
-                    ))}
-                </select>
-              </div>
+                  Select Port
+                </option>
+                {division &&
+                  area &&
+                  ports[area]?.map((port, index) => (
+                    <option key={index} value={port} className="text-white">
+                      {port}
+                    </option>
+                  ))}
+              </select>
             </div>
-
-            {/* Submit Button */}
-            <button
-              type="submit"
-              className="w-1/2 sm:w-1/3 py-3 px-3 rounded-lg hover:bg-blue-600 cursor-pointer bg-blue-500 text-white text-xs sm:text-base font-sans font-semibold"
-            >
-              Create account
-            </button>
           </div>
-        </form>
-      </div>
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            className="w-1/2 sm:w-1/3 p-2 rounded-lg hover:bg-blue-600 cursor-pointer bg-blue-500 text-white text-sm lg:text-md font-sans "
+          >
+            Create account
+          </button>
+        </div>
+      </form>
     </div>
   );
 };
