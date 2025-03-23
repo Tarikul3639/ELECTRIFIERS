@@ -67,12 +67,12 @@ const Registration = () => {
             <input
               type="text"
               placeholder="First name"
-              className="w-full sm:w-1/2 p-2 text-sm lg:text-md  bg-gray-700 text-white rounded-lg focus:outline-none"
+              className="w-full sm:w-1/2 p-3 text-sm lg:text-md  bg-gray-700 text-white rounded-lg focus:outline-none"
             />
             <input
               type="text"
               placeholder="Last name"
-              className="w-full sm:w-1/2 p-2 text-sm lg:text-md bg-gray-700 text-white rounded-lg focus:outline-none"
+              className="w-full sm:w-1/2 p-3 text-sm lg:text-md bg-gray-700 text-white rounded-lg focus:outline-none"
             />
           </div>
 
@@ -80,17 +80,17 @@ const Registration = () => {
           <input
             type="email"
             placeholder="Email"
-            className="w-full p-2 text-sm lg:text-md bg-gray-700 text-white rounded-lg focus:outline-none"
+            className="w-full p-3 text-sm lg:text-md bg-gray-700 text-white rounded-lg focus:outline-none"
           />
           <input
             type="tel"
             placeholder="Phone"
-            className="w-full p-2 text-sm lg:text-md bg-gray-700 text-white rounded-lg focus:outline-none"
+            className="w-full p-3 text-sm lg:text-md bg-gray-700 text-white rounded-lg focus:outline-none"
           />
           <input
             type="password"
             placeholder="Password"
-            className="w-full p-2 text-sm lg:text-md bg-gray-700 text-white rounded-lg focus:outline-none"
+            className="w-full p-3 text-sm lg:text-md bg-gray-700 text-white rounded-lg focus:outline-none"
           />
 
           {/* Address Section */}
@@ -100,11 +100,14 @@ const Registration = () => {
               id="division"
               value={division}
               onChange={handleDivisionChange}
-              className="w-full p-2 text-sm lg:text-md bg-gray-700 text-white rounded-lg focus:outline-none"
+              className={`w-full p-3 text-sm lg:text-md bg-gray-700 rounded-lg focus:outline-none 
+              ${!division ? "text-gray-400" : "text-white"}`}
             >
-              <option value="">Select Division</option>
+              <option value="" disabled className="text-gray-400">
+                Select Division
+              </option>
               {divisions.map((div, index) => (
-                <option key={index} value={div}>
+                <option key={index} value={div} className="text-white">
                   {div}
                 </option>
               ))}
@@ -116,14 +119,15 @@ const Registration = () => {
                 id="area"
                 value={area}
                 onChange={handleAreaChange}
-                className="w-full p-2 text-sm lg:text-md bg-gray-700 text-white rounded-lg focus:outline-none"
+                className={`w-full p-3 text-sm lg:text-md bg-gray-700 rounded-lg focus:outline-none 
+              ${!area ? "text-gray-400" : "text-white"}`}
               >
-                <option value="" className="-gray-300">
+                <option value="" disabled className="text-gray-400">
                   Select Area
                 </option>
                 {division &&
                   areas[division]?.map((area, index) => (
-                    <option key={index} value={area}>
+                    <option key={index} value={area} className="text-white">
                       {area}
                     </option>
                   ))}
@@ -135,14 +139,10 @@ const Registration = () => {
                 id="port"
                 value={port}
                 onChange={(e) => setPort(e.target.value)}
-                className="w-full p-2 text-sm lg:text-md bg-gray-700 text-white rounded-lg focus:outline-none"
+                className={`w-full p-3 text-sm lg:text-md bg-gray-700 rounded-lg focus:outline-none 
+                  ${!port ? "text-gray-400" : "text-white"}`}
               >
-                <option
-                  value=""
-                  className={`${
-                    !division || !area ? "text-gray-300" : "text-white"
-                  }`}
-                >
+                <option value="" className={"text-gray-400"}>
                   Select Port
                 </option>
                 {division &&
@@ -159,7 +159,7 @@ const Registration = () => {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-1/2 sm:w-1/3 p-2 rounded-lg hover:bg-blue-600 cursor-pointer bg-blue-500 text-white text-sm lg:text-md font-sans "
+            className="w-1/2 sm:w-1/3 p-4 rounded-lg hover:bg-blue-600 cursor-pointer bg-blue-500 text-white text-sm lg:text-md font-sans "
           >
             Create account
           </button>

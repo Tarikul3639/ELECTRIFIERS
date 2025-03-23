@@ -1,16 +1,17 @@
-import Header from "../Components/Header.jsx";
+import NavMenu from "../Components/NavMenu.jsx";
 import Footer from "../Components/Footer.jsx";
-import Sidebar from "../Components/Sidebar.jsx";
 import PropTypes from "prop-types";
 
 const MainLayout = ({ children }) => {
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
-      <div className="flex flex-1">
-        <Sidebar />
-        <main className="flex-1 p-6 bg-gray-100">{children}</main>
-      </div>
+    <div className="flex flex-col min-h-screen w-screen bg-gray-100">
+      {/* Header with Sidebar */}
+      <NavMenu />
+
+      {/* Main Content */}
+      <main className="flex-1 bg-white">{children}</main>
+
+      {/* Footer */}
       <Footer />
     </div>
   );
