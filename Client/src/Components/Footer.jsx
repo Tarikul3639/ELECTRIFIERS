@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "react-scroll";
 import Logo from "../assets/Image/logo.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFacebookSquare, faTwitterSquare, faLinkedin } from "@fortawesome/free-brands-svg-icons";
@@ -16,10 +16,10 @@ const Footer = () => {
 
         {/* Links */}
         <div className="flex space-x-6">
-          <Link to="/" className="text-gray-800 hover:text-blue-600 transition duration-300">Home</Link>
-          <Link to="/about" className="text-gray-800 hover:text-blue-600 transition duration-300">About</Link>
+          <Link activeClass="active" to="home" smooth={true} offset={-70} duration={500} className="text-gray-800 hover:text-blue-600 transition duration-300">Home</Link>
+          <Link to="about" smooth={true} offset={-70} duration={500} className="text-gray-800 hover:text-blue-600 transition duration-300">About</Link>
           <Link to="/services" className="text-gray-800 hover:text-blue-600 transition duration-300">Services</Link>
-          <Link to="/contact" className="text-gray-800 hover:text-blue-600 transition duration-300">Contact</Link>
+          <Link to="contact" smooth={true} offset={-70} duration={500} className="text-gray-800 hover:text-blue-600 transition duration-300">Contact</Link>
         </div>
 
         {/* Social Media Links */}
@@ -40,7 +40,7 @@ const Footer = () => {
       </div>
 
       {/* Copyright Section */}
-      <div className="mt-6 border-t border-gray-300 pt-4 text-center text-sm text-gray-800">
+      <div className="mt-6 border-t border-gray-400 pt-4 text-center text-sm text-gray-800">
         <p>&copy; 2025 <strong>ELECTRIFIERS</strong>. Helping Bangladesh Stay Informed About Power Outages.</p>
       </div>
     </footer>

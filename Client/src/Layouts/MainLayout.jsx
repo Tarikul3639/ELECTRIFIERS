@@ -1,24 +1,20 @@
-import NavMenu from "../Components/NavMenu.jsx";
-import Footer from "../Components/Footer.jsx";
-import PropTypes from "prop-types";
+// MainLayout.jsx 
+import { Outlet } from "react-router-dom";
+import { useEffect } from "react";
 
-const MainLayout = ({ children }) => {
+// MainLayout.jsx
+const MainLayout = () => {
+  useEffect(() => {
+    document.documentElement.style.backgroundColor = "#FFFFFF";
+    document.body.style.backgroundColor = "#FFFFFF";
+  }, []);
   return (
-    <div className="flex flex-col min-h-screen w-screen bg-gray-100">
-      {/* Header with Sidebar */}
-      <NavMenu />
-
-      {/* Main Content */}
-      <main className="flex-1 bg-white">{children}</main>
-
-      {/* Footer */}
-      <Footer />
+    <div className="flex flex-col min-h-screen w-screen bg-gray">
+      <main className="flex-1">
+        <Outlet />
+      </main>
     </div>
   );
-};
-
-MainLayout.propTypes = {
-  children: PropTypes.node.isRequired,
 };
 
 export default MainLayout;

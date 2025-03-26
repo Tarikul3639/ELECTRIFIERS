@@ -1,10 +1,10 @@
 import PropTypes from "prop-types";
 import background from "../assets/Image/background.jpg";
-const AuthLayout = ({ children }) => {
+import { Outlet } from "react-router-dom";
+const AuthLayout = () => {
   return (
     <div className="h-screen w-screen flex items-center justify-center bg-[#102210]">
-      <div
-        className="h-screen w-screen sm:h-[90vh] sm:w-[95vw] bg-center bg-no-repeat bg-fixed rounded-2xl flex flex-col justify-center p-2 sm:p-6 overflow-hidden shadow-lg"
+      <main className="h-screen w-screen sm:h-[90vh] sm:w-[95vw] bg-center bg-no-repeat bg-fixed rounded-2xl flex flex-col justify-center p-2 sm:p-6 overflow-hidden shadow-lg"
         style={{
           backgroundImage: `linear-gradient(to right, 
       rgba(0, 0, 0, 0.95) 10%,  
@@ -17,8 +17,8 @@ const AuthLayout = ({ children }) => {
           backgroundSize: "cover",
         }}
       >
-        {children}
-      </div>
+        <Outlet />
+      </main>
     </div>
   );
 };

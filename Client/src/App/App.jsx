@@ -1,23 +1,24 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Home from "../Page/Home.jsx";
-import Login from "../Page/Login.jsx";
-import Registration from "../Page/Registration.jsx";
-import ForgotPassword from "../Page/ForgotPassword.jsx";
+import MainPage from "../Page/MainPage.jsx";
+import Login from "../Page/Auth/Login.jsx";
+import Registration from "../Page/Auth/Registration.jsx";
+import ForgotPassword from "../Page/Auth/ForgotPassword.jsx";
 import MainLayout from "../Layouts/MainLayout.jsx";
-import AuthLayout from "../Layouts/AuthLayout.jsx";  
+import AuthLayout from "../Layouts/AuthLayout.jsx";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* For general pages like Home */}
-        <Route path="/" element={<MainLayout><Home /></MainLayout>} />
-        <Route path="/home" element={<MainLayout><Home /></MainLayout>} />
+        <Route element={<MainLayout />}>
+          <Route path="/" element={<MainPage/>} />
+          </Route>
 
-        {/* For login and registration, using AuthLayout */}
-        <Route path="/login" element={<AuthLayout><Login /></AuthLayout>} />
-        <Route path="/registration" element={<AuthLayout><Registration /></AuthLayout>} />
-        <Route path="/forgot-password" element={<AuthLayout><ForgotPassword/></AuthLayout>} />
+        <Route element={<AuthLayout />}>
+          <Route path="/login" element={<Login />} />
+          <Route path="/registration" element={<Registration />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );
