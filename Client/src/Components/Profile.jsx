@@ -46,7 +46,7 @@ const Profile = () => {
             {/* Profile Dropdown */}
             {isOpen && (
                 <div className="fixed top-16 right-0 sm:absolute sm:top-auto sm:right-0 sm:mt-3 mt-3 w-80 bg-white shadow-lg rounded-lg p-4 border border-gray-200 z-50">
-
+    
                     <div className="flex justify-between items-center border-b pb-2">
                         <h3 className="text-lg font-semibold">Profile</h3>
                         <button onClick={() => setIsOpen(false)}>

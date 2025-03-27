@@ -57,7 +57,7 @@ const Notification = ({ notifications }) => {
                             notifications.map((notification, index) => (
                                 <div
                                     key={index}
-                                    className="p-3 mb-2 rounded-md hover:bg-gray-100 transition duration-300 ease-in-out"
+                                    className="p-3 mb-2 rounded-md bg-gray-100 hover:bg-gray-300 transition duration-300 ease-in-out"
                                 >
                                     <p className="text-sm text-gray-700">{notification}</p>
                                 </div>
