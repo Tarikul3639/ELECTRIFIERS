@@ -7,7 +7,7 @@ const Footer = () => {
   return (
     <footer className="bg-[#DADCE2] p-8 text-gray-800">
       <div className="container mx-auto flex flex-col md:flex-row justify-between items-center space-y-6 md:space-y-0">
-        
+
         {/* Business Logo and Name */}
         <div className="flex items-center space-x-4">
           <img src={Logo} alt="Business Logo" className="w-10 h-10 object-contain" />
@@ -41,8 +41,9 @@ const Footer = () => {
 
       {/* Copyright Section */}
       <div className="mt-6 border-t border-gray-400 pt-4 text-center text-sm text-gray-800">
-        <p>&copy; 2025 <strong>ELECTRIFIERS</strong>. Helping Bangladesh Stay Informed About Power Outages.</p>
+        <p>&copy; 2025 <strong>ELECTRIFIERS</strong>. Helping Bangladesh Stay Informed About Power Outages. Developed by <strong>Tarikul Islam</strong>.</p>
       </div>
+
     </footer>
   );
 };
