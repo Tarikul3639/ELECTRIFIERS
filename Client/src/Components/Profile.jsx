@@ -1,5 +1,5 @@
-// import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useEffect, useRef, useState } from "react";
 import {
     faXmark,
     faPencil,
@@ -8,60 +8,88 @@ import {
     faGears,
 } from "@fortawesome/free-solid-svg-icons";
 import ProfileImage from "../assets/Image/logo.png";
+import Logo from "../assets/Image/logo.png";
 import PropTypes from "prop-types";
-const Profile = ({ isOpen, onClose, profileRef }) => {
-    if (!isOpen) return null;
+
+const Profile = () => {
+    const [isOpen, setIsOpen] = useState(false);
+    const profileRef = useRef(null);
+    const buttonRef = useRef(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (
+                profileRef.current &&
+                !profileRef.current.contains(event.target) &&
+                !buttonRef.current.contains(event.target)
+            ) {
+                setIsOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
 
     return (
-        <div ref={profileRef} className="relative p-2 pt-6">
+        <div ref={profileRef} className="relative pt-2">
+            {/* Profile Button */}
             <button
-                className="absolute flex items-center justify-center top-0 right-1 h-5 w-5 p-5 text-gray-600 rounded-full hover:bg-gray-100"
-                onClick={onClose}
+                ref={buttonRef}
+                className="bg-transparent rounded-full hover:bg-gray-100"
+                onClick={() => setIsOpen(!isOpen)}
             >
-                <FontAwesomeIcon icon={faXmark} className="text-2xl" />
+                <img src={Logo} alt="Profile" className="w-9 h-9 object-contain" />
             </button>
-            <div className="flex flex-col items-center">
-                <div className="relative flex items-center justify-center w-24 h-24 rounded-full">
-                    <img
-                        src={ProfileImage}
-                        alt="User"
-                        className="object-cover rounded-full"
-                    />
-                    <span className="absolute flex items-center justify-center bottom-0 right-0 h-6 w-6 rounded-full bg-gray-100 p-2 cursor-pointer hover:bg-gray-300">
-                        <FontAwesomeIcon
-                            icon={faPencil}
-                            className="text-sm text-gray-800 hover:text-blue-500"
-                        />
-                    </span>
+
+            {/* Profile Dropdown */}
+            {isOpen && (
+                <div className="fixed top-16 right-0 sm:absolute sm:top-auto sm:right-0 sm:mt-3 mt-3 w-80 bg-white shadow-lg rounded-lg p-4 border border-gray-200 z-50">
+
+                    <div className="flex justify-between items-center border-b pb-2">
+                        <h3 className="text-lg font-semibold">Profile</h3>
+                        <button onClick={() => setIsOpen(false)}>
+                            <FontAwesomeIcon icon={faXmark} className="text-gray-600 hover:text-gray-800 text-xl" />
+                        </button>
+                    </div>
+                    <div className="flex flex-col items-center mt-3">
+                        <div className="relative w-24 h-24">
+                            <img
+                                src={ProfileImage}
+                                alt="User"
+                                className="w-full object-cover rounded-full"
+                            />
+                            <span className="absolute bottom-0 right-0 h-6 w-6 flex items-center justify-center bg-gray-100 rounded-full cursor-pointer hover:bg-gray-300">
+                                <FontAwesomeIcon icon={faPencil} className="text-sm text-gray-800" />
+                            </span>
+                        </div>
+                        <h2 className="mt-3 text-xl text-[#1E2939] font-bold">Tarikul Islam</h2>
+                        <p className="text-gray-700 text-sm">tarikul@example.com</p>
+                    </div>
+                    <div className="mt-4 space-y-1">
+                        <button className="flex items-center p-3 w-full text-gray-700 hover:bg-gray-200 rounded-lg">
+                            <FontAwesomeIcon icon={faUserPen} className="text-lg pr-3" />
+                            <span className="text-sm font-semibold">Edit Profile</span>
+                        </button>
+                        <button className="flex items-center p-3 w-full text-gray-700 hover:bg-gray-200 rounded-lg">
+                            <FontAwesomeIcon icon={faGears} className="text-lg pr-3" />
+                            <span className="text-sm font-semibold">Settings</span>
+                        </button>
+                        <button className="flex items-center p-3 w-full text-gray-700 hover:bg-gray-200 rounded-lg">
+                            <FontAwesomeIcon icon={faArrowRightFromBracket} className="text-lg pr-3" />
+                            <span className="text-sm font-semibold">Sign Out</span>
+                        </button>
+                    </div>
                 </div>
-                <h2 className="mt-4 text-xl font-semibold text-gray-800">
-                    Tarikul Islam
-                </h2>
-                <p className="text-gray-600 text-sm">tarikul@example.com</p>
-                <div className="m-4 flex flex-col w-full space-y-1 rounded-3xl">
-                    <button className="p-4 pl-6 flex items-center bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-tl-3xl rounded-tr-3xl hover:bg-gray-300 transition">
-                        <FontAwesomeIcon icon={faUserPen} className="text-lg pr-4" />
-                        <span className="text-sm font-semibold">Edit profile</span>
-                    </button>
-                    <button className="p-4 pl-6 flex items-center bg-gray-100 hover:bg-gray-300 text-gray-700 transition">
-                        <FontAwesomeIcon icon={faGears} className="text-lg pr-4" />
-                        <span className="text-sm font-semibold">Setting</span>
-                    </button>
-                    <button className="p-4 pl-6 flex items-center bg-gray-100 hover:bg-gray-300 text-gray-700 rounded-bl-3xl rounded-br-3xl transition">
-                        <FontAwesomeIcon
-                            icon={faArrowRightFromBracket}
-                            className="text-lg pr-4"
-                        />
-                        <span className="text-sm font-semibold">Sign out</span>
-                    </button>
-                </div>
-            </div>
+            )}
         </div>
     );
 };
+
 Profile.propTypes = {
-    isOpen: PropTypes.bool.isRequired,
-    onClose: PropTypes.func.isRequired,
+    isOpen: PropTypes.bool,
+    onClose: PropTypes.func,
     profileRef: PropTypes.oneOfType([
         PropTypes.func,
         PropTypes.shape({ current: PropTypes.instanceOf(Element) }),

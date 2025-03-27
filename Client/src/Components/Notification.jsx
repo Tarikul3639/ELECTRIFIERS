@@ -25,11 +25,11 @@ const Notification = ({ notifications }) => {
     }, []);
 
     return (
-        <div className="relative">
+        <div className="relative pt-2">
             {/* Notification Button */}
             <button
                 ref={buttonRef}
-                className="p-3 bg-white rounded-full shadow-md hover:bg-gray-100 text-gray-800 hover:text-blue-600 relative"
+                className="p-3 bg-transparent rounded-full text-gray-800 hover:text-blue-600 relative"
                 onClick={() => setIsOpen(!isOpen)}
             >
                 <FontAwesomeIcon icon={faBell} className="text-xl" />
@@ -44,7 +44,7 @@ const Notification = ({ notifications }) => {
             {isOpen && (
                 <div
                     ref={notificationRef}
-                    className="absolute right-0 mt-3 w-80 bg-white shadow-lg rounded-lg p-4 border border-gray-200 z-50 max-h-[80vh] overflow-y-auto"
+                    className="absolute right-[-4rem] sm:right-0 mt-3 w-80 bg-white shadow-lg rounded-lg p-4 border border-gray-200 z-50 max-h-[80vh] overflow-y-auto"
                 >
                     <div className="flex justify-between items-center border-b pb-2">
                         <h3 className="text-lg font-semibold text-gray-800">Notifications</h3>
