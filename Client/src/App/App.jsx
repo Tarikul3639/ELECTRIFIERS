@@ -5,6 +5,7 @@ import Registration from "../Page/Auth/Registration.jsx";
 import ForgotPassword from "../Page/Auth/ForgotPassword.jsx";
 import MainLayout from "../Layouts/MainLayout.jsx";
 import AuthLayout from "../Layouts/AuthLayout.jsx";
+import Admin from "../Page/Admin/Admin.jsx"
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
       <Routes>
         <Route element={<MainLayout />}>
           <Route path="/" element={<MainPage/>} />
+          <Route path="/Admin" element={<Admin />} />
           </Route>
 
         <Route element={<AuthLayout />}>

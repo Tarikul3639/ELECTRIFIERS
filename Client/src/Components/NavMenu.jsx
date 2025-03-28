@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { useState } from "react";
 import { Link } from "react-scroll";
 import Logo from "../assets/Image/logo.png";
@@ -12,6 +13,12 @@ const NavMenu = () => {
     "Your request has been approved.",
     "Reminder: Meeting at 3 PM."
   ]);
+
+  const navigate = useNavigate();
+
+  const handleUpdate = () => {
+    navigate('/Admin');
+  };
 
   return (
     <header className="bg-white/30 backdrop-blur-lg border-b rounded-lg shadow-md p-2 fixed top-0 w-full z-50 flex justify-between items-center pl-6 pr-6 md:pl-20 md:pr-20">
@@ -33,6 +40,9 @@ const NavMenu = () => {
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center space-x-10">
+          <button onClick={handleUpdate} className="text-gray-800 text-lg hover:text-blue-600">
+            Update
+          </button>
           <Link to="home" smooth={true} offset={-70} duration={500} className="text-gray-800 text-lg hover:text-blue-600">
             Home
           </Link>

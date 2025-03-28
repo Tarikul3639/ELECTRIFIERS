@@ -1,13 +1,20 @@
 import { Link } from "react-scroll";
 import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHome, faInfoCircle, faEnvelope, faBars, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { RiCalendarScheduleFill } from "react-icons/ri";
 import Profile from "./Profile.jsx";
 
 const SideBar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const sidebarRef = useRef(null);
   const buttonRef = useRef(null);
+  const navigate = useNavigate();
+
+  const handleUpdate = () => {
+    navigate('/Admin');
+  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -58,7 +65,9 @@ const SideBar = () => {
           <Link to="contact" smooth={true} offset={-70} duration={500} className="flex items-center p-2 rounded-lg hover:bg-gray-300 text-gray-800 text-lg font-semibold transition duration-300">
             <FontAwesomeIcon icon={faEnvelope} className="mr-3 text-lg" /> Contact
           </Link>
-
+          <button onClick={handleUpdate} className="flex w-full items-center p-2 rounded-lg hover:bg-gray-300 text-gray-800 text-lg font-semibold transition duration-300">
+          <RiCalendarScheduleFill className="mr-3 text-xl"/> Update
+          </button>
           {/* Profile Section */}
           <button className="flex items-center bg-gray-300 p-2 rounded-full hover:bg-gray-400 transition duration-300 w-full mt-3">
             <Profile /> 
