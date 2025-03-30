@@ -16,6 +16,8 @@
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@tailwindcss/vite": "^4.0.9",
+    "classnames": "^2.5.1",
+    "clsx": "^2.1.1",
     "dayjs": "^1.11.13",
     "react": "^19.0.0",
     "react-circular-progressbar": "^2.2.0",
@@ -24,6 +26,9 @@
     "react-icons": "^5.5.0",
     "react-router-dom": "^7.4.0",
     "react-scroll": "^1.9.3",
+    "react-select": "^5.10.1",
+    "react-tailwindcss-select": "^1.8.5",
+    "tailwind-merge": "^3.0.2",
     "tailwindcss": "^4.0.9"
   },
   "devDependencies": {

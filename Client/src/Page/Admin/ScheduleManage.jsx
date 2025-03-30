@@ -4,7 +4,9 @@ import { useState, useCallback } from "react";
 import { FaRegCalendarAlt } from "react-icons/fa";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-
+import Button from "../../Components/Components/Button";
+import Select from "react-tailwindcss-select";
+import CustomSelect from "../../Components/Components/Select";
 
 const ScheduleManage = () => {
     const [showEdit, setShowEdit] = useState(null);
@@ -103,9 +105,15 @@ const ScheduleManage = () => {
         "6:00 PM - 8:00 PM"
     ];
     const handleDivisionChange = (e) => {
-        setSelectedDivision(e.target.value);
+        setSelectedDivision(e.value);
+        console.log("Division :", e.value);
+        // console.log(selectedDivision);
         setSelectedArea("");
     };
+    const handleAreaChange = (e) => {
+        setSelectedArea(e.value);
+        console.log("Area :", e.value);
+    }
     const [originalValues, setOriginalValues] = useState({});
 
     const handleEdit = useCallback((id) => {
@@ -168,26 +176,25 @@ const ScheduleManage = () => {
     const renderEditButtons = (userId, day, date, scheduleTime) => {
         return showEdit === userId ? (
             <div className="flex items-center justify-center space-x-2">
-                <button
+                <Button
+                    text="Update"
                     onClick={() => handleUpdate(userId, day, date, scheduleTime)}
-                    className="bg-[#00B56F] text-white text-xs font-semibold px-4 py-2 rounded-sm space-x-2 hover:bg-[#09a567] transition duration-300"
-                >
-                    UPDATE
-                </button>
-                <button
+                    variant="primary"
+                />
+                <Button
+                    text="Cancel"
                     onClick={() => handleCancel(userId)}
-                    className="bg-red-500 text-white text-xs font-semibold px-4 py-2 rounded-sm space-x-2 hover:bg-red-700 transition duration-300"
-                >
-                    CANCEL
-                </button>
+                    variant="danger"
+                />
             </div>
         ) : (
-            <button
-                onClick={() => handleEdit(userId)}
-                className="bg-[#00B56F] text-white text-xs font-semibold px-4 py-2 rounded-sm space-x-2 hover:bg-[#09a567] transition duration-300"
-            >
-                EDIT
-            </button>
+            <div className="flex items-center justify-center space-x-2">
+                <Button
+                    text="Edit"
+                    onClick={() => handleEdit(userId)}
+                    variant="primary"
+                />
+            </div>
         );
     };
 
@@ -211,79 +218,85 @@ const ScheduleManage = () => {
     return (
         <div className="w-screen-md bg-gray-200 p-2 rounded-lg shadow-lg">
             <div className="flex items-center justify-start p-2 w-full">
-                <button
-                    onClick={() => setShowEdit("new")}
-                    className="bg-[#00B56F] text-white text-xs font-semibold px-4 py-2 rounded-sm flex items-center space-x-2 hover:bg-[#09a567] transition duration-300"
-                >
-                    <FontAwesomeIcon icon={faPlus} className="text-[1rem]" />
-                    <span>New</span>
-                </button>
-                <button
-                    onClick={() => setShowFilter(!showFilter)}
-                    className="bg-[#2489f4] text-white text-xs font-semibold px-4 py-2 rounded-sm flex items-center space-x-2 ml-4 hover:bg-[#1179e0] transition duration-300"
-                >
-                    <FontAwesomeIcon icon={faFilter} className="text-xs " />
-                    <span>Filter</span>
-                    <FontAwesomeIcon icon={faSortDown} className={`text-xs transition-transform duration-0 ${showFilter ? "-rotate-90" : "rotate-0"}`} />
-                </button>
 
+                <Button
+                    text="New"
+                    onClick={() => setShowEdit("new")}
+                    variant="primary"
+                    icon={<FontAwesomeIcon icon={faPlus} className="text-[1rem]" />}
+                />
+                <Button
+                    text="Filter"
+                    onClick={() => setShowFilter(!showFilter)}
+                    variant="secondary"
+                    icon={<FontAwesomeIcon icon={faFilter} className={`text-xs ${showFilter ? "rotate-90" : "rotate-0"}`} />}
+                />
 
                 {showFilter && (
                     <div className="transform translate-x-0 transition-transform duration-500 ease-in-out flex items-center space-x-2 ml-4">
-                        <select
-                            name="District"
-                            className="bg-[#2489f4] text-white text-xs font-semibold px-3 py-2 rounded-sm flex items-center space-x-2 ml-4 hover:bg-[#1179e0] transition duration-300 focus:outline-none"
-                            defaultValue=""
+                        <CustomSelect
+                            value={selectedDivision}
+                            options={divisions && divisions.length > 0 ? divisions.map((division) => ({ value: division, label: division })) : []}
+                            placeholder="Select Division"
                             onChange={handleDivisionChange}
-                        >
-                            <option value="" disabled className="text-[#9ac8ff] bg-[#2489f4]">
-                                District
-                            </option>
-                            {divisions.map((division, index) => (
-                                <option
-                                    key={index}
-                                    value={division}
-                                    className="bg-[#2489f4] text-white hover:bg-[#1179e0] focus:bg-[#1179e0]"
-                                >
-                                    {division}
-                                </option>
-                            ))}
-                        </select>
+                            classNames={{
+                                menuButton: () => " bg-[#0051a2] text-[#e7efff] text-xs w-auto font-semibold min-w-[120px] rounded-sm flex items-center hover:bg-[#00287e]",
+                                menu: " z-50 bg-[#0051a2] w-full text-xs shadow-lg rounded-sm mt-1 p-0",
+                                listItem: ({ isSelected }) => (
+                                    `block transition duration-200 pl-2 py-2 mt-1 mb-1 cursor-pointer select-none truncate rounded ${isSelected
+                                        ? ` bg-[#00287e] text-white `
+                                        : `text-white hover:bg-[#00287e]`
+                                    }`
+                                )
+                            }}
+                            isSearchable
+                        />
+                            {/* <Select
+                                options={divisions && divisions.length > 0 ? divisions.map((division) => ({ value: division, label: division })) : []}
+                                value={selectedDivision ? { value: selectedDivision, label: selectedDivision } : null}
+                                placeholder="Select Division"
+                                onChange={handleDivisionChange}
+                                classNames={{
+                                    menuButton: () => "relative bg-[#0051a2] text-[#e7efff] text-xs w-auto font-semibold min-w-[120px] rounded-sm flex items-center hover:bg-[#00287e]",
+                                    menu: "absolute z-50 bg-[#0051a2] w-full text-xs shadow-lg rounded-sm mt-1 p-0",
+                                    listItem: ({ isSelected }) => (
+                                        `block transition duration-200 hover:bg-[#00287e] hover:text-white pl-2 py-2 mt-1 mb-1 cursor-pointer select-none truncate rounded 
+                                        ${isSelected
+                                            ? ` bg-[#00287e] text-white `
+                                            : `text-white hover:bg-[#00287e]`
+                                        }`
+                                    )
+                                }}
+                            /> */}
+                        <Select
+                            options={selectedDivision && areas[selectedDivision] && areas[selectedDivision].length > 0 ? areas[selectedDivision].map((area) => ({ value: area, label: area })) : []}
+                            value={selectedArea ? { value: selectedArea, label: selectedArea } : null}
+                            placeholder="Select Area"
+                            onChange={handleAreaChange}
+                            classNames={{
+                                menuButton: () => "relative bg-[#0051a2] text-[#e7efff] text-xs w-auto font-semibold min-w-[120px] rounded-sm flex items-center hover:bg-[#00287e]",
+                                menu: "absolute z-50 bg-[#0051a2] w-full text-xs shadow-lg rounded-sm mt-1 p-0",
+                                listItem: ({ isSelected }) => (
+                                    `block transition duration-200 pl-2 py-2 mt-1 mb-1 cursor-pointer select-none truncate rounded ${isSelected
+                                        ? ` bg-[#00287e] text-white `
+                                        : `text-white hover:bg-[#00287e]`
+                                    }`
+                                )
+                            }}
+                        />
 
-                        <select
-                            name="Area"
-                            className="bg-[#2489f4] text-white text-xs font-semibold px-3 py-2 rounded-sm flex items-center space-x-2 ml-4 hover:bg-[#1179e0] transition duration-300 focus:outline-none"
-                            defaultValue=""
-                        >
-                            <option value="" disabled className="text-[#9ac8ff] bg-[#2489f4]">
-                                Area
-                            </option>
-
-                            {selectedDivision && areas[selectedDivision] &&
-                                areas[selectedDivision].map((area, index) => (
-                                    <option
-                                        key={index}
-                                        value={area}
-                                        className="bg-[#2489f4] text-white hover:bg-[#1179e0] focus:bg-[#1179e0]"
-                                    >
-                                        {area}
-                                    </option>
-                                ))
-                            }
-                        </select>
-
-
-                        <button className="bg-[#2489f4] text-white text-xs font-semibold px-4 py-2 rounded-sm flex items-center space-x-2 ml-4 hover:bg-[#1179e0] transition duration-300">
+                        <button className="bg-[#2489f4] hidden text-white text-xs font-semibold px-4 py-2 rounded-sm flex items-center space-x-2 ml-4 hover:bg-[#1179e0] transition duration-300">
                             <FontAwesomeIcon icon={faCalendar} className="text-xs mr-2" />Month
                         </button>
+
                     </div>
 
                 )}
             </div>
 
             <div className="overflow-auto">
-                {/* এখান থেকে আলাদা করবো */}
-                <table className="min-w-full border-collapse bg-white border border-gray-200"> 
+
+                <table className="min-w-full border-collapse bg-white border border-gray-200">
                     <thead>
                         <tr className="border border-gray-500 border-solid bg-white text-gray-700">
                             <th className="px-1 py-2 border-3 border-gray-200">ID</th>
@@ -381,6 +394,32 @@ const ScheduleManage = () => {
                                 </td>
 
                                 <td className="px-0 py-0 border-3 border-gray-200">
+                                    {/* <Select
+                                        options={scheduleTimes.map((time) => ({ value: time, label: time }))}
+                                        value={scheduleTimes.find((time) => time === newUser.scheduleTime) ? { value: newUser.scheduleTime, label: newUser.scheduleTime } : null}
+                                        onChange={(e) => setNewUser({ ...newUser, scheduleTime: e.value })}
+                                        classNames={{
+                                            menuButton: () => "relative bg-[#0051a2] text-[#e7efff] text-xs w-auto font-semibold min-w-[120px] rounded-sm flex items-center hover:bg-[#00287e]",
+                                            menu: "absolute z-50 bg-[#0051a2] w-full text-xs shadow-lg rounded-sm mt-1 p-0",
+                                            listItem: ({ isSelected }) => (
+                                                `block transition duration-200 pl-2 py-2 mt-1 mb-1 cursor-pointer select-none truncate rounded ${isSelected
+                                                    ? ` bg-[#00287e] text-white `
+                                                    : `text-white hover:bg-[#00287e]`
+                                                }`
+                                            )
+                                        }}
+                                        placeholder="Select Schedule Time"
+                                    /> */}
+                                    <CustomSelect
+                                        value={newUser.scheduleTime}
+                                        options={scheduleTimes.map((time) => ({ value: time, label: time }))}
+                                        // placeholder={newUser.scheduleTime}
+                                        placeholder="Select Schedule Time"
+                                        // isSearchable={true}
+                                        selectClass="border px-1 py-1 w-auto rounded text-center placeholder:text-center"
+                                        optionsContainerClass="absolute z-50 bg-[#0051a2] w-full text-xs shadow-lg rounded-sm mt-1 p-0"
+                                        onChange={handleNewUserChange}
+                                    />
                                     <select
                                         name="scheduleTime"
                                         value={newUser.scheduleTime}
