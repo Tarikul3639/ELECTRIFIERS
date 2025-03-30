@@ -1,4 +1,6 @@
 import PropTypes from 'prop-types';
+import clsx from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
 const Button = ({ text, onClick, variant = "primary", disabled = false, icon, className = "" }) => {
     const variants = {
@@ -11,7 +13,13 @@ const Button = ({ text, onClick, variant = "primary", disabled = false, icon, cl
     return (
         <button
             onClick={onClick}
-            className={`${variants[variant]} ${className}`}
+            className={twMerge(
+                clsx(
+                    variants[variant],
+                    className,
+                    disabled && variants.disabled
+                )
+            )}
             disabled={disabled}
         >
             {icon && <span className="mr-2">{icon}</span>}
