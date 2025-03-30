@@ -5,7 +5,6 @@ import { FaRegCalendarAlt } from "react-icons/fa";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Button from "../../Components/Components/Button";
-import Select from "react-tailwindcss-select";
 import CustomSelect from "../../Components/Components/Select";
 
 const ScheduleManage = () => {
@@ -243,48 +242,32 @@ const ScheduleManage = () => {
                                 menuButton: () => " bg-[#0051a2] text-[#e7efff] text-xs w-auto font-semibold min-w-[120px] rounded-sm flex items-center hover:bg-[#00287e]",
                                 menu: " z-50 bg-[#0051a2] w-full text-xs shadow-lg rounded-sm mt-1 p-0",
                                 listItem: ({ isSelected }) => (
-                                    `block transition duration-200 pl-2 py-2 mt-1 mb-1 cursor-pointer select-none truncate rounded ${isSelected
-                                        ? ` bg-[#00287e] text-white `
+                                    `block transition duration-200 pl-2 py-2 mt-1 mb-1 cursor-pointer select-none truncate rounded-none ${isSelected
+                                        ? ` bg-[#00287e] text-white hover:bg-[#00287e] `
                                         : `text-white hover:bg-[#00287e]`
                                     }`
-                                )
+                                ),
                             }}
                             isSearchable
                         />
-                            {/* <Select
-                                options={divisions && divisions.length > 0 ? divisions.map((division) => ({ value: division, label: division })) : []}
-                                value={selectedDivision ? { value: selectedDivision, label: selectedDivision } : null}
-                                placeholder="Select Division"
-                                onChange={handleDivisionChange}
-                                classNames={{
-                                    menuButton: () => "relative bg-[#0051a2] text-[#e7efff] text-xs w-auto font-semibold min-w-[120px] rounded-sm flex items-center hover:bg-[#00287e]",
-                                    menu: "absolute z-50 bg-[#0051a2] w-full text-xs shadow-lg rounded-sm mt-1 p-0",
-                                    listItem: ({ isSelected }) => (
-                                        `block transition duration-200 hover:bg-[#00287e] hover:text-white pl-2 py-2 mt-1 mb-1 cursor-pointer select-none truncate rounded 
-                                        ${isSelected
-                                            ? ` bg-[#00287e] text-white `
-                                            : `text-white hover:bg-[#00287e]`
-                                        }`
-                                    )
-                                }}
-                            /> */}
-                        <Select
+
+                        <CustomSelect
                             options={selectedDivision && areas[selectedDivision] && areas[selectedDivision].length > 0 ? areas[selectedDivision].map((area) => ({ value: area, label: area })) : []}
                             value={selectedArea ? { value: selectedArea, label: selectedArea } : null}
                             placeholder="Select Area"
                             onChange={handleAreaChange}
                             classNames={{
-                                menuButton: () => "relative bg-[#0051a2] text-[#e7efff] text-xs w-auto font-semibold min-w-[120px] rounded-sm flex items-center hover:bg-[#00287e]",
-                                menu: "absolute z-50 bg-[#0051a2] w-full text-xs shadow-lg rounded-sm mt-1 p-0",
+                                menuButton: () => " bg-[#0051a2] text-[#e7efff] text-xs w-auto font-semibold min-w-[120px] rounded-sm flex items-center hover:bg-[#00287e]",
+                                menu: " z-50 bg-[#0051a2] w-full text-xs shadow-lg rounded-sm mt-1 p-0",
                                 listItem: ({ isSelected }) => (
-                                    `block transition duration-200 pl-2 py-2 mt-1 mb-1 cursor-pointer select-none truncate rounded ${isSelected
-                                        ? ` bg-[#00287e] text-white `
+                                    `block transition duration-200 pl-2 py-2 mt-1 mb-1 cursor-pointer select-none truncate rounded-none ${isSelected
+                                        ? ` bg-[#00287e] text-white hover:bg-[#00287e] `
                                         : `text-white hover:bg-[#00287e]`
                                     }`
-                                )
+                                ),
                             }}
+                            isSearchable
                         />
-
                         <button className="bg-[#2489f4] hidden text-white text-xs font-semibold px-4 py-2 rounded-sm flex items-center space-x-2 ml-4 hover:bg-[#1179e0] transition duration-300">
                             <FontAwesomeIcon icon={faCalendar} className="text-xs mr-2" />Month
                         </button>
@@ -362,12 +345,11 @@ const ScheduleManage = () => {
                                     {renderEditButtons(id, day, date, scheduleTime)}
                                 </td>
                                 <td className="px-1 py-2 border-3 border-gray-200">
-                                    <button
+                                    <Button
+                                        text="DELETE"
                                         onClick={() => handleDelete(id)}
-                                        className="bg-red-500 text-white text-xs font-semibold px-4 py-2 rounded-sm space-x-2 hover:bg-red-700 transition duration-300"
-                                    >
-                                        DELETE
-                                    </button>
+                                        variant="danger"
+                                    />
                                 </td>
                             </tr>
                         ))}
@@ -394,62 +376,40 @@ const ScheduleManage = () => {
                                 </td>
 
                                 <td className="px-0 py-0 border-3 border-gray-200">
-                                    {/* <Select
-                                        options={scheduleTimes.map((time) => ({ value: time, label: time }))}
-                                        value={scheduleTimes.find((time) => time === newUser.scheduleTime) ? { value: newUser.scheduleTime, label: newUser.scheduleTime } : null}
-                                        onChange={(e) => setNewUser({ ...newUser, scheduleTime: e.value })}
-                                        classNames={{
-                                            menuButton: () => "relative bg-[#0051a2] text-[#e7efff] text-xs w-auto font-semibold min-w-[120px] rounded-sm flex items-center hover:bg-[#00287e]",
-                                            menu: "absolute z-50 bg-[#0051a2] w-full text-xs shadow-lg rounded-sm mt-1 p-0",
-                                            listItem: ({ isSelected }) => (
-                                                `block transition duration-200 pl-2 py-2 mt-1 mb-1 cursor-pointer select-none truncate rounded ${isSelected
-                                                    ? ` bg-[#00287e] text-white `
-                                                    : `text-white hover:bg-[#00287e]`
-                                                }`
-                                            )
-                                        }}
-                                        placeholder="Select Schedule Time"
-                                    /> */}
                                     <CustomSelect
-                                        value={newUser.scheduleTime}
+                                        value={scheduleTimes.find((time) => time === newUser.scheduleTime) ? { value: newUser.scheduleTime, label: newUser.scheduleTime } : null}
                                         options={scheduleTimes.map((time) => ({ value: time, label: time }))}
-                                        // placeholder={newUser.scheduleTime}
                                         placeholder="Select Schedule Time"
-                                        // isSearchable={true}
-                                        selectClass="border px-1 py-1 w-auto rounded text-center placeholder:text-center"
-                                        optionsContainerClass="absolute z-50 bg-[#0051a2] w-full text-xs shadow-lg rounded-sm mt-1 p-0"
                                         onChange={handleNewUserChange}
+                                        classNames={{
+                                            menuButton: () => " bg-white text-gray-700 border-1 m-1 text-sm font-medium w-auto font-semibold min-w-[120px] rounded-sm  shadow-none hover:bg-white",
+                                            menu: " z-50 bg-white w-full text-sm shadow-lg rounded-sm mt-1 p-0",
+                                            listItem: ({ isSelected }) => (
+                                                `block transition duration-200 pl-2 py-2 mt-1 mb-1 cursor-pointer select-none truncate rounded-none ${isSelected
+                                                    ? ` bg-[#00287e] text-white hover:bg-[#00287e] `
+                                                    : `text-gray-700`
+                                                }`
+                                            ),
+                                        }}
                                     />
-                                    <select
-                                        name="scheduleTime"
-                                        value={newUser.scheduleTime}
-                                        onChange={handleNewUserChange}
-                                        className="border px-1 py-1 rounded text-center placeholder:text-center"
-                                    >
-                                        {scheduleTimes.map((time) => (
-                                            <option key={time} value={time}>
-                                                {time}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </td>
-                                <td className="px-0 py-0 border-3 border-gray-200">
-                                    <button
-                                        onClick={handleAddNew}
-                                        className="bg-[#00B56F] text-white text-xs font-semibold px-4 py-2 rounded-sm space-x-2 hover:bg-[#09a567] transition duration-300"
-                                    >
-                                        Add
-                                        <span className="hidden md:inline-block pl-1">New</span>
-                                    </button>
 
                                 </td>
+
+                                <td className="px-0 py-1 m-0 border-0 border-gray-10 flex items-center justify-center ">
+                                    <Button
+                                        text="Add"
+                                        onClick={handleAddNew}
+                                        variant="primary"
+                                        icon={<FontAwesomeIcon icon={faPlus} className="text-[1rem]" />}
+                                    />
+                                </td>
+
                                 <td className="px-0 py-1 border-3 border-gray-200">
-                                    <button
+                                    <Button
+                                        text="DELETE"
                                         onClick={() => setShowEdit(null)}
-                                        className="bg-red-500 text-white text-xs font-semibold px-4 py-2 rounded-sm space-x-2 hover:bg-red-700 transition duration-300"
-                                    >
-                                        DELETE
-                                    </button>
+                                        variant="danger"
+                                    />
                                 </td>
                             </tr>
                         )}

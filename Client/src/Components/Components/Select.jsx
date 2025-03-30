@@ -56,6 +56,7 @@ const CustomSelect = ({
   }, [isOpen, calculatePosition]);
 
   const handleSelect = useCallback((option) => {
+    console.log('Selected option:', option);
     onChange(option);
     setCurrentPlaceholder(option.label);
     setIsOpen(false);
@@ -105,7 +106,7 @@ const CustomSelect = ({
         {isOpen && isSearchable ? (
           <input
             type="text"
-            className="bg-transparent min-w-[4rem] w-full outline-none"
+            className="bg-transparent min-w-[4rem] w-full h-full outline-none"
             placeholder={currentPlaceholder}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -142,7 +143,7 @@ const CustomSelect = ({
                     // Default styles
                     'px-2 py-1 font-["Roboto"] text-black cursor-pointer hover:bg-[#DEEBFF] whitespace-nowrap',
                     // Conditional listItem styles and maximum priority applied last
-                    classNames.listItem ? classNames.listItem({ isSelected: value?.value === option.value }) : ""
+                    classNames.listItem ? classNames.listItem({ isSelected: currentPlaceholder === option.value }) : ""
                   ))}
                   onClick={() => handleSelect(option)}
                 >
@@ -156,7 +157,7 @@ const CustomSelect = ({
                   clsx(
                     classNames.listItem ? classNames.listItem({ isSelected: false }) : "",
                     // Default style and Maximum priority applied last
-                    "px-2 py-1 text-gray-500 hover:bg-transparent cursor-default" 
+                    "px-2 py-1 text-gray-500 hover:bg-transparent cursor-default"
                   )
                 )}
               >
