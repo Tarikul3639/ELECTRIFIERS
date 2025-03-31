@@ -2,7 +2,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faFilter, faSortDown, faCalendar } from "@fortawesome/free-solid-svg-icons";
 import { useState, useCallback } from "react";
 import { FaRegCalendarAlt } from "react-icons/fa";
-import DatePicker from "react-datepicker";
+import DatePicker from "../../Components/Components/DatePicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Button from "../../Components/Components/Button";
 import CustomSelect from "../../Components/Components/Select";
@@ -154,14 +154,6 @@ const ScheduleManage = () => {
         setShowEdit(null);
     };
 
-    const handleNewUserChange = (e) => {
-        const { name, value } = e.target;
-        setNewUser((prevState) => ({
-            ...prevState,
-            [name]: value,
-        }));
-    };
-
     const handleNewDateChange = (date) => {
         const dayOfWeek = date.toLocaleString('en-US', { weekday: 'long' });
         setNewUser({
@@ -206,12 +198,21 @@ const ScheduleManage = () => {
         );
     };
 
-    const handleScheduleTimeChange = (id, scheduleTime) => {
-        setUsers((prevUsers) =>
-            prevUsers.map((user) =>
-                user.id === id ? { ...user, scheduleTime } : user
-            )
+    const handleScheduleTimeChange = (id, selectedOption) => {
+        if(id === "new"){
+            if (!selectedOption || !selectedOption.value) return;
+            console.log(selectedOption.value, "scheduleTimeChange");
+            setNewUser((prevState) => ({
+                ...prevState,
+                scheduleTime: selectedOption.value,
+            }));
+        }else{
+            setUsers((prevUsers) =>
+                prevUsers.map((user) =>
+                    user.id === id ? { ...user, scheduleTime: selectedOption.value } : user
+                )
         );
+        }
     };
 
     return (
@@ -309,16 +310,18 @@ const ScheduleManage = () => {
                                     )}
                                 </td>
 
-                                <td className="px-1 py-2 border-3 border-gray-200">
+                                <td className="px-0 py-0 border-3 border-gray-200">
                                     {showEdit === id ? (
                                         <div className="flex items-center justify-center ">
                                             <DatePicker
                                                 selected={new Date(date)}
                                                 onChange={(date) => handleDateChange(id, date)}
-                                                className="text-gray-700 text-sm font-medium px-1 py-1 rounded flex text-center placeholder:text-center"
+                                                classNames={{
+                                                    Button: () => "bg-white text-gray-700 border-1 border-gray-700 m-1 text-sm font-medium w-auto px-1 py-1 min-w-[120px] rounded-sm  shadow-none hover:bg-gray-100",
+                                                    Input: () => "border-0 px-1 py-1 rounded text-center placeholder:text-center",
+                                                }}
                                                 dateFormat="yyyy-MM-dd"
                                             />
-                                            <FaRegCalendarAlt className="text-gray-00 pointer-events-none" />
                                         </div>
                                     ) : (
                                         date
@@ -326,17 +329,23 @@ const ScheduleManage = () => {
                                 </td>
                                 <td className="px-1 py-2 border-3 border-gray-200">
                                     {showEdit === id ? (
-                                        <select
-                                            value={scheduleTime}
-                                            onChange={(e) => handleScheduleTimeChange(id, e.target.value)}
-                                            className="text-gray-700 text-sm font-medium px-1 py-1 rounded"
-                                        >
-                                            {scheduleTimes.map((time) => (
-                                                <option key={time} value={time}>
-                                                    {time}
-                                                </option>
-                                            ))}
-                                        </select>
+                                        <CustomSelect
+                                            value={scheduleTimes.find((time) => time === scheduleTime) ? { value: scheduleTime, label: scheduleTime } : null}
+                                            onChange={(e) => handleScheduleTimeChange(id, e.value)}
+                                            options={scheduleTimes.map((time) => ({ value: time, label: time }))}
+                                            classNames={
+                                                {
+                                                    menuButton: () => " bg-white text-gray-700 border-1 m-1 text-sm font-medium w-auto font-semibold min-w-[120px] rounded-sm  shadow-none hover:bg-gray-100",
+                                                    menu: " z-50 bg-white w-full text-sm shadow-lg rounded-sm mt-1 p-0",
+                                                    listItem: ({ isSelected }) => (
+                                                        `block transition duration-200 pl-2 py-2 mt-1 mb-1 cursor-pointer select-none truncate rounded-none ${isSelected
+                                                            ? ` bg-[#00287e] text-white hover:bg-[#00287e] `
+                                                            : `text-gray-700`
+                                                        }`
+                                                    ),
+                                                }
+                                            }
+                                        />
                                     ) : (
                                         scheduleTime
                                     )}
@@ -377,22 +386,23 @@ const ScheduleManage = () => {
 
                                 <td className="px-0 py-0 border-3 border-gray-200">
                                     <CustomSelect
-                                        value={scheduleTimes.find((time) => time === newUser.scheduleTime) ? { value: newUser.scheduleTime, label: newUser.scheduleTime } : null}
+                                        value={scheduleTimes.find((time)=> time === newUser.scheduleTime) ? { 
+                                        value: newUser.scheduleTime, label: newUser.scheduleTime } : null}
+                                        onChange={(e) =>handleScheduleTimeChange("new", e)}
                                         options={scheduleTimes.map((time) => ({ value: time, label: time }))}
-                                        placeholder="Select Schedule Time"
-                                        onChange={handleNewUserChange}
-                                        classNames={{
-                                            menuButton: () => " bg-white text-gray-700 border-1 m-1 text-sm font-medium w-auto font-semibold min-w-[120px] rounded-sm  shadow-none hover:bg-white",
-                                            menu: " z-50 bg-white w-full text-sm shadow-lg rounded-sm mt-1 p-0",
-                                            listItem: ({ isSelected }) => (
-                                                `block transition duration-200 pl-2 py-2 mt-1 mb-1 cursor-pointer select-none truncate rounded-none ${isSelected
-                                                    ? ` bg-[#00287e] text-white hover:bg-[#00287e] `
-                                                    : `text-gray-700`
-                                                }`
-                                            ),
-                                        }}
+                                        classNames={
+                                            {
+                                                menuButton: () => " bg-white text-gray-700 border-1 m-1 text-sm font-medium w-auto font-semibold min-w-[120px] rounded-sm  shadow-none hover:bg-white",
+                                                menu: " z-50 bg-white w-full text-sm shadow-lg rounded-sm mt-1 p-0",
+                                                listItem: ({ isSelected }) => (
+                                                    `block transition duration-200 pl-2 py-2 mt-1 mb-1 cursor-pointer select-none truncate rounded-none ${isSelected
+                                                        ? ` bg-[#00287e] text-white hover:bg-[#00287e] `
+                                                        : `text-gray-700`
+                                                    }`
+                                                ),
+                                            }
+                                        }
                                     />
-
                                 </td>
 
                                 <td className="px-0 py-1 m-0 border-0 border-gray-10 flex items-center justify-center ">
