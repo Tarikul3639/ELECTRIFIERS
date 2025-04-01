@@ -10,7 +10,8 @@ const CustomDatePicker = ({
   selected,
   onChange,
   classNames = {},
-  dateFormat = "yyyy-MM-dd"
+  dateFormat = "yyyy-MM-dd",
+  placeholderText = "Select a date",
 }) => {
   const datepickerRef = useRef(null); 
 
@@ -25,7 +26,7 @@ const CustomDatePicker = ({
     <div
       className={twMerge(
         clsx(
-          "flex items-center",
+          "flex items-center justify-between",
           classNames.Button ? classNames.Button() : ""
         )
       )}
@@ -72,14 +73,15 @@ const CustomDatePicker = ({
           )
         )}
         dateFormat={dateFormat}
+        placeholderText={placeholderText}
       />
       {/* ✅ Clicking on the icon will toggle the DatePicker */}
       <div onClick={toggleDatePicker} className="cursor-pointer">
         <FaRegCalendarAlt
           className={twMerge(
             clsx(
-              "text-gray-600 hover:text-gray-900 ml-1",
-              classNames.Icon ? classNames.Icon() : ""
+              " text-gray-600 hover:text-gray-900 ml-1",
+              classNames.Icon ? classNames.Icon() : "",
             )
           )}
         />
@@ -106,6 +108,7 @@ CustomDatePicker.propTypes = {
     Input: PropTypes.func,
   }),
   dateFormat: PropTypes.string,
+  placeholderText: PropTypes.string,
 };
 
 export default CustomDatePicker;

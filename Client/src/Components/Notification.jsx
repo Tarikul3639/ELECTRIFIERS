@@ -29,6 +29,7 @@ const Notification = ({ notifications }) => {
             {/* Notification Button */}
             <button
                 ref={buttonRef}
+                title="Notifications"
                 className="p-3 bg-transparent rounded-full text-gray-800 hover:text-blue-600 relative"
                 onClick={() => setIsOpen(!isOpen)}
             >

@@ -37,42 +37,44 @@ const SideBar = () => {
       {/* Mobile Sidebar Toggle */}
       <button
         ref={buttonRef}
+        title="Toggle Menu"
         onClick={() => setIsOpen(!isOpen)}
-        className="md:hidden p-2 rounded-full text-xl text-black z-50"
+        className="md:hidden p-2 rounded-full text-xl text-black z-50 cursor-pointer"
       >
-        <FontAwesomeIcon icon={isOpen ? faBars : faBars} />
+        <FontAwesomeIcon icon={isOpen ? faXmark : faBars} />
       </button>
 
       {/* Sidebar Content */}
       {isOpen && (
         <div
           ref={sidebarRef}
-          className="absolute right-[-1.5rem] sm:right-0 mt-4 w-80 bg-white shadow-lg rounded-lg p-4 border border-gray-200 z-50 max-h-[80vh] overflow-y-auto"
+          className="absolute right-[-1.5rem] md:right-0 mt-4 w-80 bg-white shadow-lg rounded-lg p-4 border border-gray-200 z-50 max-h-[80vh] overflow-y-auto"
         >
           <div className="flex justify-between items-center border-b pb-2">
             <h3 className="text-lg font-semibold text-gray-800">Menu</h3>
-            <button onClick={() => setIsOpen(false)}>
-              <FontAwesomeIcon icon={faXmark} className="text-gray-600 hover:text-gray-800 text-xl" />
+            <button title="Close" onClick={() => setIsOpen(false)}>
+              <FontAwesomeIcon icon={faXmark} className="text-gray-600 hover:text-gray-800 text-xl cursor-pointer" />
             </button>
           </div>
 
-          <Link to="home" smooth={true} offset={-70} duration={500} className="flex items-center p-2 rounded-lg hover:bg-gray-300 text-gray-800 text-lg font-semibold transition duration-300">
+          <Link title="Home" to="home" smooth={true} offset={-70} duration={500} className="flex items-center p-2 rounded-lg hover:bg-gray-300 text-gray-800 text-lg font-semibold transition duration-300">
             <FontAwesomeIcon icon={faHome} className="mr-3 text-lg" /> Home
           </Link>
-          <Link to="about" smooth={true} offset={-70} duration={500} className="flex items-center p-2 rounded-lg hover:bg-gray-300 text-gray-800 text-lg font-semibold transition duration-300">
+          <Link title="About" to="about" smooth={true} offset={-70} duration={500} className="flex items-center p-2 rounded-lg hover:bg-gray-300 text-gray-800 text-lg font-semibold transition duration-300">
             <FontAwesomeIcon icon={faInfoCircle} className="mr-3 text-lg" /> About
           </Link>
-          <Link to="contact" smooth={true} offset={-70} duration={500} className="flex items-center p-2 rounded-lg hover:bg-gray-300 text-gray-800 text-lg font-semibold transition duration-300">
+          <Link title="Contact" to="contact" smooth={true} offset={-70} duration={500} className="flex items-center p-2 rounded-lg hover:bg-gray-300 text-gray-800 text-lg font-semibold transition duration-300">
             <FontAwesomeIcon icon={faEnvelope} className="mr-3 text-lg" /> Contact
           </Link>
-          <button onClick={handleUpdate} className="flex w-full items-center p-2 rounded-lg hover:bg-gray-300 text-gray-800 text-lg font-semibold transition duration-300">
-          <RiCalendarScheduleFill className="mr-3 text-xl"/> Update
+          <button title="Update" onClick={handleUpdate} className="flex w-full items-center p-2 rounded-lg hover:bg-gray-300 text-gray-800 text-lg font-semibold transition duration-300">
+            <RiCalendarScheduleFill className="mr-3 text-xl"/> Update
           </button>
+
           {/* Profile Section */}
-          <button className="flex items-center bg-gray-300 p-2 rounded-full hover:bg-gray-400 transition duration-300 w-full mt-3">
+          <div title="Click To Logo" className="flex items-center bg-gray-300 p-2 rounded-full hover:bg-gray-400 transition duration-300 w-full mt-3">
             <Profile /> 
             <p className="pl-3 text-gray-800 text-lg font-semibold">Tarikul Islam</p>
-          </button>
+          </div>
         </div>
       )}
     </div>

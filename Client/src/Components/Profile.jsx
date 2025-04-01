@@ -37,6 +37,7 @@ const Profile = () => {
             {/* Profile Button */}
             <button
                 ref={buttonRef}
+                title="Profile"
                 className="bg-transparent rounded-full hover:bg-gray-100"
                 onClick={() => setIsOpen(!isOpen)}
             >
@@ -45,13 +46,17 @@ const Profile = () => {
 
             {/* Profile Dropdown */}
             {isOpen && (
-                <div className="fixed top-16 right-0 sm:absolute sm:top-auto sm:right-0 sm:mt-3 mt-3 w-80 bg-white shadow-lg rounded-lg p-4 border border-gray-200 z-50">
-    
+                <div className="fixed top-16 right-0 md:absolute md:top-auto md:right-0 md:mt-3 mt-3 w-80 bg-white shadow-lg rounded-lg p-4 border border-gray-200 z-50">
                     <div className="flex justify-between items-center border-b pb-2">
                         <h3 className="text-lg font-semibold">Profile</h3>
-                        <button onClick={() => setIsOpen(false)}>
+                        {/* Replaced button with div for closing the dropdown */}
+                        <div
+                            onClick={() => setIsOpen(false)}
+                            title="Close"
+                            className="cursor-pointer"
+                        >
                             <FontAwesomeIcon icon={faXmark} className="text-gray-600 hover:text-gray-800 text-xl" />
-                        </button>
+                        </div>
                     </div>
                     <div className="flex flex-col items-center mt-3">
                         <div className="relative w-24 h-24">
@@ -60,7 +65,7 @@ const Profile = () => {
                                 alt="User"
                                 className="w-full object-cover rounded-full"
                             />
-                            <span className="absolute bottom-0 right-0 h-6 w-6 flex items-center justify-center bg-gray-100 rounded-full cursor-pointer hover:bg-gray-300">
+                            <span title="Edit" className="absolute bottom-0 right-0 h-6 w-6 flex items-center justify-center bg-gray-100 rounded-full cursor-pointer hover:bg-gray-300">
                                 <FontAwesomeIcon icon={faPencil} className="text-sm text-gray-800" />
                             </span>
                         </div>
@@ -68,18 +73,18 @@ const Profile = () => {
                         <p className="text-gray-700 text-sm">tarikul@example.com</p>
                     </div>
                     <div className="mt-4 space-y-1">
-                        <button className="flex items-center p-3 w-full text-gray-700 hover:bg-gray-200 rounded-lg">
+                        <div className="flex items-center p-3 w-full text-gray-700 hover:bg-gray-200 rounded-lg cursor-pointer">
                             <FontAwesomeIcon icon={faUserPen} className="text-lg pr-3" />
                             <span className="text-sm font-semibold">Edit Profile</span>
-                        </button>
-                        <button className="flex items-center p-3 w-full text-gray-700 hover:bg-gray-200 rounded-lg">
+                        </div>
+                        <div className="flex items-center p-3 w-full text-gray-700 hover:bg-gray-200 rounded-lg cursor-pointer">
                             <FontAwesomeIcon icon={faGears} className="text-lg pr-3" />
                             <span className="text-sm font-semibold">Settings</span>
-                        </button>
-                        <button className="flex items-center p-3 w-full text-gray-700 hover:bg-gray-200 rounded-lg">
+                        </div>
+                        <div className="flex items-center p-3 w-full text-gray-700 hover:bg-gray-200 rounded-lg cursor-pointer">
                             <FontAwesomeIcon icon={faArrowRightFromBracket} className="text-lg pr-3" />
                             <span className="text-sm font-semibold">Sign Out</span>
-                        </button>
+                        </div>
                     </div>
                 </div>
             )}
@@ -90,10 +95,7 @@ const Profile = () => {
 Profile.propTypes = {
     isOpen: PropTypes.bool,
     onClose: PropTypes.func,
-    profileRef: PropTypes.oneOfType([
-        PropTypes.func,
-        PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
-    ]),
+    profileRef: PropTypes.oneOfType([PropTypes.func, PropTypes.shape({ current: PropTypes.instanceOf(Element) })]),
 };
 
 export default Profile;

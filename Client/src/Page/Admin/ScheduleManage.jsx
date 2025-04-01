@@ -1,7 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faFilter, faSortDown, faCalendar } from "@fortawesome/free-solid-svg-icons";
-import { useState, useCallback } from "react";
-import { FaRegCalendarAlt } from "react-icons/fa";
+import { faPlus, faFilter, faCalendar } from "@fortawesome/free-solid-svg-icons";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import DatePicker from "../../Components/Components/DatePicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Button from "../../Components/Components/Button";
@@ -14,13 +13,13 @@ const ScheduleManage = () => {
     const [selectedDivision, setSelectedDivision] = useState("");
     const [selectedArea, setSelectedArea] = useState("");
 
-    const areas = {
+    const areas = useMemo(() => ({
         Dhaka: ["Dhanmondi", "Uttara", "Gulshan", "Mirpur"],
         Chittagong: ["Pahartali", "Nasirabad", "Halishahar"],
         Rajshahi: ["Rajpara", "Boalia", "Shalbagan"],
         Khulna: ["Sonadanga", "Khalishpur", "Daulatpur"],
-    };
-    const schedule = {
+    }), []);
+    const schedule = useMemo(() => ({
         Dhanmondi: [
             { id: 1, day: "Sunday", date: "2025-03-28", scheduleTime: "8:00 AM - 10:00 AM" },
             { id: 2, day: "Monday", date: "2025-03-29", scheduleTime: "10:00 AM - 12:00 PM" },
@@ -81,14 +80,13 @@ const ScheduleManage = () => {
             { id: 33, day: "Tuesday", date: "2025-03-30", scheduleTime: "10:00 AM - 12:00 PM" },
             { id: 34, day: "Wednesday", date: "2025-03-31", scheduleTime: "2:00 PM - 4:00 PM" }
         ]
-    };
+    }), []);
 
-    const [users, setUsers] = useState([
-        { id: 1, day: "Sunday", date: "2025-03-28", scheduleTime: "8:00 AM - 10:00 AM" },
-        { id: 2, day: "Monday", date: "2025-03-29", scheduleTime: "10:00 AM - 12:00 PM" },
-        { id: 3, day: "Tuesday", date: "2025-03-30", scheduleTime: "2:00 PM - 4:00 PM" },
-        { id: 4, day: "Wednesday", date: "2025-03-31", scheduleTime: "8:00 AM - 10:00 AM" },
-    ]);
+    const getAllSchedules = useCallback(() => {
+        return Object.values(schedule).flat();
+    }, [schedule]);
+
+    const [users, setUsers] = useState(getAllSchedules());
 
     const [newUser, setNewUser] = useState({
         day: "",
@@ -97,11 +95,11 @@ const ScheduleManage = () => {
     });
 
     const scheduleTimes = [
-        "8:00 AM - 10:00 AM",
+        "08:00 AM - 10:00 AM",
         "10:00 AM - 12:00 PM",
-        "2:00 PM - 4:00 PM",
-        "4:00 PM - 6:00 PM",
-        "6:00 PM - 8:00 PM"
+        "02:00 PM - 04:00 PM",
+        "04:00 PM - 06:00 PM",
+        "06:00 PM - 08:00 PM"
     ];
     const handleDivisionChange = (e) => {
         setSelectedDivision(e.value);
@@ -199,26 +197,45 @@ const ScheduleManage = () => {
     };
 
     const handleScheduleTimeChange = (id, selectedOption) => {
-        if(id === "new"){
+        if (id === "new") {
             if (!selectedOption || !selectedOption.value) return;
             console.log(selectedOption.value, "scheduleTimeChange");
             setNewUser((prevState) => ({
                 ...prevState,
                 scheduleTime: selectedOption.value,
             }));
-        }else{
+        } else {
             setUsers((prevUsers) =>
                 prevUsers.map((user) =>
                     user.id === id ? { ...user, scheduleTime: selectedOption.value } : user
                 )
-        );
+            );
         }
     };
 
-    return (
-        <div className="w-screen-md bg-gray-200 p-2 rounded-lg shadow-lg">
-            <div className="flex items-center justify-start p-2 w-full">
+    const filterUsers = useCallback(() => {
+        if (selectedDivision && selectedArea) {
+            setUsers(schedule[selectedArea] || []);
+        } else if (selectedDivision) {
+            const filteredUsers = Object.keys(schedule).reduce((acc, area) => {
+                if (areas[selectedDivision].includes(area)) {
+                    acc = acc.concat(schedule[area]);
+                }
+                return acc;
+            }, []);
+            setUsers(filteredUsers);
+        } else {
+            setUsers(getAllSchedules());
+        }
+    }, [selectedDivision, selectedArea, schedule, areas, getAllSchedules]);
 
+    useEffect(() => {
+        filterUsers();
+    }, [filterUsers]);
+
+    return (
+        <div className="w-screen-md bg-gray-200 p-2 rounded-lg shadow-lg overflow-hidden">
+            <div className="flex items-center justify-start p-2 w-full bg-gray-200 rounded-sm shadow-lg mb-1">
                 <Button
                     text="New"
                     onClick={() => setShowEdit("new")}
@@ -231,7 +248,7 @@ const ScheduleManage = () => {
                     variant="secondary"
                     icon={<FontAwesomeIcon icon={faFilter} className={`text-xs ${showFilter ? "rotate-90" : "rotate-0"}`} />}
                 />
-
+                {/* Filter the Address */}
                 {showFilter && (
                     <div className="transform translate-x-0 transition-transform duration-500 ease-in-out flex items-center space-x-2 ml-4">
                         <CustomSelect
@@ -278,15 +295,15 @@ const ScheduleManage = () => {
                 )}
             </div>
 
-            <div className="overflow-auto">
+            <div className="overflow-auto max-h-[450px] rounded-lg shadow-lg bg-white p-2">
 
-                <table className="min-w-full border-collapse bg-white border border-gray-200">
-                    <thead>
-                        <tr className="border border-gray-500 border-solid bg-white text-gray-700">
-                            <th className="px-1 py-2 border-3 border-gray-200">ID</th>
-                            <th className="px-1 py-2 border-3 border-gray-200">Day</th>
-                            <th className="px-1 py-2 border-3 border-gray-200">Date</th>
-                            <th className="px-1 py-2 border-3 border-gray-200">Schedule Time</th>
+                <table className="min-w-full overflow-y-scroll border-collapse bg-white border-4 border-gray-100">
+                    <thead className="sticky transition-all duration-1000 -top-[11px] z-10 bg-white shadow-[0px_4px_4px_rgba(0,0,0,0.1">
+                        <tr className="border border-gray-500 border-solid bg-white text-gray-700 sticky-header">
+                            <th className="px-1 py-2 border-3 border-gray-200 min-w-[50px]">ID</th>
+                            <th className="px-1 py-2 border-3 border-gray-200 min-w-[60px]">Day</th>
+                            <th className="px-1 py-2 border-3 border-gray-200 min-w-[100px]">Date</th>
+                            <th className="px-1 py-2 border-3 border-gray-200 min-w-[170px]">Schedule Time</th>
                             <th className="px-1 py-2 border-3 border-gray-200">EDIT</th>
                             <th className="px-1 py-2 border-3 border-gray-200">DELETE</th>
                         </tr>
@@ -333,6 +350,7 @@ const ScheduleManage = () => {
                                             value={scheduleTimes.find((time) => time === scheduleTime) ? { value: scheduleTime, label: scheduleTime } : null}
                                             onChange={(e) => handleScheduleTimeChange(id, e.value)}
                                             options={scheduleTimes.map((time) => ({ value: time, label: time }))}
+                                            placeholder="Select Schedule Time"
                                             classNames={
                                                 {
                                                     menuButton: () => " bg-white text-gray-700 border-1 m-1 text-sm font-medium w-auto font-semibold min-w-[120px] rounded-sm  shadow-none hover:bg-gray-100",
@@ -371,24 +389,30 @@ const ScheduleManage = () => {
                                         name="day"
                                         value={newUser.day}
                                         readOnly
-                                        className="border px-1 py-1 rounded text-center placeholder:text-center"
+                                        className="border-1 px-1 py-1 rounded text-center placeholder:text-center focus:outline-none focus:ring-0 cursor-default"
                                     />
                                 </td>
-                                <td className="px-0 py-0 border-3 border-gray-200">
+                                <td className="px-0 py-0 border-0 border-gray-200 flex items-center justify-center ">
                                     <DatePicker
                                         selected={newUser.date ? new Date(newUser.date) : null}
                                         onChange={handleNewDateChange}
-                                        className="border px-1 py-1 rounded text-center placeholder:text-center"
+                                        placeholderText="Select a New Date"
                                         dateFormat="yyyy-MM-dd"
-                                        placeholderText="Select a date"
+                                        classNames={{
+                                            Button: () => "flex justify-center items-center bg-white text-gray-700 border-1 border-gray-700 text-sm font-medium px-0 max-w-[200px] py-1 rounded-sm shadow-none hover:bg-gray-100",
+                                            Input: () => "border-0 px-0 py-1 text-gray-700 rounded text-center placeholder:text-center",
+                                            Icon: () => "mr-1",
+                                        }}
+
                                     />
                                 </td>
 
                                 <td className="px-0 py-0 border-3 border-gray-200">
                                     <CustomSelect
-                                        value={scheduleTimes.find((time)=> time === newUser.scheduleTime) ? { 
-                                        value: newUser.scheduleTime, label: newUser.scheduleTime } : null}
-                                        onChange={(e) =>handleScheduleTimeChange("new", e)}
+                                        value={scheduleTimes.find((time) => time === newUser.scheduleTime) ? {
+                                            value: newUser.scheduleTime, label: newUser.scheduleTime
+                                        } : null}
+                                        onChange={(e) => handleScheduleTimeChange("new", e)}
                                         options={scheduleTimes.map((time) => ({ value: time, label: time }))}
                                         classNames={
                                             {

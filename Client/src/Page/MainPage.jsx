@@ -10,7 +10,7 @@ const MainPage = () => {
 
       {/* Content Area */}
       <section id="home" className="bg-white ">
-        <HomeSection />
+        <HomeSection/>
       </section>
 
       <section id="about" className="bg-white ">
