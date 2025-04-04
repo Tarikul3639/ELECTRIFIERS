@@ -1,9 +1,9 @@
 import { useNavigate } from 'react-router-dom';
 import { useState } from "react";
 import { Link } from "react-scroll";
-import Logo from "../assets/Image/logo.png";
-import Profile from "./Profile.jsx";
-import Notification from "./Notification.jsx";
+import Logo from "../../assets/Image/logo.png";
+import Profile from "../Profile.jsx";
+import Notification from "../Notification.jsx";
 import SideBar from "./SideBar.jsx";
 
 const NavMenu = () => {

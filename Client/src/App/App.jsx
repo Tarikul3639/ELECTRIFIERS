@@ -1,18 +1,18 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import MainPage from "../Page/MainPage.jsx";
-import Login from "../Page/Auth/Login.jsx";
-import Registration from "../Page/Auth/Registration.jsx";
-import ForgotPassword from "../Page/Auth/ForgotPassword.jsx";
-import MainLayout from "../Layouts/MainLayout.jsx";
-import AuthLayout from "../Layouts/AuthLayout.jsx";
-import Admin from "../Page/Admin/Admin.jsx"
+  import { BrowserRouter, Routes, Route } from "react-router-dom";
+import LandingPage from "../pages/LandingPage.jsx";
+import Login from "../pages/auth/Login.jsx";
+import Registration from "../pages/auth/Registration.jsx";
+import ForgotPassword from "../pages/auth/ForgotPassword.jsx";
+import MainLayout from "../components/layouts/MainLayout.jsx";
+import AuthLayout from "../components/layouts/AuthLayout.jsx";
+import Admin from "../pages/admin/Admin.jsx";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route element={<MainLayout />}>
-          <Route path="/" element={<MainPage/>} />
+          <Route path="/" element={<LandingPage/>} />
           <Route path="/Admin" element={<Admin />} />
           </Route>
 

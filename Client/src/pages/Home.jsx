@@ -28,7 +28,7 @@ const Home = () => {
     const [currentSchedule, setCurrentSchedule] = useState(null);
     const [nextSchedule, setNextSchedule] = useState(null);
 
-    // useEffect to check the current time and determine the active and next schedule
+    // useEffect to check the current time and determine the active and next schedule real-time UI update
     useEffect(() => {
         const checkSchedule = () => {
             const now = new Date();

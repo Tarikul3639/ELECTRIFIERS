@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import background from "../assets/Image/background.jpg";
+import background from "../../assets/Image/background.jpg";
 import { Outlet } from "react-router-dom";
 const AuthLayout = () => {
   return (

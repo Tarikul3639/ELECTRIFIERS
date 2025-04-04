@@ -1,5 +1,5 @@
 import { Link } from "react-scroll";
-import Logo from "../assets/Image/logo.png";
+import Logo from "../../assets/Image/logo.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFacebookSquare, faTwitterSquare, faLinkedin } from "@fortawesome/free-brands-svg-icons";
 

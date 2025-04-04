@@ -1,10 +1,10 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faFilter, faCalendar } from "@fortawesome/free-solid-svg-icons";
 import { useState, useCallback, useEffect, useMemo } from "react";
-import DatePicker from "../../Components/Components/DatePicker";
+import DatePicker from "../../components/ui/DatePicker.jsx";
 import "react-datepicker/dist/react-datepicker.css";
-import Button from "../../Components/Components/Button";
-import CustomSelect from "../../Components/Components/Select";
+import Button from "../../components/ui/Button.jsx";
+import CustomSelect from "../../components/ui/Select.jsx";
 
 const ScheduleManage = () => {
     const [showEdit, setShowEdit] = useState(null);

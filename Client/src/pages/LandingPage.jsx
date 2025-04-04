@@ -1,8 +1,8 @@
-import HomeSection from "./HomeSection.jsx";
+import HomeSection from "./Home.jsx";
 import AboutSection from "./About.jsx";
 import ContactSection from "./Contact.jsx";
-import NavMenu from "../Components/NavMenu.jsx";
-import Footer from "../Components/Footer.jsx";
+import NavMenu from "../components/navigation/NavMenu.jsx";
+import Footer from "../components/navigation/Footer.jsx";
 const MainPage = () => {
   return (
     <div className="scroll-smooth h-screen">
