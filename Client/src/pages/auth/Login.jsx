@@ -25,6 +25,7 @@ const Login = () => {
       if (response.ok) {
         toast.success(data.message);
         setLoading(false);
+        navigate("/home");
         console.log("Login successful:", data);
       } else {
         console.error("Login failed:", data.message);
@@ -46,7 +47,6 @@ const Login = () => {
   };
 
   const handleForgotPassword = () => {
-    // Navigate to the Forgot Password page (you can create this page later)
     navigate("/forgot-password");
   };
 
@@ -69,7 +69,7 @@ const Login = () => {
           Sign up
         </span>
       </p>
-      <form className="space-y-5" onSubmit={(e) => e.preventDefault()} onClick={handleClickForLogin}>
+      <form className="space-y-5" onSubmit={handleClickForLogin}>
         <input
           type="email"
           placeholder="Email"

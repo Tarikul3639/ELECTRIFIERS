@@ -1,11 +1,12 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import {useState, useEffect } from "react";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Loader from '../../Components/ui/Loader.jsx';
 
 const Registration = () => {
   const navigate = useNavigate();
+  const [locationData, setLocationData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
@@ -14,8 +15,7 @@ const Registration = () => {
     password: "",
     phone: "",
     division: "",
-    area: "",
-    port: "",
+    district: "",
   });
 
   const handleChange = (e) => {
@@ -31,24 +31,22 @@ const Registration = () => {
     setFormData((prevData) => ({
       ...prevData,
       division,
-      area: "",
-      port: "",
+      district: "",
     }));
   };
 
-  const handleAreaChange = (e) => {
-    const area = e.target.value;
+  const handleDistrictChange = (e) => {
+    const district = e.target.value;
     setFormData((prevData) => ({
       ...prevData,
-      area,
-      port: "",
+      district,
     }));
   };
 
   const handleClickForRegistration = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const { firstName, lastName, email, password, phone, division, area, port } = formData;
+    const { firstName, lastName, email, password, phone, division, district } = formData;
 
     try {
       const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/registration`, {
@@ -56,12 +54,13 @@ const Registration = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ firstName, lastName, email, password, phone, division, area, port }),
+        body: JSON.stringify({ firstName, lastName, email, password, phone, division, district}),
       });
       const data = await response.json();
       if (response.ok) {
         toast.success(data.message);
         setLoading(false);
+        handleClickForLogin();
         console.log("Registration successful:", data);
       } else {
         console.error("Registration failed:", data.message);
@@ -75,31 +74,38 @@ const Registration = () => {
     }
   };
 
+  useEffect(() => {
+    const abortController = new AbortController(); // Create AbortController
+    let mounted = true;
+  
+    const fetchLocationData = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/location`, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+          signal: abortController.signal, // Pass signal to fetch
+        });
+  
+        const data = await response.json();
+        if (response.ok && mounted) {
+          setLocationData(data);
+        }
+      } catch (error) {
+        if (error.name !== "AbortError") { // Avoid logging cancellation errors
+          console.error("Error fetching location data:", error);
+        }
+      }
+    };
+  
+    fetchLocationData();
+    return () => {
+      mounted = false;
+      abortController.abort(); // Cancel the fetch request
+    };
+  }, []);
+
   const handleClickForLogin = () => {
     navigate("/login");
-  };
-
-  const divisions = ["Dhaka", "Chittagong", "Rajshahi", "Khulna"];
-  const areas = {
-    Dhaka: ["Dhanmondi", "Uttara", "Gulshan"],
-    Chittagong: ["Pahartali", "Nasirabad", "Halishahar"],
-    Rajshahi: ["Rajpara", "Boalia", "Shalbagan"],
-    Khulna: ["Sonadanga", "Khalishpur", "Daulatpur"],
-  };
-
-  const ports = {
-    Dhanmondi: ["Port A", "Port B", "Port C"],
-    Uttara: ["Port D", "Port E", "Port F"],
-    Gulshan: ["Port G", "Port H", "Port I"],
-    Pahartali: ["Port J", "Port K", "Port L"],
-    Nasirabad: ["Port M", "Port N", "Port O"],
-    Halishahar: ["Port P", "Port Q", "Port R"],
-    Rajpara: ["Port S", "Port T", "Port U"],
-    Boalia: ["Port V", "Port W", "Port X"],
-    Shalbagan: ["Port Y", "Port Z", "Port AA"],
-    Sonadanga: ["Port AB", "Port AC", "Port AD"],
-    Khalishpur: ["Port AE", "Port AF", "Port AG"],
-    Daulatpur: ["Port AH", "Port AI", "Port AJ"],
   };
 
   return (
@@ -117,7 +123,7 @@ const Registration = () => {
 
       <form onSubmit={handleClickForRegistration}>
         <div className="space-y-4">
-          <div className="flex flex-col sm:flex-row space-x-2 space-y-4 sm:space-y-0">
+          <div className="flex flex-col sm:flex-row space-x-4 space-y-4 sm:space-y-0">
             <input
               name="firstName"
               type="text"
@@ -167,7 +173,7 @@ const Registration = () => {
             className="w-full p-3 bg-gray-700 text-white rounded-lg focus:outline-none"
           />
 
-          <div className="w-full">
+          <div className="flex flex-col sm:flex-row space-x-4 space-y-4 sm:space-y-0">
             <select
               name="division"
               id="division"
@@ -180,58 +186,33 @@ const Registration = () => {
               <option value="" disabled className="text-gray-400">
                 Select Division
               </option>
-              {divisions.map((div, index) => (
+              {Object.keys(locationData).map((div, index) => (
                 <option key={index} value={div} className="text-white">
                   {div}
                 </option>
               ))}
             </select>
-          </div>
 
-          <div className="flex space-x-4">
-            <div className="w-full sm:w-1/2">
-              <select
-                name="area"
-                id="area"
-                required
-                value={formData.area}
-                onChange={handleAreaChange}
-                className={`w-full p-3 bg-gray-700 rounded-lg focus:outline-none 
-              ${!formData.area ? "text-gray-400" : "text-white"}`}
-              >
-                <option value="" disabled className="text-gray-400">
-                  Select Area
-                </option>
-                {formData.division &&
-                  areas[formData.division]?.map((area, index) => (
-                    <option key={index} value={area} className="text-white">
-                      {area}
-                    </option>
-                  ))}
-              </select>
-            </div>
+            <select
+              name="district"
+              id="district"
+              required
+              value={formData.district}
+              onChange={handleDistrictChange}
+              className={`w-full p-3 bg-gray-700 rounded-lg focus:outline-none 
+              ${!formData.district ? "text-gray-400" : "text-white"}`}
+            >
+              <option value="" disabled className="text-gray-400">
+                Select district
+              </option>
+              {formData.division &&
+                locationData[formData.division]?.map((district, index) => (
+                  <option key={index} value={district} className="text-white">
+                    {district}
+                  </option>
+                ))}
 
-            <div className="w-full sm:w-1/2">
-              <select
-                name="port"
-                id="port"
-                required
-                value={formData.port}
-                onChange={handleChange}
-                className={`w-full p-3 bg-gray-700 rounded-lg focus:outline-none 
-                ${!formData.port ? "text-gray-400" : "text-white"}`}
-              >
-                <option value="" className="text-gray-400">
-                  Select Port
-                </option>
-                {formData.area &&
-                  ports[formData.area]?.map((port, index) => (
-                    <option key={index} value={port} className="text-white">
-                      {port}
-                    </option>
-                  ))}
-              </select>
-            </div>
+            </select>
           </div>
 
           <button

@@ -72,5 +72,6 @@ const locationData = {
     "Kulaura",
   ],
 };
-Module.exports = locationData;
-// export default locationData;
+
+// Export the entire data at once
+module.exports = { locationData };
