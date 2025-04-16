@@ -4,6 +4,30 @@ import "react-circular-progressbar/dist/styles.css";
 import LoadSheddingSchedule from "../Components/LoadSheddingSchedule";
 
 const Home = () => {
+    // Fetch data from the backend API
+    useEffect(() => {
+        const api = async () => {
+          try {
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            });
+      
+            const data = await response.json();
+            console.log("Data fetched successfully:", data.message);
+            return data;
+      
+          } catch (error) {
+            console.error("Error fetching data:", error);
+          }
+        };
+      
+        api();
+      }, []); 
+
     // Define the schedule times using useMemo to avoid unnecessary recalculations
     const scheduleTimes = useMemo(() => [
         "10:00 AM - 08:56 AM",

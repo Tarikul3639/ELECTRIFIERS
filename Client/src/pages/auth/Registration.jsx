@@ -1,17 +1,84 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import Loader from '../../Components/ui/Loader.jsx';
 
 const Registration = () => {
   const navigate = useNavigate();
-  const [division, setDivision] = useState("");
-  const [area, setArea] = useState("");
-  const [port, setPort] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    phone: "",
+    division: "",
+    area: "",
+    port: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleDivisionChange = (e) => {
+    const division = e.target.value;
+    setFormData((prevData) => ({
+      ...prevData,
+      division,
+      area: "",
+      port: "",
+    }));
+  };
+
+  const handleAreaChange = (e) => {
+    const area = e.target.value;
+    setFormData((prevData) => ({
+      ...prevData,
+      area,
+      port: "",
+    }));
+  };
+
+  const handleClickForRegistration = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    const { firstName, lastName, email, password, phone, division, area, port } = formData;
+
+    try {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/registration`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ firstName, lastName, email, password, phone, division, area, port }),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        toast.success(data.message);
+        setLoading(false);
+        console.log("Registration successful:", data);
+      } else {
+        console.error("Registration failed:", data.message);
+        toast.error(data.message);
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error("Error during registration:", error);
+      toast.error("An error occurred.");
+      setLoading(false);
+    }
+  };
 
   const handleClickForLogin = () => {
     navigate("/login");
   };
 
-  // Example data, replace with actual values
   const divisions = ["Dhaka", "Chittagong", "Rajshahi", "Khulna"];
   const areas = {
     Dhaka: ["Dhanmondi", "Uttara", "Gulshan"],
@@ -35,73 +102,80 @@ const Registration = () => {
     Daulatpur: ["Port AH", "Port AI", "Port AJ"],
   };
 
-  const handleDivisionChange = (e) => {
-    setDivision(e.target.value);
-    setArea(""); // Reset area when division changes
-    setPort(""); // Reset port when division changes
-  };
-
-  const handleAreaChange = (e) => {
-    setArea(e.target.value);
-    setPort(""); // Reset port when area changes
-  };
-
   return (
     <div className="w-full sm:w-2/3 md:w-2/3 lg:w-2/4 p-6 ">
+      {loading && <Loader loading={true} />}
       <h1 className="text-2xl sm:text-3xl font-bold mb-4 ">
         Create new account<span className="text-blue-500">.</span>
       </h1>
       <p className="text-gray-400 text-sm mb-6">
         Already A Member?{" "}
-        <span
-          className="text-blue-500 cursor-pointer"
-          onClick={handleClickForLogin}
-        >
+        <span className="text-blue-500 cursor-pointer" onClick={handleClickForLogin}>
           Login
         </span>
       </p>
-      <form>
+
+      <form onSubmit={handleClickForRegistration}>
         <div className="space-y-4">
-          {/* First and Last Name Inputs */}
           <div className="flex flex-col sm:flex-row space-x-2 space-y-4 sm:space-y-0">
             <input
+              name="firstName"
               type="text"
               placeholder="First name"
-              className="w-full sm:w-1/2 p-3 text-sm lg:text-md  bg-gray-700 text-white rounded-lg focus:outline-none"
+              required
+              value={formData.firstName}
+              onChange={handleChange}
+              className="w-full sm:w-1/2 p-3 bg-gray-700 text-white rounded-lg focus:outline-none"
             />
             <input
+              name="lastName"
               type="text"
               placeholder="Last name"
-              className="w-full sm:w-1/2 p-3 text-sm lg:text-md bg-gray-700 text-white rounded-lg focus:outline-none"
+              required
+              value={formData.lastName}
+              onChange={handleChange}
+              className="w-full sm:w-1/2 p-3 bg-gray-700 text-white rounded-lg focus:outline-none"
             />
           </div>
 
-          {/* Email and Password Inputs */}
           <input
+            name="email"
             type="email"
             placeholder="Email"
-            className="w-full p-3 text-sm lg:text-md bg-gray-700 text-white rounded-lg focus:outline-none"
+            required
+            value={formData.email}
+            onChange={handleChange}
+            className="w-full p-3 bg-gray-700 text-white rounded-lg focus:outline-none"
           />
           <input
+            name="phone"
             type="tel"
             placeholder="Phone"
-            className="w-full p-3 text-sm lg:text-md bg-gray-700 text-white rounded-lg focus:outline-none"
+            required
+            value={formData.phone}
+            onChange={handleChange}
+            className="w-full p-3 bg-gray-700 text-white rounded-lg focus:outline-none"
           />
           <input
+            name="password"
             type="password"
             placeholder="Password"
-            className="w-full p-3 text-sm lg:text-md bg-gray-700 text-white rounded-lg focus:outline-none"
+            required
+            minLength={6}
+            value={formData.password}
+            onChange={handleChange}
+            className="w-full p-3 bg-gray-700 text-white rounded-lg focus:outline-none"
           />
-
-          {/* Address Section */}
 
           <div className="w-full">
             <select
+              name="division"
               id="division"
-              value={division}
+              value={formData.division}
               onChange={handleDivisionChange}
-              className={`w-full p-3 text-sm lg:text-md bg-gray-700 rounded-lg focus:outline-none 
-              ${!division ? "text-gray-400" : "text-white"}`}
+              required
+              className={`w-full p-3 bg-gray-700 rounded-lg focus:outline-none 
+              ${!formData.division ? "text-gray-400" : "text-white"}`}
             >
               <option value="" disabled className="text-gray-400">
                 Select Division
@@ -113,41 +187,45 @@ const Registration = () => {
               ))}
             </select>
           </div>
+
           <div className="flex space-x-4">
             <div className="w-full sm:w-1/2">
               <select
+                name="area"
                 id="area"
-                value={area}
+                required
+                value={formData.area}
                 onChange={handleAreaChange}
-                className={`w-full p-3 text-sm lg:text-md bg-gray-700 rounded-lg focus:outline-none 
-              ${!area ? "text-gray-400" : "text-white"}`}
+                className={`w-full p-3 bg-gray-700 rounded-lg focus:outline-none 
+              ${!formData.area ? "text-gray-400" : "text-white"}`}
               >
                 <option value="" disabled className="text-gray-400">
                   Select Area
                 </option>
-                {division &&
-                  areas[division]?.map((area, index) => (
+                {formData.division &&
+                  areas[formData.division]?.map((area, index) => (
                     <option key={index} value={area} className="text-white">
                       {area}
                     </option>
                   ))}
               </select>
             </div>
-            {/* Port Select */}
+
             <div className="w-full sm:w-1/2">
               <select
+                name="port"
                 id="port"
-                value={port}
-                onChange={(e) => setPort(e.target.value)}
-                className={`w-full p-3 text-sm lg:text-md bg-gray-700 rounded-lg focus:outline-none 
-                  ${!port ? "text-gray-400" : "text-white"}`}
+                required
+                value={formData.port}
+                onChange={handleChange}
+                className={`w-full p-3 bg-gray-700 rounded-lg focus:outline-none 
+                ${!formData.port ? "text-gray-400" : "text-white"}`}
               >
-                <option value="" className={"text-gray-400"}>
+                <option value="" className="text-gray-400">
                   Select Port
                 </option>
-                {division &&
-                  area &&
-                  ports[area]?.map((port, index) => (
+                {formData.area &&
+                  ports[formData.area]?.map((port, index) => (
                     <option key={index} value={port} className="text-white">
                       {port}
                     </option>
@@ -156,10 +234,9 @@ const Registration = () => {
             </div>
           </div>
 
-          {/* Submit Button */}
           <button
             type="submit"
-            className="w-1/2 sm:w-1/3 p-4 rounded-lg hover:bg-blue-600 cursor-pointer bg-blue-500 text-white text-sm lg:text-md font-sans "
+            className="w-1/2 sm:w-1/3 p-4 rounded-lg bg-blue-500 hover:bg-blue-600 text-white"
           >
             Create account
           </button>
