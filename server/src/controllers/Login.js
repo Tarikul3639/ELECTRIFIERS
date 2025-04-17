@@ -1,4 +1,5 @@
 const User = require("../models/User.js");
+const jwt = require("jsonwebtoken");
 
 const Login = async (req, res) => {
   try {
@@ -21,8 +22,25 @@ const Login = async (req, res) => {
       return res.status(401).json({ message: "Incorrect password." });
     }
 
+    // Generate a token (for example, using JWT or any other method)
+    const token = jwt.sign(
+      {
+        id: existingUser._id,
+        email: existingUser.email,
+        role: existingUser.email === "tarikulislam3639@gmail.com" ? "admin" : "user",
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    const user = {
+      email: existingUser.email,
+      name: existingUser.name,
+      role: existingUser.email === "tarikulislam3639@gmail.com" ? "admin" : "user",
+    };
+
     // Successful login
-    return res.status(200).json({ message: "Login successful." });
+    return res.status(200).json({ message: "Login successful.", token, user} );
 
   } catch (error) {
     console.error("Error during login:", error);

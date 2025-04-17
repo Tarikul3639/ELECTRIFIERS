@@ -8,6 +8,7 @@ import Profile from "../Profile.jsx";
 
 const SideBar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const sidebarRef = useRef(null);
   const buttonRef = useRef(null);
   const navigate = useNavigate();
@@ -17,6 +18,14 @@ const SideBar = () => {
   };
 
   useEffect(() => {
+
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user && user.role === "admin") {
+      setIsAdmin(true);
+    } else {
+      setIsAdmin(false);
+    }
+
     const handleClickOutside = (event) => {
       if (
         sidebarRef.current &&
@@ -66,13 +75,13 @@ const SideBar = () => {
           <Link title="Contact" to="contact" smooth={true} offset={-70} duration={500} className="flex items-center p-2 rounded-lg hover:bg-gray-300 text-gray-800 text-lg font-semibold transition duration-300">
             <FontAwesomeIcon icon={faEnvelope} className="mr-3 text-lg" /> Contact
           </Link>
-          <button title="Update" onClick={handleUpdate} className="flex w-full items-center p-2 rounded-lg hover:bg-gray-300 text-gray-800 text-lg font-semibold transition duration-300">
-            <RiCalendarScheduleFill className="mr-3 text-xl"/> Update
+          {isAdmin && (<button title="Update" onClick={handleUpdate} className="flex w-full items-center p-2 rounded-lg hover:bg-gray-300 text-gray-800 text-lg font-semibold transition duration-300">
+            <RiCalendarScheduleFill className="mr-3 text-xl" /> Update
           </button>
-
+          )}
           {/* Profile Section */}
-          <div title="Click To Logo" className="flex items-center bg-gray-300 p-2 rounded-full hover:bg-gray-400 transition duration-300 w-full mt-3">
-            <Profile /> 
+          <div title="Click To Logo" className="flex items-center bg-gray-300 p-2 rounded-full hover:bg-gray-400 transition duration-300 w-full mt-3 cursor-pointer">
+            <Profile />
             <p className="pl-3 text-gray-800 text-lg font-semibold">Tarikul Islam</p>
           </div>
         </div>

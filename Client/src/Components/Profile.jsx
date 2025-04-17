@@ -10,11 +10,13 @@ import {
 import ProfileImage from "../assets/Image/logo.png";
 import Logo from "../assets/Image/logo.png";
 import PropTypes from "prop-types";
+import { useNavigate } from 'react-router-dom';
 
 const Profile = () => {
     const [isOpen, setIsOpen] = useState(false);
     const profileRef = useRef(null);
     const buttonRef = useRef(null);
+    const navigate = useNavigate(); 
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -32,8 +34,13 @@ const Profile = () => {
         };
     }, []);
 
+    const handleSignOut = () => {
+        localStorage.clear(); // ✅ Clear everything from localStorage
+        navigate('/login');    // ✅ Navigate to home page
+      };
+
     return (
-        <div ref={profileRef} className="relative pt-2">
+        <div ref={profileRef} className="relative pt-2 cursor-pointer">
             {/* Profile Button */}
             <button
                 ref={buttonRef}
@@ -41,7 +48,7 @@ const Profile = () => {
                 className="bg-transparent rounded-full hover:bg-gray-100"
                 onClick={() => setIsOpen(!isOpen)}
             >
-                <img src={Logo} alt="Profile" className="w-9 h-9 object-contain" />
+                <img src={Logo} alt="Profile" className="w-9 h-9 object-contain cursor-pointer" />
             </button>
 
             {/* Profile Dropdown */}
@@ -81,7 +88,7 @@ const Profile = () => {
                             <FontAwesomeIcon icon={faGears} className="text-lg pr-3" />
                             <span className="text-sm font-semibold">Settings</span>
                         </div>
-                        <div className="flex items-center p-3 w-full text-gray-700 hover:bg-gray-200 rounded-lg cursor-pointer">
+                        <div className="flex items-center p-3 w-full text-gray-700 hover:bg-gray-200 rounded-lg cursor-pointer" onClick={handleSignOut}>
                             <FontAwesomeIcon icon={faArrowRightFromBracket} className="text-lg pr-3" />
                             <span className="text-sm font-semibold">Sign Out</span>
                         </div>

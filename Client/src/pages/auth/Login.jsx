@@ -6,6 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Loader from '../../Components/ui/Loader.jsx';
 
 const Login = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -26,6 +27,9 @@ const Login = () => {
         toast.success(data.message);
         setLoading(false);
         navigate("/home");
+        // Store the token in local storage or session storage
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
         console.log("Login successful:", data);
       } else {
         console.error("Login failed:", data.message);
@@ -39,16 +43,7 @@ const Login = () => {
     }
   };
 
-  const navigate = useNavigate();
   const [rememberMe, setRememberMe] = useState(true);
-
-  const handleClickForRegistration = () => {
-    navigate("/registration");
-  };
-
-  const handleForgotPassword = () => {
-    navigate("/forgot-password");
-  };
 
   const handleRememberMeChange = () => {
     setRememberMe(!rememberMe);
@@ -64,7 +59,7 @@ const Login = () => {
         Don&apos;t have an account?{" "}
         <span
           className="text-blue-500 cursor-pointer"
-          onClick={handleClickForRegistration}
+          onClick={()=>navigate("/registration")}
         >
           Sign up
         </span>
@@ -95,7 +90,7 @@ const Login = () => {
           <div className="text-right">
             <span
               className="text-blue-500 text-sm cursor-pointer"
-              onClick={handleForgotPassword}
+              onClick={()=>navigate("/forgot-password")}
             >
               Forgot Password?
             </span>

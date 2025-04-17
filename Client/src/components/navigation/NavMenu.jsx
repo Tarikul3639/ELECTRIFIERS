@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-scroll";
 import Logo from "../../assets/Image/logo.png";
 import Profile from "../Profile.jsx";
@@ -12,7 +12,13 @@ const NavMenu = () => {
     "Your request has been approved.",
     "Reminder: Meeting at 3 PM."
   ]);
-
+  const [isAdmin, setIsAdmin] = useState(false);
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user && user.role === "admin") {
+      setIsAdmin(true); 
+    }
+  }, []);
   const navigate = useNavigate();
 
   const handleUpdate = () => {
@@ -39,9 +45,12 @@ const NavMenu = () => {
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center space-x-10">
-          <button title='Update' onClick={handleUpdate} className="text-gray-800 text-lg hover:text-blue-600">
-            Update
-          </button>
+          {isAdmin && (
+            <button title='Update' onClick={handleUpdate} className="text-gray-800 text-lg hover:text-blue-600">
+              Update
+            </button>
+          )}
+
           <Link title='Home' to="home" smooth={true} offset={-70} duration={500} className="text-gray-800 text-lg hover:text-blue-600">
             Home
           </Link>
