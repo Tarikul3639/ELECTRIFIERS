@@ -11,6 +11,7 @@ import ProfileImage from "../assets/Image/logo.png";
 import Logo from "../assets/Image/logo.png";
 import PropTypes from "prop-types";
 import { useNavigate } from 'react-router-dom';
+import socket from "./socket/Socket.jsx";
 
 const Profile = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -37,6 +38,7 @@ const Profile = () => {
     const handleSignOut = () => {
         localStorage.clear(); // ✅ Clear everything from localStorage
         navigate('/login');    // ✅ Navigate to home page
+        socket.disconnect();   // ✅ Disconnect the socket connection
       };
 
     return (

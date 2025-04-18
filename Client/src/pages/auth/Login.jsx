@@ -1,13 +1,14 @@
 //Client\src\Page\Login.jsx
-import { useNavigate } from "react-router-dom";
+import { useNavigate,useLocation } from "react-router-dom";
 import { useState } from "react";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Loader from '../../Components/ui/Loader.jsx';
-// import  Socket  from "../../Components/socket/Socket.jsx";
 
 const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/home";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -27,15 +28,11 @@ const Login = () => {
       if (response.ok) {
         toast.success(data.message);
         setLoading(false);
-        navigate("/home");
+        navigate(from, { replace: true });
+        
         // Store the token in local storage or session storage
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
-
-        // // Connect to socket server after login success
-        // Socket.connect();
-        // // Emit 'register-user' event to server
-        // Socket.emit("user:connected", data.user);
 
         console.log("Login successful:", data);
       } else {

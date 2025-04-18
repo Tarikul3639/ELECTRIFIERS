@@ -18,21 +18,31 @@ const Socket = (server) => {
 
   //Connecting to Socket.IO
   io.on("connection", (socket) => {
-    console.log("🔌 New client connected:", socket.id);
-
     // Example: Register the user
     socket.on("user:connected", (user) => {
-      console.log("user:connected:", user);
-      // Save user data or trigger any other actions based on this event
-    }); 
+      // Store the user in the activeUsers map
+      activeUsers.set(socket.id, user.email);
 
-    // Example listener
-    socket.on("ping", () => {
-      socket.emit("pong");
+      console.log("✅ New socket user connected: ", activeUsers.get(socket.id));
+    });
+
+    // Schedule sending to the client
+    socket.emit("load-schedule", "Connected to socket server");
+
+    // Handle the load schedule event here
+    socket.on("load-schedule", (data) => {
+      console.log("✅ Load schedule event received: ", data);
     });
 
     socket.on("disconnect", () => {
-      console.log("❌ Client disconnected:", socket.id);
+      const user = activeUsers.get(socket.id);
+      if (user) {
+        console.log("❌ Socket user disconnected: ", user);
+        // Remove the user from the activeUsers map
+        activeUsers.delete(socket.id);
+      } else {
+        console.log("❌ Disconnected unknown user from socket: ", socket.id);
+      }
     });
   });
 

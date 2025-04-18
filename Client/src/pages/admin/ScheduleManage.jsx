@@ -1,10 +1,11 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faFilter, faCalendar } from "@fortawesome/free-solid-svg-icons";
-import { useState, useCallback, useEffect, useMemo } from "react";
+import { useState, useCallback, useEffect, useMemo, useRef } from "react";
 import DatePicker from "../../components/ui/DatePicker.jsx";
 import "react-datepicker/dist/react-datepicker.css";
 import Button from "../../components/ui/Button.jsx";
 import CustomSelect from "../../components/ui/Select.jsx";
+import socket from "../../Components/socket/Socket.jsx";
 
 const ScheduleManage = () => {
     const [showEdit, setShowEdit] = useState(null);
@@ -13,6 +14,29 @@ const ScheduleManage = () => {
     const [selectedDivision, setSelectedDivision] = useState("");
     const [selectedArea, setSelectedArea] = useState("");
 
+    const hasConnected = useRef(false);
+    useEffect(() => {
+        if (socket.connected && !hasConnected.current) {
+            console.log("✅ Already connected to socket");
+            hasConnected.current = true;
+        } else if (!socket.connected && !hasConnected.current) {
+            console.log("❌ Not connected. You may connect it if needed.");
+            socket.connect();
+            hasConnected.current = true;
+        }
+    }, []);
+
+    useEffect(() => {
+        socket.on("load-schedule", (data) => {
+            console.log("📦 Schedule received from server:", data);
+        });
+
+        // Event sender to server
+        socket.emit("load-schedule", "Load schedule event triggered from client");
+        return () => {
+            socket.off("load-schedule");
+        };
+    }, []);
     const areas = useMemo(() => ({
         Dhaka: ["Dhanmondi", "Uttara", "Gulshan", "Mirpur"],
         Chittagong: ["Pahartali", "Nasirabad", "Halishahar"],

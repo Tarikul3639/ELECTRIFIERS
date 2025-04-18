@@ -25,7 +25,7 @@ const AdminRoute = ({ children }) => {
         const data = await response.json();
         if (!mounted) return;
 
-        console.log("Admin verification response:", data);
+        // console.log("Admin verification response:", data);
         if (response.ok && data.isAdmin) {
           setIsVerified(true);
         } else {
