@@ -1,5 +1,6 @@
 // config/Socket.js
 const { Server } = require("socket.io");
+const Schedule = require("../models/Schedule.js");
 
 let io = null;
 // Store active users in a Map
@@ -17,7 +18,7 @@ const Socket = (server) => {
   console.log("✅ Socket.IO initialized");
 
   //Connecting to Socket.IO
-  io.on("connection", (socket) => {
+  io.on("connection", async (socket) => {
     // Example: Register the user
     socket.on("user:connected", (user) => {
       // Store the user in the activeUsers map
@@ -25,9 +26,10 @@ const Socket = (server) => {
 
       console.log("✅ New socket user connected: ", activeUsers.get(socket.id));
     });
-
+    const schedules = await Schedule.find({});
+    console.log("✅ Schedules loaded: ", schedules);
     // Schedule sending to the client
-    socket.emit("load-schedule", "Connected to socket server");
+    socket.emit("load-schedule", schedules);
 
     // Handle the load schedule event here
     socket.on("load-schedule", (data) => {
