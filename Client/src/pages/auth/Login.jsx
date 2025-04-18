@@ -4,6 +4,7 @@ import { useState } from "react";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Loader from '../../Components/ui/Loader.jsx';
+// import  Socket  from "../../Components/socket/Socket.jsx";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -30,6 +31,12 @@ const Login = () => {
         // Store the token in local storage or session storage
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
+
+        // // Connect to socket server after login success
+        // Socket.connect();
+        // // Emit 'register-user' event to server
+        // Socket.emit("user:connected", data.user);
+
         console.log("Login successful:", data);
       } else {
         console.error("Login failed:", data.message);
