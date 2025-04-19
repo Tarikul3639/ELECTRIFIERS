@@ -7,14 +7,13 @@ import Button from "../../components/ui/Button.jsx";
 import CustomSelect from "../../components/ui/Select.jsx";
 import socket from "../../Components/socket/Socket.jsx";
 import { format } from "date-fns";
+import LocationFilter from "./LocationFilter.jsx";
 
 
 const ScheduleManage = () => {
     const [showEdit, setShowEdit] = useState(null);
     const [showFilter, setShowFilter] = useState(false);
-    const divisions = ["Dhaka", "Chittagong", "Rajshahi", "Khulna"];
     const [selectedDivision, setSelectedDivision] = useState("");
-    const [selectedArea, setSelectedArea] = useState("");
     const [schedule, setSchedule] = useState([]);
 
     const hasConnected = useRef(false);
@@ -204,57 +203,17 @@ const ScheduleManage = () => {
                     variant="primary"
                     icon={<FontAwesomeIcon icon={faPlus} className="text-[1rem]" />}
                 />
-                <Button
-                    text="Filter"
-                    // onClick={() => setShowFilter(!showFilter)}
-                    variant="secondary"
-                    icon={<FontAwesomeIcon icon={faFilter} className={`text-xs ${showFilter ? "rotate-90" : "rotate-0"}`} />}
-                />
                 {/* Filter the Address */}
-                {showFilter && (
-                    <div className="transform translate-x-0 transition-transform duration-500 ease-in-out flex items-center space-x-2 ml-4">
-                        <CustomSelect
-                            value={selectedDivision}
-                            options={divisions && divisions.length > 0 ? divisions.map((division) => ({ value: division, label: division })) : []}
-                            placeholder="Select Division"
-                            // onChange={handleDivisionChange}
-                            classNames={{
-                                menuButton: () => " bg-[#0051a2] text-[#e7efff] text-xs w-auto font-semibold min-w-[120px] rounded-sm flex items-center hover:bg-[#00287e]",
-                                menu: " z-50 bg-[#0051a2] w-full text-xs shadow-lg rounded-sm mt-1 p-0",
-                                listItem: ({ isSelected }) => (
-                                    `block transition duration-200 pl-2 py-2 mt-1 mb-1 cursor-pointer select-none truncate rounded-none ${isSelected
-                                        ? ` bg-[#00287e] text-white hover:bg-[#00287e] `
-                                        : `text-white hover:bg-[#00287e]`
-                                    }`
-                                ),
-                            }}
-                            isSearchable
-                        />
-
-                        <CustomSelect
-                            options={selectedDivision && areas[selectedDivision] && areas[selectedDivision].length > 0 ? areas[selectedDivision].map((area) => ({ value: area, label: area })) : []}
-                            value={selectedArea ? { value: selectedArea, label: selectedArea } : null}
-                            placeholder="Select Area"
-                            // onChange={handleAreaChange}
-                            classNames={{
-                                menuButton: () => " bg-[#0051a2] text-[#e7efff] text-xs w-auto font-semibold min-w-[120px] rounded-sm flex items-center hover:bg-[#00287e]",
-                                menu: " z-50 bg-[#0051a2] w-full text-xs shadow-lg rounded-sm mt-1 p-0",
-                                listItem: ({ isSelected }) => (
-                                    `block transition duration-200 pl-2 py-2 mt-1 mb-1 cursor-pointer select-none truncate rounded-none ${isSelected
-                                        ? ` bg-[#00287e] text-white hover:bg-[#00287e] `
-                                        : `text-white hover:bg-[#00287e]`
-                                    }`
-                                ),
-                            }}
-                            isSearchable
-                        />
-                        <button className="bg-[#2489f4] hidden text-white text-xs font-semibold px-4 py-2 rounded-sm flex items-center space-x-2 ml-4 hover:bg-[#1179e0] transition duration-300">
-                            <FontAwesomeIcon icon={faCalendar} className="text-xs mr-2" />Month
-                        </button>
-
-                    </div>
-
-                )}
+                <LocationFilter
+                    // divisions={divisions}
+                    // areas={areas}
+                    // selectedDivision={selectedDivision}
+                    // selectedArea={selectedArea}
+                    // showFilter={showFilter}
+                    // setShowFilter={setShowFilter}
+                    // handleDivisionChange={handleDivisionChange}
+                    // handleAreaChange={handleAreaChange}
+                />
             </div>
 
             <div className="overflow-auto max-h-[450px] rounded-lg shadow-lg bg-white p-2">
@@ -263,6 +222,8 @@ const ScheduleManage = () => {
                     <thead className="sticky transition-all duration-1000 -top-[11px] z-10 bg-white shadow-[0px_4px_4px_rgba(0,0,0,0.1">
                         <tr className="border border-gray-500 border-solid bg-white text-gray-700 sticky-header">
                             <th className="px-1 py-2 border-3 border-gray-200 min-w-[50px]">ID</th>
+                            <th className="px-1 py-2 border-3 border-gray-200 min-w-[50px]">Division</th>
+                            <th className="px-1 py-2 border-3 border-gray-200 min-w-[50px]">District</th>
                             <th className="px-1 py-2 border-3 border-gray-200 min-w-[60px]">Day</th>
                             <th className="px-1 py-2 border-3 border-gray-200 min-w-[100px]">Date</th>
                             <th className="px-1 py-2 border-3 border-gray-200 min-w-[170px]">Schedule Time</th>
@@ -272,9 +233,11 @@ const ScheduleManage = () => {
                     </thead>
 
                     <tbody>
-                        {schedule.map(({ _id, day, date, scheduleTime }) => (
+                        {schedule.map(({division, district, _id, day, date, scheduleTime }) => (
                             <tr key={_id} className="border border-gray-500 border-solid bg-white text-gray-700 text-center">
                                 <td className="px-1 py-2 border-3 border-gray-200">{_id}</td>
+                                <td className="px-1 py-2 border-3 border-gray-200">{division}</td>
+                                <td className="px-1 py-2 border-3 border-gray-200">{district}</td>
                                 <td className="px-1 py-2 border-3 border-gray-200">
                                     {showEdit === _id ? (
                                         <input
@@ -342,73 +305,6 @@ const ScheduleManage = () => {
                                 </td>
                             </tr>
                         ))}
-                        {showEdit === "new" && (
-                            <tr className="border border-gray-500 border-solid bg-white text-gray-700 text-center">
-                                <td className="px-1 py-2 border-3 border-gray-200"></td>
-                                <td className="px-0 py-0 border-3 border-gray-200">
-                                    <input
-                                        type="text"
-                                        name="day"
-                                        value={newUser.day}
-                                        readOnly
-                                        className="border-1 px-1 py-1 rounded text-center placeholder:text-center focus:outline-none focus:ring-0 cursor-default"
-                                    />
-                                </td>
-                                <td className="px-0 py-0 border-0 border-gray-200 flex items-center justify-center ">
-                                    <DatePicker
-                                        selected={newUser.date ? new Date(newUser.date) : null}
-                                        onChange={handleNewDateChange}
-                                        placeholderText="Select a New Date"
-                                        dateFormat="yyyy-MM-dd"
-                                        classNames={{
-                                            Button: () => "flex justify-center items-center bg-white text-gray-700 border-1 border-gray-700 text-sm font-medium px-0 max-w-[200px] py-1 rounded-sm shadow-none hover:bg-gray-100",
-                                            Input: () => "border-0 px-0 py-1 text-gray-700 rounded text-center placeholder:text-center",
-                                            Icon: () => "mr-1",
-                                        }}
-
-                                    />
-                                </td>
-
-                                <td className="px-0 py-0 border-3 border-gray-200">
-                                    <CustomSelect
-                                        value={scheduleTimes.find((time) => time === newUser.scheduleTime) ? {
-                                            value: newUser.scheduleTime, label: newUser.scheduleTime
-                                        } : null}
-                                        onChange={(e) => handleScheduleTimeChange("new", e)}
-                                        options={scheduleTimes.map((time) => ({ value: time, label: time }))}
-                                        classNames={
-                                            {
-                                                menuButton: () => " bg-white text-gray-700 border-1 m-1 text-sm font-medium w-auto font-semibold min-w-[120px] rounded-sm  shadow-none hover:bg-white",
-                                                menu: " z-50 bg-white w-full text-sm shadow-lg rounded-sm mt-1 p-0",
-                                                listItem: ({ isSelected }) => (
-                                                    `block transition duration-200 pl-2 py-2 mt-1 mb-1 cursor-pointer select-none truncate rounded-none ${isSelected
-                                                        ? ` bg-[#00287e] text-white hover:bg-[#00287e] `
-                                                        : `text-gray-700`
-                                                    }`
-                                                ),
-                                            }
-                                        }
-                                    />
-                                </td>
-
-                                <td className="px-0 py-1 m-0 border-0 border-gray-10 flex items-center justify-center ">
-                                    <Button
-                                        text="Add"
-                                        onClick={handleAddNew}
-                                        variant="primary"
-                                        icon={<FontAwesomeIcon icon={faPlus} className="text-[1rem]" />}
-                                    />
-                                </td>
-
-                                <td className="px-0 py-1 border-3 border-gray-200">
-                                    <Button
-                                        text="DELETE"
-                                        onClick={() => setShowEdit(null)}
-                                        variant="danger"
-                                    />
-                                </td>
-                            </tr>
-                        )}
 
                     </tbody>
                 </table>

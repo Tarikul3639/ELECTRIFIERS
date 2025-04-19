@@ -27,7 +27,7 @@ const Socket = (server) => {
       console.log("✅ New socket user connected: ", activeUsers.get(socket.id));
     });
     const schedules = await Schedule.find({});
-    console.log("✅ Schedules loaded: ", schedules);
+    // console.log("✅ Schedules loaded: ", schedules);
     // Schedule sending to the client
     socket.emit("load-schedule", schedules);
 

@@ -56,7 +56,7 @@ const CustomSelect = ({
   }, [isOpen, calculatePosition]);
 
   const handleSelect = useCallback((option) => {
-    console.log('Selected option:', option);
+    // console.log('Selected option:', option);
     onChange(option);
     setCurrentPlaceholder(option.label);
     setIsOpen(false);
