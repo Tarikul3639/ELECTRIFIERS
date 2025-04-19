@@ -91,6 +91,65 @@ const Socket = (server) => {
       }
     });
 
+    socket.on('update-schedule', async (updateSchedule, callback) => {
+      try {
+        const { id, day, date, scheduleTime } = updateSchedule;
+        console.log("Update schedule data:", updateSchedule);
+
+        // Find the schedule by ID and update it which is not null
+        const updated = await Schedule.findByIdAndUpdate(
+          id,
+          Object.fromEntries(
+            Object.entries({ day, date, scheduleTime }).filter(([_, v]) => v != null)
+          ),
+          { new: true }
+        );
+
+        if (!updated) {
+          return callback({
+            status: "error",
+            message: "Schedule not found",
+          });
+        }
+
+        console.log("✅ Schedule updated:", updated);
+        callback({
+          status: "success",
+          message: "Schedule updated successfully!",
+        });
+
+        // Optional: Emit to others if needed
+        io.emit("schedule-updated", updated);
+      } catch (error) {
+        console.error("❌ Error updating schedule:", error);
+        callback({ status: "error", message: "Failed to update schedule" });
+      }
+    });
+
+    socket.on("delete-schedule", async (id, callback) => {
+      try {
+        const deletedSchedule = await Schedule.findByIdAndDelete(id);
+        if (!deletedSchedule) {
+          return callback({
+            status: "error",
+            message: "Schedule not found",
+          });
+        }
+
+        console.log("✅ Schedule deleted:", deletedSchedule);
+        callback({
+          status: "success",
+          message: "Schedule deleted successfully!",
+        });
+
+        // Optional: Emit to others if needed
+        io.emit("schedule-deleted", deletedSchedule);
+      } catch (error) {
+        console.error("❌ Error deleting schedule:", error);
+        callback({ status: "error", message: "Failed to delete schedule" });
+      }
+    });
+
     socket.on("disconnect", () => {
       const user = activeUsers.get(socket.id);
       if (user) {
