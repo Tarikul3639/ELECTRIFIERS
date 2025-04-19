@@ -8,9 +8,12 @@ import CustomSelect from "../../components/ui/Select.jsx";
 import socket from "../../Components/socket/Socket.jsx";
 import { format } from "date-fns";
 import LocationFilter from "./LocationFilter.jsx";
+import AddNewSchedule from "./AddNewSchedule.jsx";
 
 
 const ScheduleManage = () => {
+    const [loadingLocations, setLoadingLocations] = useState(false);
+    const [locationData, setLocationData] = useState({});
     const [showEdit, setShowEdit] = useState(null);
     const [schedule, setSchedule] = useState([]);
     const [selectedLocation, setSelectedLocation] = useState({
@@ -41,6 +44,22 @@ const ScheduleManage = () => {
             socket.off("load-schedule");
         };
     }, []);
+    useEffect(() => {
+        const fetchLocations = async () => {
+            setLoadingLocations(true);
+            try {
+                const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/location`);
+                const data = await response.json();
+                setLocationData(data);
+            } catch (err) {
+                console.error("Error fetching location data:", err);
+            } finally {
+                setLoadingLocations(false);
+            }
+        };
+
+        fetchLocations();
+    }, []);
 
     // Handle location change
     const handleLocationChange = (location) => {
@@ -50,84 +69,45 @@ const ScheduleManage = () => {
     };
 
 
-    // const getAllSchedules = useCallback(() => {
-    //     return Object.values(schedule).flat();
-    // }, [schedule]);
 
-    // const [users, setUsers] = useState(getAllSchedules());
 
-    // const [newUser, setNewUser] = useState({
-    //     day: "",
-    //     date: "",
-    //     scheduleTime: "8:00 AM - 10:00 AM",
-    // });
 
-    // const scheduleTimes = [
-    //     "08:00 AM - 10:00 AM",
-    //     "10:00 AM - 12:00 PM",
-    //     "02:00 PM - 04:00 PM",
-    //     "04:00 PM - 06:00 PM",
-    //     "06:00 PM - 08:00 PM"
-    // ];
-    // const handleDivisionChange = (e) => {
-    //     setSelectedDivision(e.value);
-    //     console.log("Division :", e.value);
-    //     // console.log(selectedDivision);
-    //     setSelectedArea("");
-    // };
-    // const handleAreaChange = (e) => {
-    //     setSelectedArea(e.value);
-    //     console.log("Area :", e.value);
-    // }
-    // const [originalValues, setOriginalValues] = useState({});
 
-    // const handleEdit = useCallback((id) => {
-    //     setOriginalValues((prev) => {
-    //         const user = users.find((u) => u.id === id);
-    //         return { ...prev, [id]: { ...user } };
-    //     });
-    //     setShowEdit(id);
-    // }, [users]);
 
-    // const handleDelete = useCallback((id) => {
-    //     setUsers((prevUsers) => prevUsers.filter((user) => user.id !== id));
-    // }, []);
 
-    // const handleUpdate = useCallback((id, day, date, scheduleTime) => {
-    //     setUsers((prevUsers) =>
-    //         prevUsers.map((user) =>
-    //             user.id === id ? { ...user, day, date, scheduleTime } : user
-    //         )
-    //     );
-    //     setShowEdit(null);
-    // }, []);
 
-    // const handleCancel = useCallback((id) => {
-    //     setUsers((prevUsers) =>
-    //         prevUsers.map((user) =>
-    //             user.id === id ? { ...user, ...originalValues[id] } : user
-    //         )
-    //     );
-    //     setShowEdit(null);
-    // }, [originalValues]);
 
-    // const handleAddNew = () => {
-    //     const newId = users.length + 1;
-    //     setUsers((prevUsers) => [
-    //         ...prevUsers,
-    //         { id: newId, ...newUser },
-    //     ]);
-    //     setShowEdit(null);
-    // };
 
-    // const handleNewDateChange = (date) => {
-    //     const dayOfWeek = date.toLocaleString('en-US', { weekday: 'long' });
-    //     setNewUser({
-    //         ...newUser,
-    //         date: date.toISOString().split('T')[0],
-    //         day: dayOfWeek,
-    //     });
-    // };
+
+
+
+
+
+
+    const handleAddNew = () => {
+        if (!newUser.date || !newUser.scheduleTime) return alert("Please select date and schedule time");
+        const newSchedule = {
+            ...newUser,
+            division: selectedLocation.division,
+            district: selectedLocation.district,
+        };
+        socket.emit("add-schedule", newSchedule);
+        setNewUser({ day: "", date: null, scheduleTime: "" });
+        setShowEdit(null);
+    };
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     const renderEditButtons = (userId, day, date, scheduleTime) => {
@@ -155,63 +135,21 @@ const ScheduleManage = () => {
         );
     };
 
-    // const handleDateChange = (id, selectedDate) => {
-    //     const dayOfWeek = selectedDate.toLocaleString('en-US', { weekday: 'long' });
-    //     setUsers((prevUsers) =>
-    //         prevUsers.map((user) =>
-    //             user.id === id ? { ...user, day: dayOfWeek, date: selectedDate.toISOString().split('T')[0] } : user
-    //         )
-    //     );
-    // };
-
-    // const handleScheduleTimeChange = (id, selectedOption) => {
-    //     if (id === "new") {
-    //         if (!selectedOption || !selectedOption.value) return;
-    //         console.log(selectedOption.value, "scheduleTimeChange");
-    //         setNewUser((prevState) => ({
-    //             ...prevState,
-    //             scheduleTime: selectedOption.value,
-    //         }));
-    //     } else {
-    //         setUsers((prevUsers) =>
-    //             prevUsers.map((user) =>
-    //                 user.id === id ? { ...user, scheduleTime: selectedOption.value } : user
-    //             )
-    //         );
-    //     }
-    // };
-
-    // const filterUsers = useCallback(() => {
-    //     if (selectedDivision && selectedArea) {
-    //         setUsers(schedule[selectedArea] || []);
-    //     } else if (selectedDivision) {
-    //         const filteredUsers = Object.keys(schedule).reduce((acc, area) => {
-    //             if (areas[selectedDivision].includes(area)) {
-    //                 acc = acc.concat(schedule[area]);
-    //             }
-    //             return acc;
-    //         }, []);
-    //         setUsers(filteredUsers);
-    //     } else {
-    //         setUsers(getAllSchedules());
-    //     }
-    // }, [selectedDivision, selectedArea, schedule, areas, getAllSchedules]);
-
-    // useEffect(() => {
-    //     filterUsers();
-    // }, [filterUsers]);
-
     return (
         <div className="w-screen-md bg-gray-200 p-2 rounded-lg shadow-lg overflow-hidden">
             <div className="flex items-center justify-start p-2 w-full bg-gray-200 rounded-sm shadow-lg mb-1">
                 <Button
                     text="New"
-                    // onClick={() => setShowEdit("new")}
+                    onClick={() => setShowEdit("new")}
                     variant="primary"
                     icon={<FontAwesomeIcon icon={faPlus} className="text-[1rem]" />}
                 />
                 {/* Filter the Address */}
-                <LocationFilter onChangeLocation={handleLocationChange} />
+                <LocationFilter
+                    onChangeLocation={handleLocationChange}
+                    locationData={locationData}
+                    loading={loadingLocations}
+                />
             </div>
 
             <div className="overflow-auto max-h-[450px] rounded-lg shadow-lg bg-white p-2">
@@ -231,6 +169,12 @@ const ScheduleManage = () => {
                     </thead>
 
                     <tbody>
+                        {showEdit === "new" && (
+                            <AddNewSchedule
+                                setShowEdit={setShowEdit}
+                                locationData={locationData}
+                            />
+                        )}
                         {schedule.map(({ division, district, _id, day, date, scheduleTime }) => (
                             <tr key={_id} className="border border-gray-500 border-solid bg-white text-gray-700 text-center">
                                 <td className="px-1 py-2 border-3 border-gray-200">{_id}</td>
@@ -303,7 +247,6 @@ const ScheduleManage = () => {
                                 </td>
                             </tr>
                         ))}
-
                     </tbody>
                 </table>
             </div>

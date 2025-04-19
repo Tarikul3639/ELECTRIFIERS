@@ -4,9 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendar, faFilter } from "@fortawesome/free-solid-svg-icons";
 import Button from "../../components/ui/Button.jsx";
 
-const LocationFilter = ({onChangeLocation}) => {
-    const [locationData, setLocationData] = React.useState({});
-    const [loading, setLoading] = React.useState(false);
+const LocationFilter = ({onChangeLocation,locationData, loading}) => {
     const [location, setLocation] = React.useState({
         division: "",
         district: "",
@@ -34,24 +32,9 @@ const LocationFilter = ({onChangeLocation}) => {
         onChangeLocation?.(updated);
     };
 
-    // Fetch location data
-    const handleFilterClick = async () => {
+    const handleFilterClick = () => {
         if (Object.keys(locationData).length > 0) {
             setShowFilter((prev) => !prev);
-            return;
-        }
-
-        setLoading(true);
-        try {
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/location`);
-            const data = await response.json();
-            setLocationData(data);
-
-            setShowFilter(true);
-        } catch (err) {
-            console.error("Error fetching location data:", err);
-        } finally {
-            setLoading(false);
         }
     };
 

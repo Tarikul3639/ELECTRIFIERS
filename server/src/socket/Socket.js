@@ -32,33 +32,64 @@ const Socket = (server) => {
       // console.log(location);
       // console.log( "OK?",location,"2",location.division);
       try {
-          let schedules;
-          // No filter: return all schedules
-          if (!location) {
-              schedules = await Schedule.find({});
-          }
-          // Division only
-          else if (location.division && !location.district) {
-              schedules = await Schedule.find({ division: location.division });
-          }
-          // Division + District
-          else if (location.division && location.district) {
-              schedules = await Schedule.find({
-                  division: location.division,
-                  district: location.district,
-              });
-          } else {
-              schedules = [];
-          }
-  
-          // console.log(schedules);
-          socket.emit("load-schedule", schedules);
+        let schedules;
+        // No filter: return all schedules
+        if (!location) {
+          schedules = await Schedule.find({});
+        }
+        // Division only
+        else if (location.division && !location.district) {
+          schedules = await Schedule.find({ division: location.division });
+        }
+        // Division + District
+        else if (location.division && location.district) {
+          schedules = await Schedule.find({
+            division: location.division,
+            district: location.district,
+          });
+        } else {
+          schedules = [];
+        }
+
+        // console.log(schedules);
+        socket.emit("load-schedule", schedules);
       } catch (error) {
-          console.error("❌ Error loading schedules:", error);
-          socket.emit("load-schedule", []);
+        console.error("❌ Error loading schedules:", error);
+        socket.emit("load-schedule", []);
       }
-  });
-  
+    });
+
+    socket.on("add-schedule", async (schedule, callback) => {
+      try {
+        const { division, district, day, date, scheduleTime } = schedule;
+        if (!division || !district || !day || !date || !scheduleTime) {
+          return callback({
+            status: "error",
+            message: "Missing required fields",
+          });
+        }
+
+        const newSchedule = new Schedule({
+          division,
+          district,
+          day,
+          date,
+          scheduleTime,
+        });
+        await newSchedule.save();
+        console.log("✅ Schedule added:", newSchedule);
+        callback({
+          status: "success",
+          message: "Schedule added successfully!",
+        });
+
+        // Optional: Emit to others if needed
+        io.emit("schedule-added", newSchedule);
+      } catch (error) {
+        console.error("❌ Error adding schedule:", error);
+        callback({ status: "error", message: "Failed to add schedule" });
+      }
+    });
 
     socket.on("disconnect", () => {
       const user = activeUsers.get(socket.id);

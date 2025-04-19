@@ -4,74 +4,198 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import Button from "../../components/ui/Button.jsx";
 import DatePicker from "../../components/ui/DatePicker.jsx";
 import CustomSelect from "../../components/ui/Select.jsx";
+import socket from "../../Components/socket/Socket.jsx";
+import { toast } from "react-toastify";
+import { format } from "date-fns";
+import "react-toastify/dist/ReactToastify.css";
 
-const AddNewRow = ({
-    newUser,
-    scheduleTimes,
-    handleNewDateChange,
-    handleScheduleTimeChange,
-    handleAddNew,
-    setShowEdit,
-}) => {
+const AddNewSchedule = ({ setShowEdit, locationData }) => {
+    const [loading, setLoading] = React.useState(false);
+
+    // Initial state for the new schedule data
+    const [newUser, setNewUser] = React.useState({
+        day: "",
+        date: null,
+        scheduleTime: "",
+        division: "",
+        district: "",
+    });
+
+    // Memoized time slots for schedule
+    const scheduleTimes = React.useMemo(() => [
+        "8:00 AM - 9:00 AM",
+        "9:00 AM - 10:00 AM",
+        "10:00 AM - 11:00 AM",
+        "5:00 PM - 6:00 PM",
+    ], []);
+
+    // Handle division selection
+    const handleDivisionChange = (selected) => {
+        setNewUser((prev) => ({
+            ...prev,
+            division: selected.value,
+            district: "", // Reset district on division change
+        }));
+    };
+
+    // Handle district selection
+    const handleDistrictChange = (selected) => {
+        setNewUser((prev) => ({
+            ...prev,
+            district: selected.value,
+        }));
+    };
+
+    // Handle date selection and extract day name
+    const handleNewDateChange = (date) => {
+        const dayName = format(date, "EEEE");
+        setNewUser((prev) => ({
+            ...prev,
+            date,
+            day: dayName,
+        }));
+    };
+
+    // Handle schedule time selection
+    const handleScheduleTimeChange = (id, e) => {
+        setNewUser((prev) => ({
+            ...prev,
+            scheduleTime: e.value,
+        }));
+    };
+
+    // Add new schedule via socket
+    const handleAddNew = () => {
+        setLoading(true);
+
+        // Validation check
+        if (!newUser.date || !newUser.scheduleTime || !newUser.district || !newUser.division) {
+            setLoading(false);
+            return toast.info("Please fill all the fields");
+        }
+
+        // Emit event to backend
+        socket.emit("add-schedule", newUser, (response) => {
+            if (response.status === "success") {
+                toast.success(response.message);
+            } else {
+                toast.error(response.message);
+            }
+            setLoading(false);
+        });
+
+        // Reset input and close form
+        setNewUser({ day: "", date: null, scheduleTime: "", division: "", district: "" });
+        setShowEdit(null);
+    };
+
     return (
-        <tr className="border border-gray-500 border-solid bg-white text-gray-700 text-center">
-            <td className="px-1 py-2 border-3 border-gray-200"></td>
-            <td className="px-0 py-0 border-3 border-gray-200">
+        <tr className="border border-gray-500 bg-white text-gray-700 text-center">
+            {/* ID placeholder cell */}
+            <td className="px-1 py-2 border border-gray-200">
+                <div className="border border-gray-900 py-1.5 rounded font-[600]">ID</div>
+            </td>
+
+            {/* Division selection */}
+            <td className="px-1 py-2 border border-gray-200">
+                <CustomSelect
+                    value={newUser.division ? { value: newUser.division, label: newUser.division } : null}
+                    options={Object.keys(locationData).map((div) => ({ value: div, label: div }))}
+                    onChange={handleDivisionChange}
+                    placeholder="Select Division"
+                    classNames={{
+                        menuButton: () => "bg-white text-gray-700 border m-1 text-sm font-semibold min-w-[150px] rounded-sm shadow-none hover:bg-white",
+                        menu: "z-50 bg-white text-sm shadow-lg rounded-sm mt-1 p-0",
+                        listItem: ({ isSelected }) =>
+                            `block transition pl-2 py-2 cursor-pointer truncate ${isSelected
+                                ? "bg-[#00287e] text-white"
+                                : "text-gray-700"
+                            }`,
+                    }}
+                />
+            </td>
+
+            {/* District selection */}
+            <td className="px-1 py-2 border border-gray-200">
+                <CustomSelect
+                    value={newUser.district ? { value: newUser.district, label: newUser.district } : null}
+                    options={(locationData[newUser.division] || []).map((district) => ({
+                        value: district,
+                        label: district,
+                    }))}
+                    onChange={handleDistrictChange}
+                    placeholder="Select District"
+                    classNames={{
+                        menuButton: () => "bg-white text-gray-700 border m-1 text-sm font-semibold min-w-[150px] rounded-sm shadow-none hover:bg-white",
+                        menu: "z-50 bg-white text-sm shadow-lg rounded-sm mt-1 p-0",
+                        listItem: ({ isSelected }) =>
+                            `block transition pl-2 py-2 cursor-pointer truncate ${isSelected
+                                ? "bg-[#00287e] text-white"
+                                : "text-gray-700"
+                            }`,
+                    }}
+                />
+            </td>
+
+            {/* Day display (auto-filled) */}
+            <td className="px-0 py-0 border border-gray-200">
                 <input
                     type="text"
                     name="day"
                     value={newUser.day}
                     readOnly
-                    className="border-1 px-1 py-1 rounded text-center placeholder:text-center focus:outline-none focus:ring-0 cursor-default"
+                    placeholder="Day"
+                    className="border border-gray-900 px-1 py-1.5 rounded text-center placeholder:text-center focus:outline-none placeholder:text-gray-700 placeholder:font-semibold text-sm"
                 />
             </td>
-            <td className="px-0 py-0 border-0 border-gray-200 flex items-center justify-center ">
+
+            {/* Date picker */}
+            <td className="px-0 py-0 border border-gray-200">
                 <DatePicker
                     selected={newUser.date ? new Date(newUser.date) : null}
                     onChange={handleNewDateChange}
                     placeholderText="Select a New Date"
                     dateFormat="yyyy-MM-dd"
                     classNames={{
-                        Button: () => "flex justify-center items-center bg-white text-gray-700 border-1 border-gray-700 text-sm font-medium px-0 max-w-[200px] py-1 rounded-sm shadow-none hover:bg-gray-100",
-                        Input: () => "border-0 px-0 py-1 text-gray-700 rounded text-center placeholder:text-center",
+                        Button: () => "flex justify-center items-center bg-white text-gray-700 border border-gray-900 text-sm font-medium px-0 min-w-[150px] max-w-[200px] py-[5px] rounded-sm hover:bg-gray-100",
+                        Input: () => "border-0 px-0 py-1 text-gray-700 text-center placeholder:text-gray-700",
                         Icon: () => "mr-1",
                     }}
-
                 />
             </td>
 
-            <td className="px-0 py-0 border-3 border-gray-200">
+            {/* Schedule time selection */}
+            <td className="px-0 py-0 border border-gray-200">
                 <CustomSelect
-                    value={scheduleTimes.find((time) => time === newUser.scheduleTime) ? {
-                        value: newUser.scheduleTime, label: newUser.scheduleTime
-                    } : null}
-                    onChange={(e) => handleScheduleTimeChange("new", e)}
+                    value={newUser.scheduleTime ? { value: newUser.scheduleTime, label: newUser.scheduleTime } : null}
                     options={scheduleTimes.map((time) => ({ value: time, label: time }))}
-                    classNames={
-                        {
-                            menuButton: () => " bg-white text-gray-700 border-1 m-1 text-sm font-medium w-auto font-semibold min-w-[120px] rounded-sm  shadow-none hover:bg-white",
-                            menu: " z-50 bg-white w-full text-sm shadow-lg rounded-sm mt-1 p-0",
-                            listItem: ({ isSelected }) => (
-                                `block transition duration-200 pl-2 py-2 mt-1 mb-1 cursor-pointer select-none truncate rounded-none ${isSelected
-                                    ? ` bg-[#00287e] text-white hover:bg-[#00287e] `
-                                    : `text-gray-700`
-                                }`
-                            ),
-                        }
-                    }
+                    onChange={(e) => handleScheduleTimeChange("new", e)}
+                    placeholder="Select Schedule Time"
+                    classNames={{
+                        menuButton: () => "bg-white text-gray-700 border m-1 text-sm font-semibold min-w-[150px] rounded-sm shadow-none hover:bg-white",
+                        menu: "z-50 bg-white text-sm shadow-lg rounded-sm mt-1 p-0",
+                        listItem: ({ isSelected }) =>
+                            `block transition pl-2 py-2 cursor-pointer truncate ${isSelected
+                                ? "bg-[#00287e] text-white"
+                                : "text-gray-700"
+                            }`,
+                    }}
                 />
             </td>
 
-            <td className="px-0 py-1 m-0 border-0 border-gray-10 flex items-center justify-center ">
+            {/* Add button */}
+            <td className="px-0 py-1">
                 <Button
                     text="Add"
                     onClick={handleAddNew}
                     variant="primary"
+                    loading={loading}
                     icon={<FontAwesomeIcon icon={faPlus} className="text-[1rem]" />}
                 />
             </td>
 
-            <td className="px-0 py-1 border-3 border-gray-200">
+            {/* Cancel/Delete button */}
+            <td className="px-0 py-1 border border-gray-200">
                 <Button
                     text="DELETE"
                     onClick={() => setShowEdit(null)}
@@ -82,4 +206,4 @@ const AddNewRow = ({
     );
 };
 
-export default AddNewRow;
+export default AddNewSchedule;
