@@ -26,15 +26,39 @@ const Socket = (server) => {
 
       console.log("✅ New socket user connected: ", activeUsers.get(socket.id));
     });
-    const schedules = await Schedule.find({});
-    // console.log("✅ Schedules loaded: ", schedules);
-    // Schedule sending to the client
-    socket.emit("load-schedule", schedules);
 
     // Handle the load schedule event here
-    socket.on("load-schedule", (data) => {
-      console.log("✅ Load schedule event received: ", data);
-    });
+    socket.on("load-schedule", async (location) => {
+      // console.log(location);
+      // console.log( "OK?",location,"2",location.division);
+      try {
+          let schedules;
+          // No filter: return all schedules
+          if (!location) {
+              schedules = await Schedule.find({});
+          }
+          // Division only
+          else if (location.division && !location.district) {
+              schedules = await Schedule.find({ division: location.division });
+          }
+          // Division + District
+          else if (location.division && location.district) {
+              schedules = await Schedule.find({
+                  division: location.division,
+                  district: location.district,
+              });
+          } else {
+              schedules = [];
+          }
+  
+          // console.log(schedules);
+          socket.emit("load-schedule", schedules);
+      } catch (error) {
+          console.error("❌ Error loading schedules:", error);
+          socket.emit("load-schedule", []);
+      }
+  });
+  
 
     socket.on("disconnect", () => {
       const user = activeUsers.get(socket.id);

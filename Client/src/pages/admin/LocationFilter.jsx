@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendar, faFilter } from "@fortawesome/free-solid-svg-icons";
 import Button from "../../components/ui/Button.jsx";
 
-const LocationFilter = () => {
+const LocationFilter = ({onChangeLocation}) => {
     const [locationData, setLocationData] = React.useState({});
     const [loading, setLoading] = React.useState(false);
     const [location, setLocation] = React.useState({
@@ -15,23 +15,23 @@ const LocationFilter = () => {
     const [showFilter, setShowFilter] = React.useState(false);
 
     // Handle division change
-    const handleDivisionChange = (e) => {
-        const division = e.value;
-        setLocation({
-            division,
-            district: "", // Reset district when division changes
-        });
-        // console.log("Selected division:", division);
+    const handleDivisionChange = (selected) => {
+        const updated = {
+            division: selected.value,
+            district: "",
+        };
+        setLocation(updated);
+        onChangeLocation?.(updated);
     };
 
     // Handle district change
-    const handleDistrictChange = (e) => {
-        const district = e.value;
-        setLocation((prev) => ({
-            ...prev,
-            district,
-        }));
-        // console.log("Selected district:", district);
+    const handleDistrictChange = (selected) => {
+        const updated = {
+            ...location,
+            district: selected.value,
+        };
+        setLocation(updated);
+        onChangeLocation?.(updated);
     };
 
     // Fetch location data
@@ -46,7 +46,7 @@ const LocationFilter = () => {
             const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/location`);
             const data = await response.json();
             setLocationData(data);
-            // console.log("Location data fetched successfully:", data);
+
             setShowFilter(true);
         } catch (err) {
             console.error("Error fetching location data:", err);
@@ -54,8 +54,6 @@ const LocationFilter = () => {
             setLoading(false);
         }
     };
-
-    console.log("Selected location:", location);
 
     return (
         <>
@@ -74,8 +72,8 @@ const LocationFilter = () => {
             />
 
             {/* Filter Dropdowns */}
-            {showFilter && !loading && (
-                <div className="transform translate-x-0 transition-transform duration-500 ease-in-out flex items-center space-x-2 ml-4 mt-2">
+            {showFilter && !loading && locationData && (
+                <div className="transform translate-x-0 transition-transform duration-500 ease-in-out flex items-center space-x-2 ml-4">
                     {/* Division Select */}
                     <CustomSelect
                         value={location.division ? { value: location.division, label: location.division } : null}

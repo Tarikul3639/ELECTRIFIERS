@@ -1,4 +1,7 @@
 @import "tailwindcss";
+@theme {
+    --color-primary-light: #467c63;
+}
 
 html,
 body {
@@ -19,3 +22,29 @@ body {
     justify-content: center;
     align-items: center;
 }
+
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: #d5cbcb;
+    margin-top: 40vh;
+    margin-right: 35vw;
+    margin-bottom: 40vh;
+    margin-left: 35vw;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--color-primary-light);
+  }
+  
+  .break-word {
+    word-wrap: break-word;
+    hyphens: auto;
+  }
+  
+  

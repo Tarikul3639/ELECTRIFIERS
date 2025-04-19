@@ -12,9 +12,11 @@ import LocationFilter from "./LocationFilter.jsx";
 
 const ScheduleManage = () => {
     const [showEdit, setShowEdit] = useState(null);
-    const [showFilter, setShowFilter] = useState(false);
-    const [selectedDivision, setSelectedDivision] = useState("");
     const [schedule, setSchedule] = useState([]);
+    const [selectedLocation, setSelectedLocation] = useState({
+        division: "",
+        district: "",
+    });
 
     const hasConnected = useRef(false);
     useEffect(() => {
@@ -27,20 +29,25 @@ const ScheduleManage = () => {
             hasConnected.current = true;
         }
     }, []);
-
     useEffect(() => {
-        socket.on("load-schedule", async (data) => {
-            // console.log("✅ Schedule data received: ", data);
+        socket.emit("load-schedule", '');
+        socket.on("load-schedule", (data) => {
+            console.log("✅ Schedule data received: ", data);
             setSchedule(data);
         });
 
-        // Event sender to server
-        socket.emit("load-schedule", "Load schedule event triggered from client");
+        // Optional cleanup
         return () => {
             socket.off("load-schedule");
         };
     }, []);
-    console.log("Schedule Data: ", schedule);
+
+    // Handle location change
+    const handleLocationChange = (location) => {
+        setSelectedLocation(location);
+        // Emit event to server with location info (optional)
+        socket.emit("load-schedule", location);
+    };
 
 
     // const getAllSchedules = useCallback(() => {
@@ -204,16 +211,7 @@ const ScheduleManage = () => {
                     icon={<FontAwesomeIcon icon={faPlus} className="text-[1rem]" />}
                 />
                 {/* Filter the Address */}
-                <LocationFilter
-                    // divisions={divisions}
-                    // areas={areas}
-                    // selectedDivision={selectedDivision}
-                    // selectedArea={selectedArea}
-                    // showFilter={showFilter}
-                    // setShowFilter={setShowFilter}
-                    // handleDivisionChange={handleDivisionChange}
-                    // handleAreaChange={handleAreaChange}
-                />
+                <LocationFilter onChangeLocation={handleLocationChange} />
             </div>
 
             <div className="overflow-auto max-h-[450px] rounded-lg shadow-lg bg-white p-2">
@@ -233,7 +231,7 @@ const ScheduleManage = () => {
                     </thead>
 
                     <tbody>
-                        {schedule.map(({division, district, _id, day, date, scheduleTime }) => (
+                        {schedule.map(({ division, district, _id, day, date, scheduleTime }) => (
                             <tr key={_id} className="border border-gray-500 border-solid bg-white text-gray-700 text-center">
                                 <td className="px-1 py-2 border-3 border-gray-200">{_id}</td>
                                 <td className="px-1 py-2 border-3 border-gray-200">{division}</td>

@@ -106,7 +106,7 @@ const CustomSelect = ({
         {isOpen && isSearchable ? (
           <input
             type="text"
-            className="bg-transparent min-w-[4rem] w-full h-full outline-none"
+            className="w-0 flex-1 bg-transparent text-white outline-none placeholder-gray-400"
             placeholder={currentPlaceholder}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -141,7 +141,7 @@ const CustomSelect = ({
                   key={option.value}
                   className={twMerge(clsx(
                     // Default styles
-                    'px-2 py-1 font-["Roboto"] text-black cursor-pointer hover:bg-[#DEEBFF] whitespace-nowrap',
+                    'px-2 py-1 font-["Roboto"] text-black cursor-pointer hover:bg-[#DEEBFF] whitespace-nowrap tracking-wider',
                     // Conditional listItem styles and maximum priority applied last
                     classNames.listItem ? classNames.listItem({ isSelected: currentPlaceholder === option.value }) : ""
                   ))}
