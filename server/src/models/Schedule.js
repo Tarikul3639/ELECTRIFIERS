@@ -26,6 +26,10 @@ const Schedule = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    status: {
+      type: String,
+      enum: ["Active", "Completed", "Upcoming"],
+    },
   },
   {
     timestamps: true,

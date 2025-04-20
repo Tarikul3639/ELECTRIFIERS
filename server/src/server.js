@@ -3,7 +3,7 @@ const http = require("http");
 const app = require("./app");
 const connectDB = require("./config/ConnectDB.js");
 const { Socket } = require("./socket/Socket.js");
-
+require("../src/cron/updateScheduleStatus.js"); // Import the cron job
 const PORT = process.env.PORT || 3000;
 
 // Create HTTP server
