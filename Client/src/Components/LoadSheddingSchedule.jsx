@@ -14,7 +14,7 @@ function sortByStatus(schedule) {
     return [...schedule].sort((a, b) => priority[a.status] - priority[b.status]);
 }
 
-const LoadSheddingSchedule = React.memo(() => {
+const LoadSheddingSchedule = React.memo(({ onScheduleFetched }) => {
     const userEmail = JSON.parse(localStorage.getItem("user")).email;
 
     const [fullSchedule, setFullSchedule] = useState([]);
@@ -29,6 +29,11 @@ const LoadSheddingSchedule = React.memo(() => {
                 }));
 
                 setFullSchedule(processedSchedule);
+                if (onScheduleFetched) {
+                    const todaySchedule = getTodaysSchedule(processedSchedule);
+                    onScheduleFetched(todaySchedule);
+                }
+
             } else {
                 console.error("Error fetching schedule:", response.message);
             }
