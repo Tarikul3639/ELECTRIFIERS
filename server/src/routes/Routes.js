@@ -10,9 +10,6 @@ router.post("/login", Login);
 router.post("/registration", Registration);
 router.get("/location", Location);
 
-// GET request for grouped schedules
-// router.get('/schedule-manage', GroupedSchedules);
-
 // verifyToken must run before AdminVerify
 router.get("/verify-admin", verifyToken, AdminVerify);
 

@@ -1,6 +1,7 @@
 // config/Socket.js
 const { Server } = require("socket.io");
 const Schedule = require("../models/Schedule.js");
+const User = require("../models/User.js");
 
 let io = null;
 // Store active users in a Map
@@ -27,6 +28,24 @@ const Socket = (server) => {
       console.log("✅ New socket user connected: ", activeUsers.get(socket.id));
     });
 
+    socket.on("user:load-schedule", async (email,callback) => {
+      try {
+        const user = await User.findOne({ email }, 'division district').lean();
+        if (!user) {
+            return callback({ status: "error", message: "User not found" });
+        }
+        const { division, district } = user;
+
+        // Fetch schedules based on user division and district
+        const schedule = await Schedule.find({ division, district });
+        console.log("✅ Schedule loaded for user:", email, schedule);
+
+        callback({ status: "success", data: schedule });
+      } catch (error) {
+        console.error("❌ Error loading schedules:", error);
+        callback({ status: "error", message: "Failed to load schedule" });
+      }
+    });
     // Handle the load schedule event here
     socket.on("load-schedule", async (location) => {
       // console.log(location);

@@ -35,7 +35,7 @@ const ScheduleManage = () => {
     const hasConnected = useRef(false);
     useEffect(() => {
         if (socket.connected && !hasConnected.current) {
-            console.log("✅ Already connected to socket");
+            console.log("✅ Already connected to socket :", socket.id);
             hasConnected.current = true;
         } else if (!socket.connected && !hasConnected.current) {
             console.log("❌ Not connected. You may connect it if needed.");

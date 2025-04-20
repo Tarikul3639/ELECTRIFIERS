@@ -1,5 +1,6 @@
-import { useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import dayjs from "dayjs";
+import socket from "./socket/Socket.jsx";
 
 // Full schedule data for load shedding
 const fullSchedule = [
@@ -24,8 +25,27 @@ function getWeeklySchedule(schedule) {
         return itemDate.isAfter(startOfWeek) && itemDate.isBefore(endOfWeek);
     });
 }
+let isRequestSent = false; // Flag to prevent multiple requests
+const LoadSheddingSchedule = React.memo(() => {
+    console.log("LoadSheddingSchedule component rendered");
+    const userEmail = JSON.parse(localStorage.getItem("user")).email;
 
-export default function LoadSheddingSchedule() {
+    useEffect(() => {
+        if (isRequestSent) return;
+        isRequestSent = true;
+        socket.emit("user:load-schedule", userEmail, (response) => {
+            if (response.status === "success") {
+                console.log("Schedule data received:", response.data);
+            } else {
+                console.error("Error fetching schedule:", response.message);
+            }
+        });
+
+        return () => {
+
+        };
+    }, []);
+
     // State for toggling view mode
     const [viewMonthly, setViewMonthly] = useState(false);
     // Get this week's schedule
@@ -85,5 +105,7 @@ export default function LoadSheddingSchedule() {
             </button>
 
         </div>
-    );
-}
+    )
+});
+
+export default LoadSheddingSchedule;
