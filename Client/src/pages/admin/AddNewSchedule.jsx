@@ -67,7 +67,7 @@ const AddNewSchedule = ({ setShowEdit, locationData }) => {
     // Add new schedule via socket
     const handleAddNew = () => {
         setLoading(true);
-
+        const formattedDate = format(newUser.date, "yyyy-MM-dd");
         // Validation check
         if (!newUser.date || !newUser.scheduleTime || !newUser.district || !newUser.division) {
             setLoading(false);
@@ -90,7 +90,7 @@ const AddNewSchedule = ({ setShowEdit, locationData }) => {
     };
 
     return (
-        <tr className="border border-gray-500 bg-white text-gray-700 text-center">
+        <tr id="AddNewSchedule" className="border border-gray-500 bg-white text-gray-700 text-center">
             {/* ID placeholder cell */}
             <td className="px-1 py-2 border border-gray-200">
                 <div className="border border-gray-900 py-1.5 rounded font-[600]">ID</div>

@@ -15,6 +15,8 @@ import "react-toastify/dist/ReactToastify.css";
 
 
 const ScheduleManage = () => {
+    const [loadingForDelete, setLoadingForDelete] = useState(null); // stores _id of deleting row
+    const [loadingForUpdate, setLoadingForUpdate] = useState(null); // stores _id of updating row    
     const [loadingLocations, setLoadingLocations] = useState(false);
     const [locationData, setLocationData] = useState({});
     const [showEdit, setShowEdit] = useState(null);
@@ -89,6 +91,7 @@ const ScheduleManage = () => {
     ], []);
 
     const handleUpdate = (id) => {
+        setLoadingForUpdate(id);
         if (!id) {
             return toast.info("Please fill all the fields");
         }
@@ -99,13 +102,17 @@ const ScheduleManage = () => {
         socket.emit("update-schedule", updateSchedule, (response) => {
             if (response.status === "success") {
                 toast.success(response.message);
+                setLoadingForUpdate(null);
+        setShowEdit(null);
+        setUpdateSchedule({ id: null, date: null, scheduleTime: null });
             } else {
                 toast.error(response.message);
+                setLoadingForUpdate(null);
+        setShowEdit(null);
+        setUpdateSchedule({ id: null, date: null, scheduleTime: null });
             }  
         });
         console.log("✅ Schedule updated:", updateSchedule);
-        setShowEdit(null);
-        setUpdateSchedule({ id: null, date: null, scheduleTime: null });
     };
     
     const handleCancel = (id) => {
@@ -113,7 +120,9 @@ const ScheduleManage = () => {
         setUpdateSchedule({ id: null, date: null, scheduleTime: null });
     };
     const handleDelete = (id) => {
+        setLoadingForDelete(id);
         socket.emit("delete-schedule", id, (response) => {
+            setLoadingForDelete(null);
             if (response.status === "success") {
                 toast.success(response.message);
             } else {
@@ -121,13 +130,23 @@ const ScheduleManage = () => {
             }
         });
     };
+    const handleAddNewSchedule = () => {
+        setShowEdit("new");
+        setTimeout(() => {
+            document
+              .getElementById("AddNewSchedule")
+              ?.scrollIntoView({ behavior: "smooth", block: "center" , inline: "end" });
+          }, 50);
+        setUpdateSchedule({ id: null, date: null, scheduleTime: null });
+    };
+    
 
     return (
         <div className="w-screen-md bg-gray-200 p-2 rounded-lg shadow-lg overflow-hidden">
             <div className="flex items-center justify-start p-2 w-full bg-gray-200 rounded-sm shadow-lg mb-1">
                 <Button
                     text="New"
-                    onClick={() => setShowEdit("new")}
+                    onClick={handleAddNewSchedule}
                     variant="primary"
                     icon={<FontAwesomeIcon icon={faPlus} className="text-[1rem]" />}
                 />
@@ -241,6 +260,7 @@ const ScheduleManage = () => {
                                         handleEdit={handleEdit}
                                         handleUpdate={handleUpdate}
                                         handleCancel={handleCancel}
+                                        loadingForUpdate={loadingForUpdate}
                                     />
 
                                 </td>
@@ -249,6 +269,7 @@ const ScheduleManage = () => {
                                         text="DELETE"
                                         onClick={() => handleDelete(_id)}
                                         variant="danger"
+                                        loading={loadingForDelete === _id}
                                     />
                                 </td>
                             </tr>
