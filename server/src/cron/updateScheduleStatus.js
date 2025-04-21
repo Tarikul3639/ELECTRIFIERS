@@ -4,14 +4,18 @@ const Schedule = require("../models/Schedule.js");
 
 cron.schedule("* * * * *", async () => {
   try {
-    const schedules = await Schedule.find();
+    // Filter only schedules that are not already Completed
+    const schedules = await Schedule.find({
+      status: { $ne: "Completed" },
+    });
+    const now = dayjs();
+    const today = now.format("YYYY-MM-DD");
+    const tomorrow = now.add(1, "day").format("YYYY-MM-DD");
+    const yesterday = now.subtract(1, "day").format("YYYY-MM-DD");
+
+    const bulkOps = [];
 
     for (const schedule of schedules) {
-      const now = dayjs();
-      const today = now.format("YYYY-MM-DD");
-      const tomorrow = now.add(1, "day").format("YYYY-MM-DD");
-      const yesterday = now.subtract(1, "day").format("YYYY-MM-DD");
-
       const scheduleDate = dayjs(schedule.date).format("YYYY-MM-DD");
 
       // Parse scheduleTime to get start and end time
@@ -37,12 +41,25 @@ cron.schedule("* * * * *", async () => {
         newDay = "Yesterday";
       }
 
-      // Only update if something changed
+      // Push to bulkOps only if changed
       if (schedule.status !== newStatus || schedule.day !== newDay) {
-        schedule.status = newStatus;
-        schedule.day = newDay;
-        await schedule.save();
+        bulkOps.push({
+          updateOne: {
+            filter: { _id: schedule._id },
+            update: {
+              $set: {
+                status: newStatus,
+                day: newDay,
+              },
+            },
+          },
+        });
       }
+    }
+
+    // Perform bulkWrite if there are updates
+    if (bulkOps.length > 0) {
+      await Schedule.bulkWrite(bulkOps);
     }
 
     console.log("✅ Schedule statuses and days updated");

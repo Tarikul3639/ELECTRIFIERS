@@ -32,7 +32,6 @@ const AddNewSchedule = ({ setShowEdit, locationData }) => {
         "6:00 AM - 6:59 AM",
         "7:00 AM - 7:59 AM",
         "8:00 AM - 8:59 AM",
-        "8:00 AM - 8:59 AM",
         "9:00 AM - 9:59 AM",
         "10:00 AM - 10:59 AM",
         "11:00 AM - 11:59 AM",
@@ -140,10 +139,10 @@ const AddNewSchedule = ({ setShowEdit, locationData }) => {
             <td className="px-1 py-2 border border-gray-200">
                 <CustomSelect
                     value={newUser.district ? { value: newUser.district, label: newUser.district } : null}
-                    options={(locationData[newUser.division] || []).map((district) => ({
+                    options={[...new Set(locationData[newUser.division] || [])].map((district) => ({
                         value: district,
                         label: district,
-                    }))}
+                      }))}                      
                     onChange={handleDistrictChange}
                     placeholder="Select District"
                     classNames={{
@@ -189,7 +188,7 @@ const AddNewSchedule = ({ setShowEdit, locationData }) => {
             <td className="px-0 py-0 border border-gray-200">
                 <CustomSelect
                     value={newUser.scheduleTime ? { value: newUser.scheduleTime, label: newUser.scheduleTime } : null}
-                    options={scheduleTimes.map((time) => ({ value: time, label: time }))}
+                    options={[...new Set(scheduleTimes)].map((time) => ({ value: time, label: time }))}
                     onChange={(e) => handleScheduleTimeChange("new", e)}
                     placeholder="Select Schedule Time"
                     classNames={{
