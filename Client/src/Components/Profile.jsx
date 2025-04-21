@@ -15,9 +15,10 @@ import socket from "./socket/Socket.jsx";
 
 const Profile = () => {
     const [isOpen, setIsOpen] = useState(false);
+    const [settingIsOpen, setSettingIsOpen] = useState(false);
     const profileRef = useRef(null);
     const buttonRef = useRef(null);
-    const navigate = useNavigate(); 
+    const navigate = useNavigate();
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -39,7 +40,7 @@ const Profile = () => {
         localStorage.clear(); // ✅ Clear everything from localStorage
         navigate('/login');    // ✅ Navigate to home page
         socket.disconnect();   // ✅ Disconnect the socket connection
-      };
+    };
 
     return (
         <div ref={profileRef} className="relative pt-2 cursor-pointer">
@@ -67,44 +68,56 @@ const Profile = () => {
                             <FontAwesomeIcon icon={faXmark} className="text-gray-600 hover:text-gray-800 text-xl" />
                         </div>
                     </div>
-                    <div className="flex flex-col items-center mt-3">
-                        <div className="relative w-24 h-24">
-                            <img
-                                src={ProfileImage}
-                                alt="User"
-                                className="w-full object-cover rounded-full"
-                            />
-                            <span title="Edit" className="absolute bottom-0 right-0 h-6 w-6 flex items-center justify-center bg-gray-100 rounded-full cursor-pointer hover:bg-gray-300">
-                                <FontAwesomeIcon icon={faPencil} className="text-sm text-gray-800" />
-                            </span>
+                    {!settingIsOpen ? (
+                        <div>
+                            <div className="flex flex-col items-center mt-3">
+                                <div className="relative w-24 h-24">
+                                    <img
+                                        src={ProfileImage}
+                                        alt="User"
+                                        className="w-full object-cover rounded-full"
+                                    />
+                                    <span title="Edit" className="absolute bottom-0 right-0 h-6 w-6 flex items-center justify-center bg-gray-100 rounded-full cursor-pointer hover:bg-gray-300">
+                                        <FontAwesomeIcon icon={faPencil} className="text-sm text-gray-800" />
+                                    </span>
+                                </div>
+                                <h2 className="mt-3 text-xl text-[#1E2939] font-bold">Tarikul Islam</h2>
+                                <p className="text-gray-700 text-sm">tarikul@example.com</p>
+                            </div>
+                            <div className="mt-4 space-y-1">
+                                <div className="flex items-center p-3 w-full text-gray-700 hover:bg-gray-200 rounded-lg cursor-pointer">
+                                    <FontAwesomeIcon icon={faUserPen} className="text-lg pr-3" />
+                                    <span className="text-sm font-semibold">Edit Profile</span>
+                                </div>
+                                <div className="flex items-center p-3 w-full text-gray-700 hover:bg-gray-200 rounded-lg cursor-pointer" onClick={() => setSettingIsOpen(!settingIsOpen)}>
+                                    <FontAwesomeIcon icon={faGears} className="text-lg pr-3" />
+                                    <span className="text-sm font-semibold">Settings</span>
+                                </div>
+                                <div className="flex items-center p-3 w-full text-gray-700 hover:bg-gray-200 rounded-lg cursor-pointer" onClick={handleSignOut}>
+                                    <FontAwesomeIcon icon={faArrowRightFromBracket} className="text-lg pr-3" />
+                                    <span className="text-sm font-semibold">Sign Out</span>
+                                </div>
+                            </div>
                         </div>
-                        <h2 className="mt-3 text-xl text-[#1E2939] font-bold">Tarikul Islam</h2>
-                        <p className="text-gray-700 text-sm">tarikul@example.com</p>
-                    </div>
-                    <div className="mt-4 space-y-1">
-                        <div className="flex items-center p-3 w-full text-gray-700 hover:bg-gray-200 rounded-lg cursor-pointer">
-                            <FontAwesomeIcon icon={faUserPen} className="text-lg pr-3" />
+                    ): (
+                        <div className="mt-4 space-y-1">
+                            <div className="flex items-center p-3 w-full text-gray-700 hover:bg-gray-200 rounded-lg cursor-pointer" onClick={() => setSettingIsOpen(!settingIsOpen)}>
+                                <FontAwesomeIcon icon={faArrowRightFromBracket} className="text-lg pr-3" />
+                                <span className="text-sm font-semibold">Close Settings</span>
+                            </div>
+                            <div className="flex items-center p-3 w-full text-gray-700 hover:bg-gray-200 rounded-lg cursor-pointer">
+                                <FontAwesomeIcon icon={faArrowRightFromBracket} className="text-lg pr-3" />
+                                <span className="text-sm font-semibold">Sign Out</span>
+                            </div>
+                            <div className="flex items-center p-3 w-full text-gray-700 hover:bg-gray-200 rounded-lg cursor-pointer">
+                                <FontAwesomeIcon icon={faUserPen} className="text-lg pr-3" />
                             <span className="text-sm font-semibold">Edit Profile</span>
                         </div>
-                        <div className="flex items-center p-3 w-full text-gray-700 hover:bg-gray-200 rounded-lg cursor-pointer">
-                            <FontAwesomeIcon icon={faGears} className="text-lg pr-3" />
-                            <span className="text-sm font-semibold">Settings</span>
-                        </div>
-                        <div className="flex items-center p-3 w-full text-gray-700 hover:bg-gray-200 rounded-lg cursor-pointer" onClick={handleSignOut}>
-                            <FontAwesomeIcon icon={faArrowRightFromBracket} className="text-lg pr-3" />
-                            <span className="text-sm font-semibold">Sign Out</span>
-                        </div>
                     </div>
-                </div>
-            )}
-        </div>
+                )}
+            </div>
+        )}
+    </div>
     );
-};
-
-Profile.propTypes = {
-    isOpen: PropTypes.bool,
-    onClose: PropTypes.func,
-    profileRef: PropTypes.oneOfType([PropTypes.func, PropTypes.shape({ current: PropTypes.instanceOf(Element) })]),
-};
-
+}
 export default Profile;
