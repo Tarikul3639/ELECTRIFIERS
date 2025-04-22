@@ -28,6 +28,29 @@ const Socket = (server) => {
       console.log("✅ New socket user connected:", user.email);
     });
 
+    socket.on(
+      "update-profile-image",
+      async ({ email, profileImage }, callback) => {
+        try {
+          const updatedUser = await User.findOneAndUpdate(
+            { email },
+            { profileImage },
+            { new: true }
+          );
+
+          if (updatedUser) {
+            console.log("Profile image updated successfully.");
+            return callback({ status: "success", data: updatedUser });
+          } else {
+            return callback({ status: "error", message: "User not found" });
+          }
+        } catch (err) {
+          console.error("Update failed:", err);
+          callback({ status: "error", message: "Error updating profile" });
+        }
+      }
+    );
+
     // Load schedule based on user email
     socket.on("user:load-schedule", async (email, callback) => {
       try {
@@ -72,7 +95,7 @@ const Socket = (server) => {
 
     // Add a new schedule
     AddNewSchedule(socket, io);
-   
+
     // Delete a schedule
     socket.on("delete-schedule", async (id, callback) => {
       try {

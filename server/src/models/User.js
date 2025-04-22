@@ -5,6 +5,9 @@ const mongoose = require("mongoose");
 // User Schema
 const UserSchema = new mongoose.Schema(
     {
+        profileImage: {
+            type: String,
+        },
         name: {
             type: String,
             required: true,

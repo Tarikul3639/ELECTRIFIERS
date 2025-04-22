@@ -13,12 +13,15 @@ const NavMenu = () => {
     "Reminder: Meeting at 3 PM."
   ]);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false); // state for controlling Profile open/close
+
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
     if (user && user.role === "admin") {
-      setIsAdmin(true); 
+      setIsAdmin(true);
     }
   }, []);
+
   const navigate = useNavigate();
 
   const handleUpdate = () => {
@@ -60,8 +63,8 @@ const NavMenu = () => {
           <Link title='Contact' to="contact" smooth={true} offset={-70} duration={500} className="text-gray-800 text-lg hover:text-blue-600">
             Contact
           </Link>
-          {/* Profile Component */}
-          <Profile/>
+          {/* Profile Component with controlled state */}
+          <Profile isOpen={isProfileOpen} setIsOpen={setIsProfileOpen} />
         </div>
       </div>
     </header>

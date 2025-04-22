@@ -9,16 +9,17 @@ import Profile from "../Profile.jsx";
 const SideBar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);  // State for profile modal visibility
   const sidebarRef = useRef(null);
   const buttonRef = useRef(null);
   const navigate = useNavigate();
+  const name = JSON.parse(localStorage.getItem("user"))?.name || "Support";
 
   const handleUpdate = () => {
     navigate('/Admin');
   };
 
   useEffect(() => {
-
     const user = JSON.parse(localStorage.getItem("user"));
     if (user && user.role === "admin") {
       setIsAdmin(true);
@@ -66,23 +67,54 @@ const SideBar = () => {
             </button>
           </div>
 
-          <Link title="Home" to="home" smooth={true} offset={-70} duration={500} className="flex items-center p-2 rounded-lg hover:bg-gray-300 text-gray-800 text-lg font-semibold transition duration-300">
+          <Link
+            title="Home"
+            to="home"
+            smooth={true}
+            offset={-70}
+            duration={500}
+            className="flex items-center p-2 rounded-lg hover:bg-gray-300 text-gray-800 text-lg font-semibold transition duration-300"
+          >
             <FontAwesomeIcon icon={faHome} className="mr-3 text-lg" /> Home
           </Link>
-          <Link title="About" to="about" smooth={true} offset={-70} duration={500} className="flex items-center p-2 rounded-lg hover:bg-gray-300 text-gray-800 text-lg font-semibold transition duration-300">
+          <Link
+            title="About"
+            to="about"
+            smooth={true}
+            offset={-70}
+            duration={500}
+            className="flex items-center p-2 rounded-lg hover:bg-gray-300 text-gray-800 text-lg font-semibold transition duration-300"
+          >
             <FontAwesomeIcon icon={faInfoCircle} className="mr-3 text-lg" /> About
           </Link>
-          <Link title="Contact" to="contact" smooth={true} offset={-70} duration={500} className="flex items-center p-2 rounded-lg hover:bg-gray-300 text-gray-800 text-lg font-semibold transition duration-300">
+          <Link
+            title="Contact"
+            to="contact"
+            smooth={true}
+            offset={-70}
+            duration={500}
+            className="flex items-center p-2 rounded-lg hover:bg-gray-300 text-gray-800 text-lg font-semibold transition duration-300"
+          >
             <FontAwesomeIcon icon={faEnvelope} className="mr-3 text-lg" /> Contact
           </Link>
-          {isAdmin && (<button title="Update" onClick={handleUpdate} className="flex w-full items-center p-2 rounded-lg hover:bg-gray-300 text-gray-800 text-lg font-semibold transition duration-300">
-            <RiCalendarScheduleFill className="mr-3 text-xl" /> Update
-          </button>
+          {isAdmin && (
+            <button
+              title="Update"
+              onClick={handleUpdate}
+              className="flex w-full items-center p-2 rounded-lg hover:bg-gray-300 text-gray-800 text-lg font-semibold transition duration-300"
+            >
+              <RiCalendarScheduleFill className="mr-3 text-xl" /> Update
+            </button>
           )}
+
           {/* Profile Section */}
-          <div title="Click To Logo" className="flex items-center bg-gray-300 p-2 rounded-full hover:bg-gray-400 transition duration-300 w-full mt-3 cursor-pointer">
-            <Profile />
-            <p className="pl-3 text-gray-800 text-lg font-semibold">Tarikul Islam</p>
+          <div
+            title="Click To Logo"
+            className="flex items-center justify-center bg-gray-300 rounded-full mt-3 hover:bg-gray-400 transition duration-300 px-4.5 py-1.5 cursor-pointer"
+            onClick={() => setIsProfileOpen(true)}  
+          >
+            <Profile isOpen={isProfileOpen} setIsOpen={setIsProfileOpen} />
+            <p className="pl-3 text-gray-800 text-lg font-semibold">{name}</p>
           </div>
         </div>
       )}

@@ -34,6 +34,7 @@ const Login = async (req, res) => {
     );
 
     const user = {
+      profileImage: existingUser.profileImage || null,
       email: existingUser.email,
       name: existingUser.name,
       role: existingUser.email === "tarikulislam3639@gmail.com" ? "admin" : "user",
