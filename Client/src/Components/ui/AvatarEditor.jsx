@@ -41,7 +41,7 @@ const AvatarEditor = ({ imageSrc, onClose, onSave }) => {
           </button>
         </div>
 
-        <div className="relative w-full h-80 bg-gray-100 rounded-md overflow-hidden mb-4">
+        <div className="relative w-full h-80 rounded-md overflow-hidden mb-4">
           <Cropper
             image={image}
             crop={crop}
@@ -63,7 +63,7 @@ const AvatarEditor = ({ imageSrc, onClose, onSave }) => {
             step={0.1}
             value={zoom}
             onChange={(e) => setZoom(Number(e.target.value))}
-            className="w-3/4"
+            className="w-full ml-2"
           />
         </div>
 
