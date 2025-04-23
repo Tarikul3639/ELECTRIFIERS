@@ -7,11 +7,6 @@ import Notification from "../Notification.jsx";
 import SideBar from "./SideBar.jsx";
 
 const NavMenu = () => {
-  const [notifications, setNotifications] = useState([
-    "You have a new message!",
-    "Your request has been approved.",
-    "Reminder: Meeting at 3 PM."
-  ]);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false); // state for controlling Profile open/close
 
@@ -40,7 +35,7 @@ const NavMenu = () => {
       <div className="flex items-center md:space-x-10">
         {/* Notification Button */}
         <div className="relative mr-[3vw]">
-          <Notification notifications={notifications} />
+          <Notification />
         </div>
         <div className="md:hidden">
           <SideBar />

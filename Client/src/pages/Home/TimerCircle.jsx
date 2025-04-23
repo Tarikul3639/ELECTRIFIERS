@@ -7,12 +7,32 @@ const TimerCircle = ({ fullSchedule }) => {
   const [currentSchedule, setCurrentSchedule] = useState(null);
   const [nextSchedule, setNextSchedule] = useState(null);
   const [scheduleTimes, setScheduleTimes] = useState([]);
+  // console.log("fullSchedule", fullSchedule);
 
-  // Update scheduleTimes whenever schedule changes or view mode changes
   useEffect(() => {
-    const times = fullSchedule.map((item) => item.scheduleTime);
+    const now = new Date();
+  
+    // Filter schedules that are not completed and have future time slots
+    const filtered = fullSchedule.filter((item) => {
+      const [startStr] = item.scheduleTime.split(" - ");
+      // console.log("startStr", startStr); // startStr 12:00 AM
+      const start = parseTime(startStr);
+      // console.log("start", start); // start Wed Apr 23 2025 00:00:00 GMT+0600 (Bangladesh Standard Time)
+  
+      // Set schedule start time to its actual date from `item.date`
+      const scheduleDate = new Date(item.date);
+      // console.log("scheduleDate", scheduleDate); // scheduleDate Wed Apr 23 2025 06:00:00 GMT+0600 (Bangladesh Standard Time)
+      start.setFullYear(scheduleDate.getFullYear(), scheduleDate.getMonth(), scheduleDate.getDate());
+      // console.log("start", start); // start Wed Apr 23 2025 00:00:00 GMT+0600 (Bangladesh Standard Time)
+      return new Date(item.date) >= now || start >= now;
+    });
+  
+    const times = filtered.map((item) => item.scheduleTime);
     setScheduleTimes(times);
   }, [fullSchedule]);
+  
+  
+  
 
   // Time parser utility
   const parseTime = (timeStr) => {

@@ -3,11 +3,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell, faXmark } from "@fortawesome/free-solid-svg-icons";
 import PropTypes from "prop-types";
 
-const Notification = ({ notifications }) => {
+const Notification = () => {
     const [isOpen, setIsOpen] = useState(false);
     const notificationRef = useRef(null);
     const buttonRef = useRef(null);
-
+    const [notifications, setNotifications] = useState([
+        "You have a new message!",
+        "Your request has been approved.",
+        "Reminder: Meeting at 3 PM."
+    ]);
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (
