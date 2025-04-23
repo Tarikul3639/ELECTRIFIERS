@@ -44,17 +44,44 @@ const ScheduleManage = () => {
         }
     }, []);
     useEffect(() => {
+        // Load initial schedule
         socket.emit("load-schedule", '');
+    
+        // Listener: Load full schedule data
         socket.on("load-schedule", (data) => {
-            console.log("✅ Schedule data received: ", data);
+            console.log("✅ Schedule data received:", data);
             setSchedule(data);
         });
-
-        // Optional cleanup
+    
+        // Listener: Real-time new schedule added
+        socket.on("schedule-added", (newSchedule) => {
+            console.log("📢 New schedule added in real-time:", newSchedule);
+            setSchedule((prev) => [...prev, newSchedule]);
+            toast.success("New schedule added!");
+        });
+    
+        // Optional: Listener for updates
+        socket.on("schedule-updated", (updatedSchedule) => {
+            console.log("🔄 Schedule updated in real-time:", updatedSchedule);
+            setSchedule((prev) =>
+                prev.map((item) =>
+                    item._id === updatedSchedule._id ? updatedSchedule : item
+                )
+            );
+        });
+        socket.on("schedule-deleted", (deletedSchedule) => {
+            setSchedule((prev) => prev.filter((item) => item._id !== deletedSchedule._id));
+            toast.success("Schedule deleted successfully!");
+        });
+        // Optional: Cleanup to prevent memory leaks
         return () => {
             socket.off("load-schedule");
+            socket.off("schedule-added");
+            socket.off("schedule-updated");
+            socket.off("schedule-deleted");
         };
     }, []);
+    
     useEffect(() => {
         const fetchLocations = async () => {
             setLoadingLocations(true);
@@ -124,7 +151,7 @@ const ScheduleManage = () => {
         socket.emit("delete-schedule", id, (response) => {
             setLoadingForDelete(null);
             if (response.status === "success") {
-                toast.success(response.message);
+                // toast.success(response.message);
             } else {
                 toast.error(response.message);
             }

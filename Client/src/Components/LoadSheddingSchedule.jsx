@@ -21,6 +21,7 @@ const LoadSheddingSchedule = React.memo(({ onScheduleFetched }) => {
     const [viewMonthly, setViewMonthly] = useState(false);
 
     useEffect(() => {
+        // Initial fetch
         socket.emit("user:load-schedule", userEmail, (response) => {
             if (response.status === "success") {
                 const processedSchedule = response.data.map((item) => ({
@@ -29,15 +30,76 @@ const LoadSheddingSchedule = React.memo(({ onScheduleFetched }) => {
                 }));
 
                 setFullSchedule(processedSchedule);
+
                 if (onScheduleFetched) {
                     const todaySchedule = getTodaysSchedule(processedSchedule);
                     onScheduleFetched(todaySchedule);
                 }
-
             } else {
                 console.error("Error fetching schedule:", response.message);
             }
         });
+
+        // Function to update parent component with today's schedule
+        const updateParentTodaySchedule = (newScheduleList) => {
+            if (!viewMonthly && onScheduleFetched) {
+                const todaySchedule = getTodaysSchedule(newScheduleList);
+                onScheduleFetched(todaySchedule);
+            }
+        };
+
+        // Real-time schedule added
+        const handleNewSchedule = (newSchedule) => {
+            const formatted = {
+                ...newSchedule,
+                date: dayjs(newSchedule.date).format("YYYY-MM-DD"),
+            };
+
+            setFullSchedule((prev) => {
+                const updated = [...prev, formatted];
+                updateParentTodaySchedule(updated);
+                return updated;
+            });
+        };
+
+        // Real-time schedule updated
+        const handleScheduleUpdate = (updatedSchedule) => {
+            setFullSchedule((prev) => {
+                const updated = prev.map((item) => {
+                    if (item._id === updatedSchedule._id) {
+                        return {
+                            ...item,
+                            ...updatedSchedule,
+                            date: dayjs(updatedSchedule.date).format("YYYY-MM-DD"),
+                        };
+                    }
+                    return item;
+                });
+                updateParentTodaySchedule(updated);
+                return updated;
+            });
+        };
+
+        // Real-time schedule deleted
+        const handleScheduleDelete = (deletedSchedule) => {
+            setFullSchedule((prev) => {
+                const updated = prev.filter((item) => item._id !== deletedSchedule._id);
+                updateParentTodaySchedule(updated);
+                return updated;
+            });
+        };
+
+        // Attach socket listeners
+        socket.on("schedule-added", handleNewSchedule);
+        socket.on("schedule-updated", handleScheduleUpdate);
+        socket.on("schedule-deleted", handleScheduleDelete);
+
+        // ✅ Cleanup listeners on unmount
+        return () => {
+            socket.off("schedule-added", handleNewSchedule);
+            socket.off("schedule-updated", handleScheduleUpdate);
+            socket.off("schedule-deleted", handleScheduleDelete);
+        };
     }, []);
 
     // Get sorted today or monthly data

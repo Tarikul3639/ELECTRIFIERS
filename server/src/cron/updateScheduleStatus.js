@@ -6,7 +6,7 @@ cron.schedule("* * * * *", async () => {
   try {
     // Filter only schedules that are not already Completed
     const schedules = await Schedule.find({
-      status: { $ne: "Completed" },
+      // status: { $ne: "Completed" },
     });
     const now = dayjs();
     const today = now.format("YYYY-MM-DD");

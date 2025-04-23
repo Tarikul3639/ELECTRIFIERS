@@ -97,7 +97,7 @@ const AddNewSchedule = ({ setShowEdit, locationData }) => {
         // Emit event to backend
         socket.emit("add-schedule", newUser, (response) => {
             if (response.status === "success") {
-                toast.success(response.message);
+                // toast.success(response.message);
             } else {
                 toast.error(response.message);
             }
