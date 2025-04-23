@@ -1,4 +1,4 @@
-import HomeSection from "./Home.jsx";
+import HomeSection from "./Home/Home.jsx";
 import AboutSection from "./About.jsx";
 import ContactSection from "./Contact.jsx";
 import NavMenu from "../components/navigation/NavMenu.jsx";
