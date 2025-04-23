@@ -17,11 +17,27 @@ const Home = () => {
           ...item,
           date: dayjs(item.date).format("YYYY-MM-DD"),
         }));
+    
+        processedSchedule.sort((a, b) => {
+          const dateA = dayjs(a.date);
+          const dateB = dayjs(b.date);
+    
+          if (dateA.isBefore(dateB)) return -1;
+          if (dateA.isAfter(dateB)) return 1;
+    
+          // Same date — now compare schedule start times
+          const startA = dayjs(`${a.date} ${a.scheduleTime.split(" - ")[0]}`);
+          const startB = dayjs(`${b.date} ${b.scheduleTime.split(" - ")[0]}`);
+    
+          return startA - startB;
+        });
+    
         setFullSchedule(processedSchedule);
       } else {
         console.error("Error fetching schedule:", response.message);
       }
     });
+    
 
     // Real-time schedule updates
     const handleNewSchedule = (newSchedule) => {

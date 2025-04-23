@@ -4,10 +4,24 @@ const Schedule = require("../models/Schedule.js");
 
 cron.schedule("* * * * *", async () => {
   try {
-    // Filter only schedules that are not already Completed
-    const schedules = await Schedule.find({
-      // status: { $ne: "Completed" },
+    // Get all schedules
+    const schedules = await Schedule.find({});
+
+    // Sort schedules by date first, then by start time in scheduleTime (handling AM/PM)
+    schedules.sort((a, b) => {
+      const dateA = dayjs(a.date);
+      const dateB = dayjs(b.date);
+
+      if (dateA.isBefore(dateB)) return -1;
+      if (dateA.isAfter(dateB)) return 1;
+
+      // Dates are equal — now sort by start time
+      const startTimeA = dayjs(`${dayjs(a.date).format("YYYY-MM-DD")} ${a.scheduleTime.split(" - ")[0]}`);
+      const startTimeB = dayjs(`${dayjs(b.date).format("YYYY-MM-DD")} ${b.scheduleTime.split(" - ")[0]}`);
+
+      return startTimeA - startTimeB;
     });
+
     const now = dayjs();
     const today = now.format("YYYY-MM-DD");
     const tomorrow = now.add(1, "day").format("YYYY-MM-DD");
@@ -18,7 +32,6 @@ cron.schedule("* * * * *", async () => {
     for (const schedule of schedules) {
       const scheduleDate = dayjs(schedule.date).format("YYYY-MM-DD");
 
-      // Parse scheduleTime to get start and end time
       const [start, end] = schedule.scheduleTime.split(" - ");
       const startTime = dayjs(`${scheduleDate} ${start}`);
       const endTime = dayjs(`${scheduleDate} ${end}`);
@@ -32,7 +45,7 @@ cron.schedule("* * * * *", async () => {
       }
 
       // Determine day label
-      let newDay = dayjs(schedule.date).format("dddd"); // default to day name
+      let newDay = dayjs(schedule.date).format("dddd");
       if (scheduleDate === today) {
         newDay = "Today";
       } else if (scheduleDate === tomorrow) {
@@ -41,7 +54,7 @@ cron.schedule("* * * * *", async () => {
         newDay = "Yesterday";
       }
 
-      // Push to bulkOps only if changed
+      // Only update if needed
       if (schedule.status !== newStatus || schedule.day !== newDay) {
         bulkOps.push({
           updateOne: {
@@ -57,11 +70,11 @@ cron.schedule("* * * * *", async () => {
       }
     }
 
-    // Perform bulkWrite if there are updates
+    // Perform bulk update if needed
     if (bulkOps.length > 0) {
       await Schedule.bulkWrite(bulkOps);
     }
-
+    console.log("✅ Schedule statuses and days updated successfully", schedules);
     console.log("✅ Schedule statuses and days updated");
   } catch (error) {
     console.error("❌ Error updating schedule statuses:", error.message);
