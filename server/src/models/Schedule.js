@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const Schedule = new mongoose.Schema(
+const ScheduleSchema = new mongoose.Schema(
   {
     division: {
       type: String,
@@ -12,23 +12,24 @@ const Schedule = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    day: {
-      type: String,
-      required: true,
-      trim: true,
-    },
     date: {
       type: Date,
       required: true,
     },
-    scheduleTime: {
-      type: String,
+    startTime: {
+      type: String, // "HH:mm"
+      required: true,
+      trim: true,
+    },
+    endTime: {
+      type: String, // "HH:mm"
       required: true,
       trim: true,
     },
     status: {
       type: String,
       enum: ["Active", "Completed", "Upcoming"],
+      default: "Upcoming",
     },
   },
   {
@@ -36,4 +37,8 @@ const Schedule = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("Schedule", Schedule);
+// Indexes for faster search and sorting
+ScheduleSchema.index({ division: 1, district: 1, date: 1 });
+ScheduleSchema.index({ date: 1, startTime: 1 });
+
+module.exports = mongoose.model("Schedule", ScheduleSchema);

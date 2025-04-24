@@ -1,6 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faFilter, faCalendar } from "@fortawesome/free-solid-svg-icons";
 import { useState, useCallback, useEffect, useMemo, useRef } from "react";
+import TimeRangePicker from "../../Components/ui/TimeRangePicker.jsx";
 import DatePicker from "../../components/ui/DatePicker.jsx";
 import "react-datepicker/dist/react-datepicker.css";
 import Button from "../../components/ui/Button.jsx";
@@ -21,17 +22,13 @@ const ScheduleManage = () => {
     const [locationData, setLocationData] = useState({});
     const [showEdit, setShowEdit] = useState(null);
     const [schedule, setSchedule] = useState([]);
-    const [selectedLocation, setSelectedLocation] = useState({
-        division: "",
-        district: "",
-    });
     const [updateSchedule, setUpdateSchedule] = useState({
         id: null,
         date: null,
-        day: null,
-        scheduleTime: null,
+        startTime: null,
+        endTime: null,
     });
-
+    console.log("updateSchedule", updateSchedule);
     const hasConnected = useRef(false);
     useEffect(() => {
         if (socket.connected && !hasConnected.current) {
@@ -101,21 +98,13 @@ const ScheduleManage = () => {
 
     // Handle location change
     const handleLocationChange = (location) => {
-        setSelectedLocation(location);
         // Emit event to server with location info (optional)
         socket.emit("load-schedule", location);
     };
     const handleEdit = (id)=>{
         setShowEdit(id);
-        setUpdateSchedule({ id: id, date: null, scheduleTime: null });
+        setUpdateSchedule({ id: null, date: null, startTime: null, endTime: null });
     }
-    // Memoized time slots for schedule
-    const scheduleTimes = useMemo(() => [
-        "8:00 AM - 9:00 AM",
-        "9:00 AM - 10:00 AM",
-        "10:00 AM - 11:00 AM",
-        "5:00 PM - 6:00 PM",
-    ], []);
 
     const handleUpdate = (id) => {
         setLoadingForUpdate(id);
@@ -131,12 +120,12 @@ const ScheduleManage = () => {
                 toast.success(response.message);
                 setLoadingForUpdate(null);
         setShowEdit(null);
-        setUpdateSchedule({ id: null, date: null, scheduleTime: null });
+        setUpdateSchedule({ id: null, date: null, startTime: null, endTime: null });
             } else {
                 toast.error(response.message);
                 setLoadingForUpdate(null);
         setShowEdit(null);
-        setUpdateSchedule({ id: null, date: null, scheduleTime: null });
+        setUpdateSchedule({ id: null, date: null, startTime: null, endTime: null });
             }  
         });
         console.log("✅ Schedule updated:", updateSchedule);
@@ -144,7 +133,7 @@ const ScheduleManage = () => {
     
     const handleCancel = (id) => {
         setShowEdit(null);
-        setUpdateSchedule({ id: null, date: null, scheduleTime: null });
+        setUpdateSchedule({ id: null, date: null, startTime: null, endTime: null });
     };
     const handleDelete = (id) => {
         setLoadingForDelete(id);
@@ -164,7 +153,7 @@ const ScheduleManage = () => {
               .getElementById("AddNewSchedule")
               ?.scrollIntoView({ behavior: "smooth", block: "center" , inline: "end" });
           }, 50);
-        setUpdateSchedule({ id: null, date: null, scheduleTime: null });
+        setUpdateSchedule({ id: null, date: null, startTime: null, endTime: null });
     };
     
 
@@ -208,7 +197,7 @@ const ScheduleManage = () => {
                                 locationData={locationData}
                             />
                         )}
-                        {schedule.map(({ division, district, _id, day, date, scheduleTime }) => (
+                        {schedule.map(({ division, district, _id, date, startTime, endTime  }) => (
                             <tr key={_id} className="border border-gray-500 border-solid bg-white text-gray-700 text-center">
                                 <td className="px-1 py-2 border-3 border-gray-200">{_id}</td>
                                 <td className="px-1 py-2 border-3 border-gray-200">{division}</td>
@@ -217,13 +206,13 @@ const ScheduleManage = () => {
                                     {showEdit === _id ? (
                                         <input
                                             type="text"
-                                            value={day}
+                                            value={format(new Date(date), "EEEE")}
                                             readOnly
                                             className="text-gray-700 text-sm font-medium px-1 py-1 rounded text-center placeholder:text-center 
                        focus:outline-none focus:ring-0 border-none bg-transparent cursor-default"
                                         />
                                     ) : (
-                                        day
+                                        format(new Date(date), "EEEE")
                                     )}
                                 </td>
 
@@ -251,38 +240,27 @@ const ScheduleManage = () => {
                                 </td>
                                 <td className="px-1 py-2 border-3 border-gray-200">
                                     {showEdit === _id ? (
-                                        <CustomSelect
-                                            value={scheduleTimes.find((time) => time === scheduleTime) ? { value: scheduleTime, label: scheduleTime } : null}
-                                            onChange={(e) => setUpdateSchedule((prev) => ({
-                                                ...prev,
-                                                id: _id,
-                                                scheduleTime: e.value,
-                                              }))}                                              
-                                            options={scheduleTimes.map((time) => ({ value: time, label: time }))}
-                                            placeholder="Select Schedule Time"
-                                            classNames={
-                                                {
-                                                    menuButton: () => " bg-white text-gray-700 border-1 m-1 text-sm font-medium w-auto font-semibold min-w-[120px] rounded-sm  shadow-none hover:bg-gray-100",
-                                                    menu: " z-50 bg-white w-full text-sm shadow-lg rounded-sm mt-1 p-0",
-                                                    listItem: ({ isSelected }) => (
-                                                        `block transition duration-200 pl-2 py-2 mt-1 mb-1 cursor-pointer select-none truncate rounded-none ${isSelected
-                                                            ? ` bg-[#00287e] text-white hover:bg-[#00287e] `
-                                                            : `text-gray-700`
-                                                        }`
-                                                    ),
-                                                }
-                                            }
-                                        />
+                                        <TimeRangePicker
+                                        startTime={startTime}
+                                        endTime={endTime}
+                                        onStartTimeChange={(e) => setUpdateSchedule((prev) => ({
+                                                    ...prev,
+                                                    id: _id,
+                                                    startTime: e.value,
+                                                  }))}
+                                        onEndTimeChange={(e) => setUpdateSchedule((prev) => ({
+                                            ...prev,
+                                            id: _id,
+                                            endTime: e.value,
+                                          }))}
+                                      />
                                     ) : (
-                                        scheduleTime
+                                       `${new Date(`1970-01-01T${startTime}`).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }).toUpperCase()} - ${new Date(`1970-01-01T${endTime}`).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }).toUpperCase()}`
                                     )}
                                 </td>
                                 <td className="px-1 py-2 border-3 border-gray-200">
                                     <EditButtons
                                         _Id={_id}
-                                        day={day}
-                                        date={date}
-                                        scheduleTime={scheduleTime}
                                         showEdit={showEdit}
                                         handleEdit={handleEdit}
                                         handleUpdate={handleUpdate}

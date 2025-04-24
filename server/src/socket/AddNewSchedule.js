@@ -4,72 +4,77 @@ const dayjs = require("dayjs");
 const AddNewSchedule = (socket, io) => {
   socket.on("add-schedule", async (schedule, callback) => {
     try {
-      const { division, district, day, date, scheduleTime } = schedule;
-
-      if (!division || !district || !day || !date || !scheduleTime) {
+      const { division, district, date, startTime, endTime } = schedule;
+  
+      if (!division || !district || !date || !startTime || !endTime) {
         return callback({
           status: "error",
           message: "Missing required fields",
         });
       }
-
-      const now = dayjs();
-      const selectedDate = dayjs(date);
-      const [startTime] = scheduleTime.split(" - ");
-      const fullScheduleDateTime = dayjs(
-        `${selectedDate.format("YYYY-MM-DD")} ${startTime}`
-      );
-
+  
+      const now = dayjs(); // current time
+      const selectedDate = dayjs(date); // input date (yyyy-MM-dd)
+      const scheduleStart = dayjs(`${date} ${startTime}`);
+      const scheduleEnd = dayjs(`${date} ${endTime}`);
+  
       // Prevent scheduling in the past
       if (
         selectedDate.isBefore(now, "day") ||
-        (selectedDate.isSame(now, "day") && fullScheduleDateTime.isBefore(now))
+        (selectedDate.isSame(now, "day") && scheduleEnd.isBefore(now))
       ) {
         return callback({
           status: "error",
           message: "Cannot set schedule in the past",
         });
       }
-
-      // Check if schedule already exists for same date, time, division, and district
+  
+      // Check for duplicate schedule
       const existing = await Schedule.findOne({
         division,
         district,
-        date,
-        scheduleTime,
+        date: selectedDate.toDate(),
+        startTime,
+        endTime,
       });
-
+  
       if (existing) {
         return callback({
           status: "error",
           message: "Schedule already exists for this time and location.",
         });
       }
-
+  
+      // Determine status
+      let status = "Upcoming";
+      if (scheduleStart.isBefore(now) && scheduleEnd.isAfter(now)) {
+        status = "Active";
+      }
+  
       const newSchedule = new Schedule({
         division,
         district,
-        day,
-        date,
-        scheduleTime,
+        date: selectedDate.toDate(),
+        startTime,
+        endTime,
+        status,
       });
-
+  
       await newSchedule.save();
-
+  
       console.log("✅ Schedule added:", newSchedule);
-
+  
       callback({
         status: "success",
         message: "Schedule added successfully!",
       });
-
-      // Notify other users
+  
       io.emit("schedule-added", newSchedule);
     } catch (error) {
       console.error("❌ Error adding schedule:", error);
       callback({ status: "error", message: "Failed to add schedule" });
     }
-  });
+  });  
 
   // Update an existing schedule
   socket.on("update-schedule", async (updateSchedule, callback) => {

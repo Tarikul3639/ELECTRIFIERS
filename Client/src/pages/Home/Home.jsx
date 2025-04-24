@@ -38,7 +38,7 @@ const Home = () => {
       }
     });
     
-
+// console.log("Full Schedule:", fullSchedule);
     // Real-time schedule updates
     const handleNewSchedule = (newSchedule) => {
       const formatted = {

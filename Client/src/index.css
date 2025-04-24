@@ -24,6 +24,18 @@ body {
 }
 
 
+input[type="time"].no-border {
+  border: none;
+  outline: none;
+  box-shadow: none;
+}
+
+input[type="time"].no-border:focus {
+  border: none;
+  outline: none;
+  box-shadow: none;
+}
+
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
     width: 5px;
@@ -46,5 +58,4 @@ body {
     word-wrap: break-word;
     hyphens: auto;
   }
-  
   

@@ -1,31 +1,45 @@
 import { useEffect, useState, useRef } from "react";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-const Notification = {
-  one:"Power cut after in 10 minutes",
-  two:"Power cut after in 5 minutes",
-  three:"Power cut after in 1 minutes",
-  first:"Power on after 10 minutes",
-  second:"Power on after 5 minutes",
-  third:"Power on after 1 minutes",
-}
+
+// ✅ Renamed from "Notification" to avoid conflict with browser Notification API
+const messages = {
+  first: "Power cut after in 10 minutes",
+  second: "Power cut after in 5 minutes",
+  third: "Power cut after in 1 minutes",
+  one: "Power on after 10 minutes",
+  two: "Power on after 5 minutes",
+  three: "Power on after 1 minutes",
+};
+
 const TimerCircle = ({ fullSchedule }) => {
   const [currentSchedule, setCurrentSchedule] = useState(null);
   const [nextSchedule, setNextSchedule] = useState(null);
   const [scheduleTimes, setScheduleTimes] = useState([]);
+  const lastNotifiedMinute = useRef(null);
+  // console.log("fullSchedule:", fullSchedule);
+  const parseTime = (timeStr) => {
+    const [time, modifier] = timeStr.split(" ");
+    let [hours, minutes] = time.split(":").map(Number);
+    if (modifier === "PM" && hours !== 12) hours += 12;
+    if (modifier === "AM" && hours === 12) hours = 0;
+    const date = new Date();
+    date.setHours(hours, minutes, 0, 0);
+    return date;
+  };
 
-  const lastNotifiedMinute = useRef(null); 
+  const formatTime = (date) =>
+    date.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
 
   useEffect(() => {
     const now = new Date();
-
+    console.log("fullSchedule:", fullSchedule);
     const filtered = fullSchedule.filter((item) => {
-      const [startStr] = item.scheduleTime.split(" - ");
-      const start = parseTime(startStr);
-      const scheduleDate = new Date(item.date);
-      start.setFullYear(scheduleDate.getFullYear(), scheduleDate.getMonth(), scheduleDate.getDate());
-      return new Date(item.date) >= now || start >= now;
+      const [startStr, endStr] = item.scheduleTime.split(" - ");
+      const start = parseTime(startStr); // time only (e.g., "14:00")
+      const end = parseTime(endStr);     // time only (e.g., "15:00")
     });
+
 
     const times = filtered.map((item) => item.scheduleTime);
     setScheduleTimes(times);
@@ -40,34 +54,40 @@ const TimerCircle = ({ fullSchedule }) => {
   }, []);
 
   const sendNotification = (title, body) => {
+    console.log("Sending notification:", title, body);
+    const newNotification = {
+      title,
+      body,
+      read: false,
+      timestamp: new Date().toISOString(),
+    };
+
+    // Get existing notifications from localStorage
+    const existing = JSON.parse(localStorage.getItem("notifications")) || [];
+
+    // Add the new one to the beginning (optional: keep only latest 20)
+    existing.unshift(newNotification);
+    const updated = existing.slice(0, 20); // Keep only latest 20 notifications
+
+    // Save back to localStorage
+    localStorage.setItem("notifications", JSON.stringify(updated));
+
+    // Show system notification
     if ("Notification" in window && Notification.permission === "granted") {
       new Notification(title, {
         body,
         icon: "/icon.png",
       });
-  
-      // 🔊 Play sound
-      const audio = new Audio("../../assets/audio/Iphone.mp3");
-      audio.play().catch((error) => {
-        console.error("Audio play failed:", error);
-      });
+
+      // const audio = new Audio("/assets/audio/Iphone.mp3"); // Adjust path if needed
+      // audio.play().catch((error) => {
+      //   console.error("Audio play failed:", error);
+      // });
     }
   };
 
-  const parseTime = (timeStr) => {
-    const [time, modifier] = timeStr.split(" ");
-    let [hours, minutes] = time.split(":").map(Number);
-    if (modifier === "PM" && hours !== 12) hours += 12;
-    if (modifier === "AM" && hours === 12) hours = 0;
-    const date = new Date();
-    date.setHours(hours, minutes, 0, 0);
-    return date;
-  };
-
   useEffect(() => {
-
     const checkSchedule = () => {
-      // console.log(currentSchedule);
       if (scheduleTimes.length === 0) return;
 
       const now = new Date();
@@ -83,9 +103,9 @@ const TimerCircle = ({ fullSchedule }) => {
           setNextSchedule(
             scheduleTimes[i + 1]
               ? {
-                  start: parseTime(scheduleTimes[i + 1].split(" - ")[0]),
-                  end: parseTime(scheduleTimes[i + 1].split(" - ")[1]),
-                }
+                start: parseTime(scheduleTimes[i + 1].split(" - ")[0]),
+                end: parseTime(scheduleTimes[i + 1].split(" - ")[1]),
+              }
               : null
           );
           found = true;
@@ -123,7 +143,7 @@ const TimerCircle = ({ fullSchedule }) => {
   });
 
   useEffect(() => {
-    lastNotifiedMinute.current = null; // ✅ Reset on schedule change
+    lastNotifiedMinute.current = null;
   }, [currentSchedule, nextSchedule]);
 
   useEffect(() => {
@@ -135,32 +155,47 @@ const TimerCircle = ({ fullSchedule }) => {
         progressColor = "url(#gradient)";
 
       if (currentSchedule) {
-        // console.log(currentSchedule);
         const { start, end } = currentSchedule;
         difference = Math.max(end - now, 0);
         totalDuration = end - start;
         progressColor = "url(#gradient)";
         progress = totalDuration > 0 ? (difference / totalDuration) * 100 : 0;
+        // console.log("Current Progress:", progress);
       } else if (nextSchedule) {
         const { start, end } = nextSchedule;
         difference = Math.max(start - now, 0);
         totalDuration = end - start;
         progressColor = "url(#gradient2)";
         progress = totalDuration > 0 ? 100 - (difference / 3600000) * 100 : 100;
+        // console.log("Progress:", progress);
       }
 
       const hour = Math.floor(difference / 3600000);
       const minute = Math.floor((difference % 3600000) / 60000);
       const second = Math.floor((difference % 60000) / 1000);
 
-      // ✅ Push Notification with repeat prevention
+      // ✅ Send Notification (once) when it's 10, 5, or 1 minute left
       if ((minute === 10 || minute === 5 || minute === 1) && second === 0) {
         if (lastNotifiedMinute.current !== minute) {
-          sendNotification("Load Shedding Alert", `Power will go in ${minute} minutes.`);
-          lastNotifiedMinute.current = minute;
+          let message = "";
+
+          if (currentSchedule) {
+            if (minute === 10 && second === 0) message = messages.one;
+            if (minute === 5 && second === 0) message = messages.two;
+            if (minute === 1 && second === 0) message = messages.three;
+          } else if (nextSchedule) {
+            if (minute === 10 && second === 0) message = messages.first;
+            if (minute === 5 && second === 0) message = messages.second;
+            if (minute === 1 && second === 0) message = messages.third;
+          }
+
+          if (message) {
+            sendNotification("Load Shedding Alert", message);
+            lastNotifiedMinute.current = minute;
+          }
         }
       }
-    console.log("Time: ", minute);
+
       setTimeLeft({ hour, minute, second, progress, color: progressColor });
     };
 
@@ -168,9 +203,6 @@ const TimerCircle = ({ fullSchedule }) => {
     const timer = setInterval(updateTime, 1000);
     return () => clearInterval(timer);
   }, [currentSchedule, nextSchedule]);
-
-  const formatTime = (date) =>
-    date.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
 
   return (
     <div className="bg-white shadow-[-2px_-2px_10px_2px_rgba(104,58,183,0.53),_2px_2px_10px_2px_rgba(104,58,183,0.53)] mt-15 rounded-lg p-6 w-full text-center">
@@ -181,8 +213,8 @@ const TimerCircle = ({ fullSchedule }) => {
             timeLeft.hour > 0
               ? `${timeLeft.hour}h`
               : timeLeft.minute > 0
-              ? `${timeLeft.minute}m`
-              : `${timeLeft.second}s`
+                ? `${timeLeft.minute}m`
+                : `${timeLeft.second}s`
           }
           strokeWidth={12}
           styles={buildStyles({
@@ -201,8 +233,8 @@ const TimerCircle = ({ fullSchedule }) => {
         {currentSchedule
           ? `${formatTime(currentSchedule.start)} - ${formatTime(currentSchedule.end)}`
           : nextSchedule
-          ? `${formatTime(nextSchedule.start)} - ${formatTime(nextSchedule.end)}`
-          : "No schedule available"}
+            ? `${formatTime(nextSchedule.start)} - ${formatTime(nextSchedule.end)}`
+            : "No schedule available"}
       </p>
     </div>
   );
