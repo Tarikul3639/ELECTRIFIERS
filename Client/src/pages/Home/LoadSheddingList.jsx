@@ -1,23 +1,15 @@
 import React, { useState } from "react";
 import dayjs from "dayjs";
 
-// Function to sort schedule by status priority
-function sortByStatus(schedule) {
-    const priority = { Active: 1, Upcoming: 2, Completed: 3 };
-    return [...schedule].sort((a, b) => priority[a.status] - priority[b.status]);
+// Function to get today's schedule
+function getTodaysSchedule(schedule) {
+    const today = dayjs().format("YYYY-MM-DD");
+    return schedule.filter((item) => item.date === today);
 }
 
 const LoadSheddingList = React.memo(({ fullSchedule }) => {
     const [viewToday, setViewToday] = useState(true); // Default to show today's schedule
-
-    // Function to get today's schedule
-    function getTodaysSchedule(schedule) {
-        const today = dayjs().format("YYYY-MM-DD");
-        return schedule.filter((item) => item.date === today);
-    }
-
     const displayedSchedule = viewToday ? getTodaysSchedule(fullSchedule) : fullSchedule;
-
     return (
         <div className="rounded-lg bg-gray-100 sm:p-6 w-full mt-6">
             <h2 className="text-2xl text-slate-700 text-center font-bold mb-4 uppercase">
@@ -30,7 +22,7 @@ const LoadSheddingList = React.memo(({ fullSchedule }) => {
                 </h3>
 
                 <div className="space-y-4">
-                    {sortByStatus(displayedSchedule).map((item, index) => (
+                    {displayedSchedule.map((item, index) => (
                         <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-white">
                             <div className="flex items-center gap-4">
                                 <div
@@ -42,7 +34,10 @@ const LoadSheddingList = React.memo(({ fullSchedule }) => {
                                         }`}
                                 />
                                 <div>
-                                    <div className="TEXT-CONTENT font-medium text-slate-700">{item.scheduleTime}</div>
+                                    <div className="TEXT-CONTENT font-medium text-slate-700">
+                                        {dayjs(`2000-01-01T${item.startTime}`).format("h:mm A")} -{" "}
+                                        {dayjs(`2000-01-01T${item.endTime}`).format("h:mm A")}
+                                    </div>
                                     <div className="TEXT-CONTENT text-sm text-slate-500">
                                         {item.date} - {item.day}
                                     </div>

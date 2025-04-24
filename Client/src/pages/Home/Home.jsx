@@ -8,42 +8,40 @@ const Home = () => {
   const [fullSchedule, setFullSchedule] = useState([]);
   const userEmail = JSON.parse(localStorage.getItem("user")).email;
 
-  // Fetch data and handle socket events
+  // Helper function to get relative day label
+  function getRelativeDay(dateStr) {
+    const today = dayjs().startOf("day");
+    const target = dayjs(dateStr).startOf("day");
+
+    if (target.isSame(today)) return "Today";
+    if (target.isSame(today.subtract(1, "day"))) return "Yesterday";
+    if (target.isSame(today.add(1, "day"))) return "Tomorrow";
+    return target.format("dddd"); // fallback to day name like "Monday"
+  }
+
   useEffect(() => {
     // Initial fetch
     socket.emit("user:load-schedule", userEmail, (response) => {
+      console.log("Initial schedule response:", response);
       if (response.status === "success") {
-        const processedSchedule = response.data.map((item) => ({
+        const updatedData = response.data.map((item) => ({
           ...item,
           date: dayjs(item.date).format("YYYY-MM-DD"),
+          day: getRelativeDay(item.date),
         }));
-    
-        processedSchedule.sort((a, b) => {
-          const dateA = dayjs(a.date);
-          const dateB = dayjs(b.date);
-    
-          if (dateA.isBefore(dateB)) return -1;
-          if (dateA.isAfter(dateB)) return 1;
-    
-          // Same date — now compare schedule start times
-          const startA = dayjs(`${a.date} ${a.scheduleTime.split(" - ")[0]}`);
-          const startB = dayjs(`${b.date} ${b.scheduleTime.split(" - ")[0]}`);
-    
-          return startA - startB;
-        });
-    
-        setFullSchedule(processedSchedule);
+        setFullSchedule(updatedData);
+        console.log("Schedule loaded successfully:", updatedData);
       } else {
         console.error("Error fetching schedule:", response.message);
       }
     });
-    
-// console.log("Full Schedule:", fullSchedule);
+
     // Real-time schedule updates
     const handleNewSchedule = (newSchedule) => {
       const formatted = {
         ...newSchedule,
         date: dayjs(newSchedule.date).format("YYYY-MM-DD"),
+        day: getRelativeDay(newSchedule.date),
       };
       setFullSchedule((prev) => [...prev, formatted]);
     };
@@ -52,7 +50,12 @@ const Home = () => {
       setFullSchedule((prev) =>
         prev.map((item) =>
           item._id === updatedSchedule._id
-            ? { ...item, ...updatedSchedule, date: dayjs(updatedSchedule.date).format("YYYY-MM-DD") }
+            ? {
+                ...item,
+                ...updatedSchedule,
+                date: dayjs(updatedSchedule.date).format("YYYY-MM-DD"),
+                day: getRelativeDay(updatedSchedule.date),
+              }
             : item
         )
       );
@@ -75,10 +78,9 @@ const Home = () => {
     };
   }, [userEmail]);
 
-
   return (
     <div className="max-w-6xl flex flex-col items-center mx-auto my-10 p-8 bg-white rounded-lg shadow-sm">
-      <TimerCircle fullSchedule={fullSchedule} />
+      {/* <TimerCircle fullSchedule={fullSchedule} /> */}
 
       <svg xmlns="http://www.w3.org/2000/svg" style={{ position: "absolute", width: 0, height: 0 }}>
         <defs>

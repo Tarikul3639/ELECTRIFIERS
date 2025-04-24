@@ -14,7 +14,6 @@ import EditButtons from "./EditButtons.jsx";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-
 const ScheduleManage = () => {
     const [loadingForDelete, setLoadingForDelete] = useState(null); // stores _id of deleting row
     const [loadingForUpdate, setLoadingForUpdate] = useState(null); // stores _id of updating row    
@@ -43,20 +42,20 @@ const ScheduleManage = () => {
     useEffect(() => {
         // Load initial schedule
         socket.emit("load-schedule", '');
-    
+
         // Listener: Load full schedule data
         socket.on("load-schedule", (data) => {
             console.log("✅ Schedule data received:", data);
             setSchedule(data);
         });
-    
+
         // Listener: Real-time new schedule added
         socket.on("schedule-added", (newSchedule) => {
             console.log("📢 New schedule added in real-time:", newSchedule);
             setSchedule((prev) => [...prev, newSchedule]);
             toast.success("New schedule added!");
         });
-    
+
         // Optional: Listener for updates
         socket.on("schedule-updated", (updatedSchedule) => {
             console.log("🔄 Schedule updated in real-time:", updatedSchedule);
@@ -78,7 +77,7 @@ const ScheduleManage = () => {
             socket.off("schedule-deleted");
         };
     }, []);
-    
+
     useEffect(() => {
         const fetchLocations = async () => {
             setLoadingLocations(true);
@@ -101,7 +100,7 @@ const ScheduleManage = () => {
         // Emit event to server with location info (optional)
         socket.emit("load-schedule", location);
     };
-    const handleEdit = (id)=>{
+    const handleEdit = (id) => {
         setShowEdit(id);
         setUpdateSchedule({ id: null, date: null, startTime: null, endTime: null });
     }
@@ -119,18 +118,18 @@ const ScheduleManage = () => {
             if (response.status === "success") {
                 toast.success(response.message);
                 setLoadingForUpdate(null);
-        setShowEdit(null);
-        setUpdateSchedule({ id: null, date: null, startTime: null, endTime: null });
+                setShowEdit(null);
+                setUpdateSchedule({ id: null, date: null, startTime: null, endTime: null });
             } else {
                 toast.error(response.message);
                 setLoadingForUpdate(null);
-        setShowEdit(null);
-        setUpdateSchedule({ id: null, date: null, startTime: null, endTime: null });
-            }  
+                setShowEdit(null);
+                setUpdateSchedule({ id: null, date: null, startTime: null, endTime: null });
+            }
         });
         console.log("✅ Schedule updated:", updateSchedule);
     };
-    
+
     const handleCancel = (id) => {
         setShowEdit(null);
         setUpdateSchedule({ id: null, date: null, startTime: null, endTime: null });
@@ -150,12 +149,11 @@ const ScheduleManage = () => {
         setShowEdit("new");
         setTimeout(() => {
             document
-              .getElementById("AddNewSchedule")
-              ?.scrollIntoView({ behavior: "smooth", block: "center" , inline: "end" });
-          }, 50);
+                .getElementById("AddNewSchedule")
+                ?.scrollIntoView({ behavior: "smooth", block: "center", inline: "end" });
+        }, 50);
         setUpdateSchedule({ id: null, date: null, startTime: null, endTime: null });
     };
-    
 
     return (
         <div className="w-screen-md bg-gray-200 p-2 rounded-lg shadow-lg overflow-hidden">
@@ -197,7 +195,7 @@ const ScheduleManage = () => {
                                 locationData={locationData}
                             />
                         )}
-                        {schedule.map(({ division, district, _id, date, startTime, endTime  }) => (
+                        {schedule.map(({ division, district, _id, date, startTime, endTime }) => (
                             <tr key={_id} className="border border-gray-500 border-solid bg-white text-gray-700 text-center">
                                 <td className="px-1 py-2 border-3 border-gray-200">{_id}</td>
                                 <td className="px-1 py-2 border-3 border-gray-200">{division}</td>
@@ -208,8 +206,7 @@ const ScheduleManage = () => {
                                             type="text"
                                             value={format(new Date(date), "EEEE")}
                                             readOnly
-                                            className="text-gray-700 text-sm font-medium px-1 py-1 rounded text-center placeholder:text-center 
-                       focus:outline-none focus:ring-0 border-none bg-transparent cursor-default"
+                                            className="text-gray-700 text-sm font-medium px-1 py-1 rounded text-center placeholder:text-center focus:outline-none focus:ring-0 border-none bg-transparent cursor-default"
                                         />
                                     ) : (
                                         format(new Date(date), "EEEE")
@@ -220,13 +217,12 @@ const ScheduleManage = () => {
                                     {showEdit === _id ? (
                                         <div className="flex items-center justify-center ">
                                             <DatePicker
-                                                selected={new Date(date)}
+                                                selected={updateSchedule.date ? new Date(updateSchedule.date) : new Date(date)}
                                                 onChange={(date) => setUpdateSchedule((prev) => ({
                                                     ...prev,
                                                     id: _id,
-                                                    day: format(date, "EEEE"),
                                                     date: date,
-                                                  }))}                                                  
+                                                }))}
                                                 classNames={{
                                                     Button: () => "bg-white text-gray-700 border-1 border-gray-700 m-1 text-sm font-medium w-auto px-1 py-1 min-w-[120px] rounded-sm  shadow-none hover:bg-gray-100",
                                                     Input: () => "border-0 px-1 py-1 rounded text-center placeholder:text-center",
@@ -241,21 +237,33 @@ const ScheduleManage = () => {
                                 <td className="px-1 py-2 border-3 border-gray-200">
                                     {showEdit === _id ? (
                                         <TimeRangePicker
-                                        startTime={startTime}
-                                        endTime={endTime}
-                                        onStartTimeChange={(e) => setUpdateSchedule((prev) => ({
+                                            startTime={updateSchedule.startTime || startTime}
+                                            endTime={updateSchedule.endTime || endTime}
+                                            onStartTimeChange={(e) =>
+                                                setUpdateSchedule((prev) => ({
                                                     ...prev,
                                                     id: _id,
-                                                    startTime: e.value,
-                                                  }))}
-                                        onEndTimeChange={(e) => setUpdateSchedule((prev) => ({
-                                            ...prev,
-                                            id: _id,
-                                            endTime: e.value,
-                                          }))}
-                                      />
+                                                    startTime: e.target.value,
+                                                }))
+                                            }
+                                            onEndTimeChange={(e) =>
+                                                setUpdateSchedule((prev) => ({
+                                                    ...prev,
+                                                    id: _id,
+                                                    endTime: e.target.value,
+                                                }))
+                                            }
+                                        />
                                     ) : (
-                                       `${new Date(`1970-01-01T${startTime}`).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }).toUpperCase()} - ${new Date(`1970-01-01T${endTime}`).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }).toUpperCase()}`
+                                        `${new Date(`1970-01-01T${startTime}`).toLocaleTimeString([], {
+                                            hour: '2-digit',
+                                            minute: '2-digit',
+                                            hour12: true,
+                                          }).toLowerCase()} - ${new Date(`1970-01-01T${endTime}`).toLocaleTimeString([], {
+                                            hour: '2-digit',
+                                            minute: '2-digit',
+                                            hour12: true,
+                                          }).toLowerCase()}`
                                     )}
                                 </td>
                                 <td className="px-1 py-2 border-3 border-gray-200">
@@ -267,7 +275,6 @@ const ScheduleManage = () => {
                                         handleCancel={handleCancel}
                                         loadingForUpdate={loadingForUpdate}
                                     />
-
                                 </td>
                                 <td className="px-1 py-2 border-3 border-gray-200">
                                     <Button
