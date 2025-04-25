@@ -24,9 +24,24 @@ const Notification = () => {
     const buttonRef = useRef(null);
 
     useEffect(() => {
-        const savedNotifications = JSON.parse(localStorage.getItem("notifications")) || [];
-        setNotifications(savedNotifications);
-    }, []);
+        const loadNotifications = () => {
+          const savedNotifications = JSON.parse(localStorage.getItem("notifications")) || [];
+          setNotifications(savedNotifications);
+        };
+      
+        loadNotifications();
+      
+        const handleUpdate = () => {
+          loadNotifications();
+        };
+      
+        window.addEventListener("notificationUpdated", handleUpdate);
+      
+        return () => {
+          window.removeEventListener("notificationUpdated", handleUpdate);
+        };
+      }, []);      
+      
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -101,7 +116,7 @@ const Notification = () => {
                                 <p className="text-sm text-gray-500 text-center p-4">No new notifications</p>
                             )}
                         </div>
-                    </div>
+                 </div>
             )}
         </div>
     );

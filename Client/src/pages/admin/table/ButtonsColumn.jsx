@@ -1,5 +1,5 @@
 import React from "react";
-import Button from "../../components/ui/Button.jsx";
+import Button from "../../../components/ui/Button.jsx";
 
 const EditButtons = ({
     _Id,

@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo } from "react";
 import LoadSheddingList from "./LoadSheddingList.jsx";
 import TimerCircle from "./TimerCircle.jsx";
 import socket from "../../Components/socket/Socket.jsx";
 import dayjs from "dayjs";
 
-const Home = () => {
+const Home = memo(() => {
   const [fullSchedule, setFullSchedule] = useState([]);
   const userEmail = JSON.parse(localStorage.getItem("user")).email;
 
@@ -101,6 +101,6 @@ const Home = () => {
       </div>
     </div>
   );
-};
+});
 
 export default Home;

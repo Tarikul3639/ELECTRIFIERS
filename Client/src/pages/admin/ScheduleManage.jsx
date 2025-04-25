@@ -6,13 +6,13 @@ import Button from "../../components/ui/Button.jsx";
 import socket from "../../Components/socket/Socket.jsx";
 import LocationFilter from "./LocationFilter.jsx";
 import AddNewSchedule from "./AddNewSchedule.jsx";
-import EditButtons from "./EditButtons.jsx";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import DayColumn from "./table/DayColumn.jsx";
 import DateColumn from "./table/DateColumn.jsx";
 import StatusColumn from "./table/StatusColumn.jsx";
 import TimeRangeColumn from "./table/TimeRangeColumn.jsx";
+import ButtonsColumn from "./table/ButtonsColumn.jsx";
 
 const ScheduleManage = () => {
     // State to manage loading status for delete and update actions
@@ -246,7 +246,7 @@ const ScheduleManage = () => {
                                     <StatusColumn showEdit={showEdit} status={status} _id={_id} />
                                 </td>
                                 <td className="px-1 py-2 border-3 border-gray-200">
-                                    <EditButtons
+                                    <ButtonsColumn
                                         _Id={_id}
                                         showEdit={showEdit}
                                         handleEdit={handleEdit}
