@@ -1,37 +1,47 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faFilter, faCalendar } from "@fortawesome/free-solid-svg-icons";
-import { useState, useCallback, useEffect, useMemo, useRef } from "react";
-import TimeRangePicker from "../../Components/ui/TimeRangePicker.jsx";
-import DatePicker from "../../components/ui/DatePicker.jsx";
+import { useState, useEffect, useRef } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import Button from "../../components/ui/Button.jsx";
-import CustomSelect from "../../components/ui/Select.jsx";
 import socket from "../../Components/socket/Socket.jsx";
-import { format } from "date-fns";
 import LocationFilter from "./LocationFilter.jsx";
 import AddNewSchedule from "./AddNewSchedule.jsx";
 import EditButtons from "./EditButtons.jsx";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import DayColumn from "./table/DayColumn.jsx";
+import DateColumn from "./table/DateColumn.jsx";
+import StatusColumn from "./table/StatusColumn.jsx";
+import TimeRangeColumn from "./table/TimeRangeColumn.jsx";
 
 const ScheduleManage = () => {
+    // State to manage loading status for delete and update actions
     const [loadingForDelete, setLoadingForDelete] = useState(null); // stores _id of deleting row
     const [loadingForUpdate, setLoadingForUpdate] = useState(null); // stores _id of updating row    
+
+    // State to manage loading locations and location data
     const [loadingLocations, setLoadingLocations] = useState(false);
     const [locationData, setLocationData] = useState({});
+
+    // State for edit functionality and schedule data
     const [showEdit, setShowEdit] = useState(null);
     const [schedule, setSchedule] = useState([]);
+
+    // State to manage schedule updates
     const [updateSchedule, setUpdateSchedule] = useState({
         id: null,
         date: null,
         startTime: null,
         endTime: null,
     });
-    console.log("updateSchedule", updateSchedule);
+
+    // Ref to track socket connection status
     const hasConnected = useRef(false);
+
+    // Socket connection and event listeners setup
     useEffect(() => {
         if (socket.connected && !hasConnected.current) {
-            console.log("✅ Already connected to socket :", socket.id);
+            console.log("✅ Already connected to socket:", socket.id);
             hasConnected.current = true;
         } else if (!socket.connected && !hasConnected.current) {
             console.log("❌ Not connected. You may connect it if needed.");
@@ -39,24 +49,26 @@ const ScheduleManage = () => {
             hasConnected.current = true;
         }
     }, []);
+
+    // Fetch schedule data and handle real-time updates via sockets
     useEffect(() => {
-        // Load initial schedule
+        // Load initial schedule data
         socket.emit("load-schedule", '');
 
-        // Listener: Load full schedule data
+        // Listener for full schedule data
         socket.on("load-schedule", (data) => {
             console.log("✅ Schedule data received:", data);
             setSchedule(data);
         });
 
-        // Listener: Real-time new schedule added
+        // Listener for new schedule addition in real-time
         socket.on("schedule-added", (newSchedule) => {
             console.log("📢 New schedule added in real-time:", newSchedule);
             setSchedule((prev) => [...prev, newSchedule]);
             toast.success("New schedule added!");
         });
 
-        // Optional: Listener for updates
+        // Listener for schedule updates in real-time
         socket.on("schedule-updated", (updatedSchedule) => {
             console.log("🔄 Schedule updated in real-time:", updatedSchedule);
             setSchedule((prev) =>
@@ -65,11 +77,14 @@ const ScheduleManage = () => {
                 )
             );
         });
+
+        // Listener for schedule deletion
         socket.on("schedule-deleted", (deletedSchedule) => {
             setSchedule((prev) => prev.filter((item) => item._id !== deletedSchedule._id));
             toast.success("Schedule deleted successfully!");
         });
-        // Optional: Cleanup to prevent memory leaks
+
+        // Cleanup listeners to prevent memory leaks
         return () => {
             socket.off("load-schedule");
             socket.off("schedule-added");
@@ -78,6 +93,7 @@ const ScheduleManage = () => {
         };
     }, []);
 
+    // Fetch location data for the location filter
     useEffect(() => {
         const fetchLocations = async () => {
             setLoadingLocations(true);
@@ -95,16 +111,18 @@ const ScheduleManage = () => {
         fetchLocations();
     }, []);
 
-    // Handle location change
+    // Handle location change for filtering schedule
     const handleLocationChange = (location) => {
-        // Emit event to server with location info (optional)
-        socket.emit("load-schedule", location);
+        socket.emit("load-schedule", location); // Emit event with the selected location
     };
+
+    // Handle editing of a schedule
     const handleEdit = (id) => {
         setShowEdit(id);
         setUpdateSchedule({ id: null, date: null, startTime: null, endTime: null });
-    }
+    };
 
+    // Handle schedule update
     const handleUpdate = (id) => {
         setLoadingForUpdate(id);
         if (!id) {
@@ -127,36 +145,39 @@ const ScheduleManage = () => {
                 setUpdateSchedule({ id: null, date: null, startTime: null, endTime: null });
             }
         });
-        console.log("✅ Schedule updated:", updateSchedule);
     };
 
-    const handleCancel = (id) => {
+    // Handle cancel of schedule update
+    const handleCancel = () => {
         setShowEdit(null);
         setUpdateSchedule({ id: null, date: null, startTime: null, endTime: null });
     };
+
+    // Handle schedule deletion
     const handleDelete = (id) => {
         setLoadingForDelete(id);
         socket.emit("delete-schedule", id, (response) => {
             setLoadingForDelete(null);
             if (response.status === "success") {
-                // toast.success(response.message);
+                toast.success(response.message);
             } else {
                 toast.error(response.message);
             }
         });
     };
+
+    // Handle opening of new schedule addition form
     const handleAddNewSchedule = () => {
         setShowEdit("new");
         setTimeout(() => {
-            document
-                .getElementById("AddNewSchedule")
-                ?.scrollIntoView({ behavior: "smooth", block: "center", inline: "end" });
+            document.getElementById("AddNewSchedule")?.scrollIntoView({ behavior: "smooth", block: "center", inline: "end" });
         }, 50);
         setUpdateSchedule({ id: null, date: null, startTime: null, endTime: null });
     };
 
     return (
         <div className="w-screen-md bg-gray-200 p-2 rounded-lg shadow-lg overflow-hidden">
+            {/* Header Section */}
             <div className="flex items-center justify-start p-2 w-full bg-gray-200 rounded-sm shadow-lg mb-1">
                 <Button
                     text="New"
@@ -164,7 +185,7 @@ const ScheduleManage = () => {
                     variant="primary"
                     icon={<FontAwesomeIcon icon={faPlus} className="text-[1rem]" />}
                 />
-                {/* Filter the Address */}
+                {/* Location Filter */}
                 <LocationFilter
                     onChangeLocation={handleLocationChange}
                     locationData={locationData}
@@ -172,99 +193,57 @@ const ScheduleManage = () => {
                 />
             </div>
 
+            {/* Schedule Table */}
             <div className="overflow-auto max-h-[450px] rounded-lg shadow-lg bg-white p-2">
-
                 <table className="min-w-full overflow-y-scroll border-collapse bg-white border-4 border-gray-100">
-                    <thead className="sticky transition-all duration-1000 -top-[11px] z-10 bg-white shadow-[0px_4px_4px_rgba(0,0,0,0.1">
+                    <thead className="sticky transition-all duration-1000 -top-[11px] z-10 bg-white shadow-[0px_4px_4px_rgba(0,0,0,0.1)">
                         <tr className="border border-gray-500 border-solid bg-white text-gray-700 sticky-header">
+                            {/* Table Headers */}
                             <th className="px-1 py-2 border-3 border-gray-200 min-w-[50px]">ID</th>
                             <th className="px-1 py-2 border-3 border-gray-200 min-w-[50px]">Division</th>
                             <th className="px-1 py-2 border-3 border-gray-200 min-w-[50px]">District</th>
                             <th className="px-1 py-2 border-3 border-gray-200 min-w-[60px]">Day</th>
                             <th className="px-1 py-2 border-3 border-gray-200 min-w-[100px]">Date</th>
                             <th className="px-1 py-2 border-3 border-gray-200 min-w-[170px]">Schedule Time</th>
+                            <th className="px-1 py-2 border-3 border-gray-200 min-w-[60px]">Status</th>
                             <th className="px-1 py-2 border-3 border-gray-200">EDIT</th>
                             <th className="px-1 py-2 border-3 border-gray-200">DELETE</th>
                         </tr>
                     </thead>
 
                     <tbody>
+                        {/* Add New Schedule */}
                         {showEdit === "new" && (
                             <AddNewSchedule
                                 setShowEdit={setShowEdit}
                                 locationData={locationData}
                             />
                         )}
-                        {schedule.map(({ division, district, _id, date, startTime, endTime }) => (
+
+                        {/* Schedule Rows */}
+                        {schedule.map(({ division, district, _id, date, startTime, endTime, status }) => (
                             <tr key={_id} className="border border-gray-500 border-solid bg-white text-gray-700 text-center">
                                 <td className="px-1 py-2 border-3 border-gray-200">{_id}</td>
                                 <td className="px-1 py-2 border-3 border-gray-200">{division}</td>
                                 <td className="px-1 py-2 border-3 border-gray-200">{district}</td>
                                 <td className="px-1 py-2 border-3 border-gray-200">
-                                    {showEdit === _id ? (
-                                        <input
-                                            type="text"
-                                            value={format(new Date(date), "EEEE")}
-                                            readOnly
-                                            className="text-gray-700 text-sm font-medium px-1 py-1 rounded text-center placeholder:text-center focus:outline-none focus:ring-0 border-none bg-transparent cursor-default"
-                                        />
-                                    ) : (
-                                        format(new Date(date), "EEEE")
-                                    )}
+                                    <DayColumn showEdit={showEdit} date={date} _id={_id} />
                                 </td>
-
                                 <td className="px-0 py-0 border-3 border-gray-200">
-                                    {showEdit === _id ? (
-                                        <div className="flex items-center justify-center ">
-                                            <DatePicker
-                                                selected={updateSchedule.date ? new Date(updateSchedule.date) : new Date(date)}
-                                                onChange={(date) => setUpdateSchedule((prev) => ({
-                                                    ...prev,
-                                                    id: _id,
-                                                    date: date,
-                                                }))}
-                                                classNames={{
-                                                    Button: () => "bg-white text-gray-700 border-1 border-gray-700 m-1 text-sm font-medium w-auto px-1 py-1 min-w-[120px] rounded-sm  shadow-none hover:bg-gray-100",
-                                                    Input: () => "border-0 px-1 py-1 rounded text-center placeholder:text-center",
-                                                }}
-                                                dateFormat="yyyy-MM-dd"
-                                            />
-                                        </div>
-                                    ) : (
-                                        format(new Date(date), "yyyy-MM-dd")
-                                    )}
+                                    <DateColumn showEdit={showEdit} date={date} _id={_id} setUpdateSchedule={setUpdateSchedule} updateSchedule={updateSchedule} />
                                 </td>
                                 <td className="px-1 py-2 border-3 border-gray-200">
-                                    {showEdit === _id ? (
-                                        <TimeRangePicker
-                                            startTime={updateSchedule.startTime || startTime}
-                                            endTime={updateSchedule.endTime || endTime}
-                                            onStartTimeChange={(e) =>
-                                                setUpdateSchedule((prev) => ({
-                                                    ...prev,
-                                                    id: _id,
-                                                    startTime: e.target.value,
-                                                }))
-                                            }
-                                            onEndTimeChange={(e) =>
-                                                setUpdateSchedule((prev) => ({
-                                                    ...prev,
-                                                    id: _id,
-                                                    endTime: e.target.value,
-                                                }))
-                                            }
-                                        />
-                                    ) : (
-                                        `${new Date(`1970-01-01T${startTime}`).toLocaleTimeString([], {
-                                            hour: '2-digit',
-                                            minute: '2-digit',
-                                            hour12: true,
-                                          }).toLowerCase()} - ${new Date(`1970-01-01T${endTime}`).toLocaleTimeString([], {
-                                            hour: '2-digit',
-                                            minute: '2-digit',
-                                            hour12: true,
-                                          }).toLowerCase()}`
-                                    )}
+                                    <TimeRangeColumn
+                                        showEdit={showEdit}
+                                        startTime={startTime}
+                                        endTime={endTime}
+                                        _id={_id}
+                                        setUpdateSchedule={setUpdateSchedule} // Pass the correct setter here
+                                        updateSchedule={updateSchedule} // Pass the current state
+                                    />
+                                </td>
+                                <td className="px-1 py-2 border-3 border-gray-200">
+                                    <StatusColumn showEdit={showEdit} status={status} _id={_id} />
                                 </td>
                                 <td className="px-1 py-2 border-3 border-gray-200">
                                     <EditButtons

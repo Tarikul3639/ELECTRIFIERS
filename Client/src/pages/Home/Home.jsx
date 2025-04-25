@@ -80,7 +80,7 @@ const Home = () => {
 
   return (
     <div className="max-w-6xl flex flex-col items-center mx-auto my-10 p-8 bg-white rounded-lg shadow-sm">
-      {/* <TimerCircle fullSchedule={fullSchedule} /> */}
+      <TimerCircle fullSchedule={fullSchedule} />
 
       <svg xmlns="http://www.w3.org/2000/svg" style={{ position: "absolute", width: 0, height: 0 }}>
         <defs>

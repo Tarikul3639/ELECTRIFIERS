@@ -2,6 +2,7 @@
 const { Server } = require("socket.io");
 const Schedule = require("../models/Schedule.js");
 const AddNewSchedule = require("./AddNewSchedule.js");
+const ScheduleSortByStatusDateTime = require("../utils/ScheduleSortByStatusDateTime.js");
 const User = require("../models/User.js");
 
 let io = null;
@@ -60,10 +61,12 @@ const Socket = (server) => {
         }
 
         const { division, district } = user;
-        const schedule = await Schedule.find({ division, district });
+        const schedule = await Schedule.find({ division, district }).lean();
+
+        const sortedSchedule = ScheduleSortByStatusDateTime(schedule);
 
         console.log("✅ Schedule loaded for user:", email);
-        callback({ status: "success", data: schedule });
+        callback({ status: "success", data: sortedSchedule });
       } catch (error) {
         console.error("❌ Error loading schedules:", error);
         callback({ status: "error", message: "Failed to load schedule" });
@@ -76,7 +79,8 @@ const Socket = (server) => {
         let schedules = [];
 
         if (!location) {
-          schedules = await Schedule.find({});
+         const AllSchedule = await Schedule.find({});
+          schedules = ScheduleSortByStatusDateTime(AllSchedule);
         } else if (location.division && !location.district) {
           schedules = await Schedule.find({ division: location.division });
         } else if (location.division && location.district) {

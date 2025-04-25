@@ -13,37 +13,14 @@ const messages = {
 };
 
 const TimerCircle = ({ fullSchedule }) => {
+  console.log("TimerCircle fullSchedule:", fullSchedule);
   const [currentSchedule, setCurrentSchedule] = useState(null);
   const [nextSchedule, setNextSchedule] = useState(null);
   const [scheduleTimes, setScheduleTimes] = useState([]);
   const lastNotifiedMinute = useRef(null);
-  // console.log("fullSchedule:", fullSchedule);
-  const parseTime = (timeStr) => {
-    const [time, modifier] = timeStr.split(" ");
-    let [hours, minutes] = time.split(":").map(Number);
-    if (modifier === "PM" && hours !== 12) hours += 12;
-    if (modifier === "AM" && hours === 12) hours = 0;
-    const date = new Date();
-    date.setHours(hours, minutes, 0, 0);
-    return date;
-  };
 
   const formatTime = (date) =>
     date.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
-
-  useEffect(() => {
-    const now = new Date();
-    console.log("fullSchedule:", fullSchedule);
-    const filtered = fullSchedule.filter((item) => {
-      const [startStr, endStr] = item.scheduleTime.split(" - ");
-      const start = parseTime(startStr); // time only (e.g., "14:00")
-      const end = parseTime(endStr);     // time only (e.g., "15:00")
-    });
-
-
-    const times = filtered.map((item) => item.scheduleTime);
-    setScheduleTimes(times);
-  }, [fullSchedule]);
 
   useEffect(() => {
     if ("Notification" in window && Notification.permission !== "granted") {
@@ -87,27 +64,44 @@ const TimerCircle = ({ fullSchedule }) => {
   };
 
   useEffect(() => {
+    if (!fullSchedule || fullSchedule.length === 0) return;
+
+    const parsedSchedules = fullSchedule.map((s) => {
+      const [startHour, startMinute] = s.startTime.split(":").map(Number);
+      const [endHour, endMinute] = s.endTime.split(":").map(Number);
+
+      const start = new Date(s.date);
+      start.setHours(startHour, startMinute, 0, 0);
+
+      const end = new Date(s.date);
+      end.setHours(endHour, endMinute, 0, 0);
+
+      // If end is before start, assume it crosses to next day
+      if (end < start) {
+        end.setDate(end.getDate() + 1);
+      }
+
+      return { start, end };
+    });
+
+    setScheduleTimes(parsedSchedules);
+  }, [fullSchedule]);
+
+
+  useEffect(() => {
     const checkSchedule = () => {
+
       if (scheduleTimes.length === 0) return;
 
       const now = new Date();
       let found = false;
 
       for (let i = 0; i < scheduleTimes.length; i++) {
-        const [startStr, endStr] = scheduleTimes[i].split(" - ");
-        const start = parseTime(startStr);
-        const end = parseTime(endStr);
+        const { start, end } = scheduleTimes[i];
 
         if (now >= start && now < end) {
           setCurrentSchedule({ start, end });
-          setNextSchedule(
-            scheduleTimes[i + 1]
-              ? {
-                start: parseTime(scheduleTimes[i + 1].split(" - ")[0]),
-                end: parseTime(scheduleTimes[i + 1].split(" - ")[1]),
-              }
-              : null
-          );
+          setNextSchedule(scheduleTimes[i + 1] || null);
           found = true;
           break;
         } else if (now < start) {
