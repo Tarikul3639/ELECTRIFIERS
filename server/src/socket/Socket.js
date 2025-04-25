@@ -1,8 +1,10 @@
-// config/Socket.js
 const { Server } = require("socket.io");
-const Schedule = require("../models/Schedule.js");
 const AddNewSchedule = require("./AddNewSchedule.js");
-const ScheduleSortByStatusDateTime = require("../utils/ScheduleSortByStatusDateTime.js");
+const DeleteSchedule = require("./DeleteSchedule.js");
+const LocationFilter = require("./LocationFilter.js");
+const LoadAllSchedule = require("./LoadAllSchedule.js");
+const ProfileImageCustom = require("./ProfileImageCustom.js");
+const UpdateSchedule = require("./UpdateSchedule.js");
 const User = require("../models/User.js");
 
 let io = null;
@@ -24,115 +26,59 @@ const Socket = (server) => {
 
   io.on("connection", async (socket) => {
     // When user connects
-    socket.on("user:connected", (user) => {
+    socket.on("user:connected", async (user) => {
       activeUsers.set(socket.id, user.email);
       console.log("✅ New socket user connected:", user.email);
+
+      // ✅ Update socketId in User schema
+      try {
+        await User.findOneAndUpdate(
+          { email: user.email },
+          { socketId: socket.id },
+          { new: true }
+        );
+        console.log("✅ socketId updated in DB for:", user.email);
+      } catch (error) {
+        console.error("❌ Error updating socketId:", error.message);
+      }
     });
 
-    socket.on(
-      "update-profile-image",
-      async ({ email, profileImage }, callback) => {
-        try {
-          const updatedUser = await User.findOneAndUpdate(
-            { email },
-            { profileImage },
-            { new: true }
-          );
-
-          if (updatedUser) {
-            console.log("Profile image updated successfully.");
-            return callback({ status: "success", data: updatedUser });
-          } else {
-            return callback({ status: "error", message: "User not found" });
-          }
-        } catch (err) {
-          console.error("Update failed:", err);
-          callback({ status: "error", message: "Error updating profile" });
-        }
-      }
-    );
+    // Profile image update
+    ProfileImageCustom(socket, io);
 
     // Load schedule based on user email
-    socket.on("user:load-schedule", async (email, callback) => {
-      try {
-        const user = await User.findOne({ email }, "division district").lean();
-        if (!user) {
-          return callback({ status: "error", message: "User not found" });
-        }
-
-        const { division, district } = user;
-        const schedule = await Schedule.find({ division, district }).lean();
-
-        const sortedSchedule = ScheduleSortByStatusDateTime(schedule);
-
-        console.log("✅ Schedule loaded for user:", email);
-        callback({ status: "success", data: sortedSchedule });
-      } catch (error) {
-        console.error("❌ Error loading schedules:", error);
-        callback({ status: "error", message: "Failed to load schedule" });
-      }
-    });
+    LoadAllSchedule(socket, io);
 
     // Load schedule based on location filter
-    socket.on("load-schedule", async (location) => {
-      try {
-        let schedules = [];
-
-        if (!location) {
-         const AllSchedule = await Schedule.find({});
-          schedules = ScheduleSortByStatusDateTime(AllSchedule);
-        } else if (location.division && !location.district) {
-          schedules = await Schedule.find({ division: location.division });
-        } else if (location.division && location.district) {
-          schedules = await Schedule.find({
-            division: location.division,
-            district: location.district,
-          });
-        }
-
-        socket.emit("load-schedule", schedules);
-      } catch (error) {
-        console.error("❌ Error loading schedules:", error);
-        socket.emit("load-schedule", []);
-      }
-    });
+    LocationFilter(socket, io);
 
     // Add a new schedule
     AddNewSchedule(socket, io);
 
+    // Update a schedule
+    UpdateSchedule(socket, io);
+
     // Delete a schedule
-    socket.on("delete-schedule", async (id, callback) => {
-      try {
-        const deletedSchedule = await Schedule.findByIdAndDelete(id);
-
-        if (!deletedSchedule) {
-          return callback({
-            status: "error",
-            message: "Schedule not found",
-          });
-        }
-
-        console.log("✅ Schedule deleted:", deletedSchedule);
-
-        callback({
-          status: "success",
-          message: "Schedule deleted successfully!",
-        });
-
-        // Notify other users
-        io.emit("schedule-deleted", deletedSchedule);
-      } catch (error) {
-        console.error("❌ Error deleting schedule:", error);
-        callback({ status: "error", message: "Failed to delete schedule" });
-      }
-    });
+    DeleteSchedule(socket, io);
 
     // When a user disconnects
-    socket.on("disconnect", () => {
-      const user = activeUsers.get(socket.id);
-      if (user) {
-        console.log("❌ Socket user disconnected:", user);
+    socket.on("disconnect", async () => {
+      const userEmail = activeUsers.get(socket.id);
+      if (userEmail) {
+        console.log("❌ Socket user disconnected:", userEmail);
         activeUsers.delete(socket.id);
+
+        // ✅ Optionally reset the socketId
+        try {
+          await User.findOneAndUpdate(
+            { email: userEmail },
+            { socketId: null },
+            { new: true }
+          );
+          console.log("✅ socketId reset in DB for:", userEmail);
+        } catch (error) {
+          console.error("❌ Error resetting socketId:", error.message);
+        }
       } else {
         console.log("❌ Disconnected unknown socket:", socket.id);
       }
