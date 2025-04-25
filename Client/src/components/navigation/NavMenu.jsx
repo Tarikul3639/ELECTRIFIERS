@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-scroll";
 import Logo from "../../assets/Image/logo.png";
 import Profile from "../Profile.jsx";
-import Notification from "../Notification.jsx";
+import Notification from "../Notifications.jsx";
 import SideBar from "./SideBar.jsx";
 
 const NavMenu = () => {

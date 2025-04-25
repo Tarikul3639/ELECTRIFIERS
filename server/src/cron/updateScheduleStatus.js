@@ -10,7 +10,17 @@ cron.schedule("* * * * *", async () => {
     const now = dayjs();
     const bulkOps = [];
     const io = getIO();
-    const notifyMinutes = [10, 5, 1];
+    const notifyMinutes = [10,9,8,7,6, 5,4,3,2, 1];
+
+    // ✅ Helper function to send socket notification
+    const sendNotification = async (division, district, title, message) => {
+      const users = await User.find({ division, district }, "socketId");
+      users.forEach(user => {
+        if (user.socketId) {
+          io.to(user.socketId).emit("notify", { title, message });
+        }
+      });
+    };
 
     for (const schedule of schedules) {
       const { _id, date, startTime, endTime, status, division, district } = schedule;
@@ -20,7 +30,7 @@ cron.schedule("* * * * *", async () => {
       let endDateTime = dayjs(`${baseDate}T${endTime}`);
 
       if (endDateTime.isBefore(startDateTime)) {
-        endDateTime = endDateTime.add(1, "day"); // handle overnight schedule
+        endDateTime = endDateTime.add(1, "day"); // Overnight schedule
       }
 
       // --- Status Update Logic ---
@@ -40,29 +50,24 @@ cron.schedule("* * * * *", async () => {
       // --- Notification Logic ---
       const minsBeforeStart = startDateTime.diff(now, "minute");
       const minsBeforeEnd = endDateTime.diff(now, "minute");
+      console.log(`Schedule ID: ${_id}, Status: ${newStatus}, Mins Before Start: ${minsBeforeStart}, Mins Before End: ${minsBeforeEnd}`);
 
       if (notifyMinutes.includes(minsBeforeStart)) {
-        const users = await User.find({ division, district }, "socketId");
-        users.forEach(user => {
-          if (user.socketId) {
-            io.to(user.socketId).emit("notify", {
-              title: "⚡ Load Shedding Alert",
-              message: `Power cut will start after ${minsBeforeStart} minute(s).`,
-            });
-          }
-        });
+        await sendNotification(
+          division,
+          district,
+          "⚡ Load Shedding Alert",
+          `Power cut will start after ${minsBeforeStart} minute(s).`
+        );
       }
 
       if (notifyMinutes.includes(minsBeforeEnd)) {
-        const users = await User.find({ division, district }, "socketId");
-        users.forEach(user => {
-          if (user.socketId) {
-            io.to(user.socketId).emit("notify", {
-              title: "✅ Power Resume Alert",
-              message: `Power will be back after ${minsBeforeEnd} minute(s).`,
-            });
-          }
-        });
+        await sendNotification(
+          division,
+          district,
+          "✅ Power Resume Alert",
+          `Power will be back after ${minsBeforeEnd} minute(s).`
+        );
       }
     }
 

@@ -1,21 +1,18 @@
-import { memo, useEffect, useState, useRef } from "react";
+import { memo, useEffect, useState } from "react";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-
-const messages = {
-  first: "Power cut after in 10 minutes",
-  second: "Power cut after in 5 minutes",
-  third: "Power cut after in 1 minutes",
-  one: "Power on after 10 minutes",
-  two: "Power on after 5 minutes",
-  three: "Power on after 1 minutes",
-};
 
 const TimerCircle = memo(({ fullSchedule }) => {
   const [currentSchedule, setCurrentSchedule] = useState(null);
   const [nextSchedule, setNextSchedule] = useState(null);
   const [scheduleTimes, setScheduleTimes] = useState([]);
-  const lastNotifiedTime = useRef({ minute: null, type: null });
+  const [timeLeft, setTimeLeft] = useState({
+    hour: 0,
+    minute: 0,
+    second: 0,
+    progress: 0,
+    color: "url(#gradient2)",
+  });
 
   const formatTime = (date) =>
     date.toLocaleTimeString("en-US", {
@@ -23,39 +20,6 @@ const TimerCircle = memo(({ fullSchedule }) => {
       minute: "2-digit",
       hour12: true,
     });
-
-  useEffect(() => {
-    if ("Notification" in window && Notification.permission !== "granted") {
-      Notification.requestPermission().then((permission) => {
-        console.log("Notification permission:", permission);
-      });
-    }
-  }, []);
-
-  const sendNotification = (title, body) => {
-    console.log("Sending notification:", title, body);
-    const newNotification = {
-      title,
-      body,
-      read: false,
-      timestamp: new Date().toISOString(),
-    };
-  
-    const existing = JSON.parse(localStorage.getItem("notifications")) || [];
-    existing.unshift(newNotification);
-    const updated = existing.slice(0, 20);
-    localStorage.setItem("notifications", JSON.stringify(updated));
-  
-    // Dispatch custom event
-    window.dispatchEvent(new Event("notificationUpdated"));
-  
-    if ("Notification" in window && Notification.permission === "granted") {
-      new Notification(title, {
-        body,
-        icon: "/icon.png",
-      });
-    }
-  };  
 
   useEffect(() => {
     if (!fullSchedule || fullSchedule.length === 0) return;
@@ -82,8 +46,6 @@ const TimerCircle = memo(({ fullSchedule }) => {
 
   useEffect(() => {
     const checkSchedule = () => {
-      if (scheduleTimes.length === 0) return;
-
       const now = new Date();
       let found = false;
 
@@ -97,13 +59,15 @@ const TimerCircle = memo(({ fullSchedule }) => {
           break;
         } else if (now < start) {
           setNextSchedule({ start, end });
+          setCurrentSchedule(null);
           found = true;
           break;
         }
       }
 
-      if (!found && scheduleTimes.length > 0) {
+      if (!found) {
         setCurrentSchedule(null);
+        setNextSchedule(null);
       }
     };
 
@@ -112,25 +76,13 @@ const TimerCircle = memo(({ fullSchedule }) => {
     return () => clearInterval(interval);
   }, [scheduleTimes]);
 
-  const [timeLeft, setTimeLeft] = useState({
-    hour: 0,
-    minute: 0,
-    second: 0,
-    progress: 0,
-    color: "url(#gradient2)",
-  });
-
-  useEffect(() => {
-    lastNotifiedTime.current = { minute: null, type: null };
-  }, [currentSchedule, nextSchedule]);
-
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
       let difference = 0,
         totalDuration = 1,
         progress = 0,
-        progressColor = "url(#gradient)";
+        progressColor = "url(#gradient2)";
 
       if (currentSchedule) {
         const { start, end } = currentSchedule;
@@ -149,32 +101,6 @@ const TimerCircle = memo(({ fullSchedule }) => {
       const hour = Math.floor(difference / 3600000);
       const minute = Math.floor((difference % 3600000) / 60000);
       const second = Math.floor((difference % 60000) / 1000);
-
-      if ((minute === 10 || minute === 5 || minute === 1) && second === 0) {
-        const type = currentSchedule ? "current" : "next";
-
-        if (
-          lastNotifiedTime.current.minute !== minute ||
-          lastNotifiedTime.current.type !== type
-        ) {
-          let message = "";
-
-          if (type === "current") {
-            if (minute === 10) message = messages.one;
-            else if (minute === 5) message = messages.two;
-            else if (minute === 1) message = messages.three;
-          } else {
-            if (minute === 10) message = messages.first;
-            else if (minute === 5) message = messages.second;
-            else if (minute === 1) message = messages.third;
-          }
-
-          if (message) {
-            sendNotification("Load Shedding Alert", message);
-            lastNotifiedTime.current = { minute, type };
-          }
-        }
-      }
 
       setTimeLeft({ hour, minute, second, progress, color: progressColor });
     };
@@ -220,5 +146,4 @@ const TimerCircle = memo(({ fullSchedule }) => {
   );
 });
 
-// Export memoized version
 export default TimerCircle;

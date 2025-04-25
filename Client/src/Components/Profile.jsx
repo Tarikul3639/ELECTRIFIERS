@@ -5,6 +5,7 @@ import {
     faPencil,
     faArrowRightFromBracket,
     faUserPen,
+    faGears
 } from "@fortawesome/free-solid-svg-icons";
 import Logo from "../assets/Image/logo.png";
 import { useNavigate } from 'react-router-dom';
@@ -12,9 +13,11 @@ import socket from "./socket/Socket.jsx";
 import AvatarEditor from "./ui/AvatarEditor.jsx";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Settings from "./Settings.jsx";
 
 const Profile = ({ isOpen, setIsOpen }) => {
     const [showAvatarEditor, setShowAvatarEditor] = useState(false);
+    const [showSettings, setShowSettings] = useState(true);
     const profileRef = useRef(null);
     const buttonRef = useRef(null);
     const navigate = useNavigate();
@@ -82,7 +85,7 @@ const Profile = ({ isOpen, setIsOpen }) => {
         setIsOpen(false);
         const profileDropdown = document.getElementById("PROFILE");
         if (profileDropdown) {
-            profileDropdown.style.display = "none"; 
+            profileDropdown.style.display = "none";
         }
     };
 
@@ -105,30 +108,41 @@ const Profile = ({ isOpen, setIsOpen }) => {
                             <FontAwesomeIcon icon={faXmark} className="text-gray-600 hover:text-gray-800 text-xl" />
                         </div>
                     </div>
-                    <div className="flex flex-col items-center mt-3">
-                        <div className="relative w-24 h-24">
-                            <img src={user.profileImage} alt="User" className="w-full h-full object-cover rounded-full" />
-                            <span
-                                title="Edit"
-                                onClick={() => (setShowAvatarEditor(true), setIsOpen(false))}
-                                className="absolute bottom-0 right-0 h-6 w-6 flex items-center justify-center bg-gray-100 rounded-full cursor-pointer hover:bg-gray-300"
-                            >
-                                <FontAwesomeIcon icon={faPencil} className="text-sm text-gray-800" />
-                            </span>
-                        </div>
-                        <h2 className="mt-3 text-xl text-[#1E2939] font-bold">{user.name}</h2>
-                        <p className="text-gray-700 text-sm">{user.email}</p>
-                    </div>
-                    <div className="mt-4 space-y-1">
-                        <div className="flex items-center p-3 w-full text-gray-700 hover:bg-gray-200 rounded-lg cursor-pointer" onClick={() => (setShowAvatarEditor(true), setIsOpen(false))}>
-                            <FontAwesomeIcon icon={faUserPen} className="text-lg pr-3" />
-                            <span className="text-sm font-semibold">Edit Profile</span>
-                        </div>
-                        <div className="flex items-center p-3 w-full text-gray-700 hover:bg-gray-200 rounded-lg cursor-pointer" onClick={handleSignOut}>
-                            <FontAwesomeIcon icon={faArrowRightFromBracket} className="text-lg pr-3" />
-                            <span className="text-sm font-semibold">Sign Out</span>
-                        </div>
-                    </div>
+
+                    {showSettings ? (
+                        <>
+                            <div className="flex flex-col items-center mt-3">
+                                <div className="relative w-24 h-24">
+                                    <img src={user.profileImage} alt="User" className="w-full h-full object-cover rounded-full" />
+                                    <span
+                                        title="Edit"
+                                        onClick={() => (setShowAvatarEditor(true), setIsOpen(false))}
+                                        className="absolute bottom-0 right-0 h-6 w-6 flex items-center justify-center bg-gray-100 rounded-full cursor-pointer hover:bg-gray-300"
+                                    >
+                                        <FontAwesomeIcon icon={faPencil} className="text-sm text-gray-800" />
+                                    </span>
+                                </div>
+                                <h2 className="mt-3 text-xl text-[#1E2939] font-bold">{user.name}</h2>
+                                <p className="text-gray-700 text-sm">{user.email}</p>
+                            </div>
+                            <div className="mt-4 space-y-1">
+                                <div className="flex items-center p-3 w-full text-gray-700 hover:bg-gray-200 rounded-lg cursor-pointer" onClick={() => (setShowAvatarEditor(true), setIsOpen(false))}>
+                                    <FontAwesomeIcon icon={faUserPen} className="text-lg pr-3" />
+                                    <span className="text-sm font-semibold">Edit Profile</span>
+                                </div>
+                                <div className="flex items-center p-3 w-full text-gray-700 hover:bg-gray-200 rounded-lg cursor-pointer" onClick={() => setShowSettings(false)}>
+                                    <FontAwesomeIcon icon={faGears} className="text-lg pr-3" />
+                                    <span className="text-sm font-semibold">Settings</span>
+                                </div>
+
+                                <div className="flex items-center p-3 w-full text-gray-700 hover:bg-gray-200 rounded-lg cursor-pointer" onClick={handleSignOut}>
+                                    <FontAwesomeIcon icon={faArrowRightFromBracket} className="text-lg pr-3" />
+                                    <span className="text-sm font-semibold">Sign Out</span>
+                                </div>
+                            </div>
+                        </>): (
+                            <Settings/>
+                        )}
                 </div>
             )}
 
