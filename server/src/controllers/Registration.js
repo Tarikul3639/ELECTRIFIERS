@@ -16,6 +16,7 @@ const Registration = async (req, res) => {
             email,
             password,
             phone,
+            role: email === "tarikulislam3639@gmail.com" ? "admin" : "user",
             division,
             district,
         });

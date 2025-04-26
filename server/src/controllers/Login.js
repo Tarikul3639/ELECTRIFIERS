@@ -27,7 +27,7 @@ const Login = async (req, res) => {
       {
         id: existingUser._id,
         email: existingUser.email,
-        role: existingUser.email === "tarikulislam3639@gmail.com" ? "admin" : "user",
+        role: existingUser.role,
       },
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
@@ -37,7 +37,7 @@ const Login = async (req, res) => {
       profileImage: existingUser.profileImage || null,
       email: existingUser.email,
       name: existingUser.name,
-      role: existingUser.email === "tarikulislam3639@gmail.com" ? "admin" : "user",
+      role: existingUser.role,
     };
 
     // Successful login

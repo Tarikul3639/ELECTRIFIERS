@@ -26,15 +26,6 @@ const Notifications = () => {
     const notificationRef = useRef(null);
     const buttonRef = useRef(null);
 
-    // Step 1: Request permission for browser notification once
-    useEffect(() => {
-        if ("Notification" in window && Notification.permission !== "granted") {
-            Notification.requestPermission().then((permission) => {
-                console.log("Notification permission:", permission);
-            });
-        }
-    }, []);
-
     // Step 2: Handle socket notification
     useEffect(() => {
         const handleSocketNotification = (data) => {
@@ -55,11 +46,14 @@ const Notifications = () => {
 
             window.dispatchEvent(new Event("notificationUpdated"));
 
-            // Browser (Windows) notification
-            if ("Notification" in window && Notification.permission === "granted") {
+            // ✅ Check user's setting
+            const isEnabled = localStorage.getItem("notificationsEnabled") === "true";
+
+            // ✅ If browser allows + user enabled in settings
+            if ("Notification" in window && Notification.permission === "granted" && isEnabled) {
                 new Notification(data.title, {
                     body: data.message,
-                    icon: "../assets/Image/logo.png", 
+                    icon: "../assets/Image/logo.png",
                 });
             }
         };

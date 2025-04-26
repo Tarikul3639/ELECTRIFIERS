@@ -19,6 +19,11 @@ const SideBar = () => {
     navigate('/Admin');
   };
 
+  const handleProfileOpen = () => {
+    setIsProfileOpen(true);  
+    // setIsOpen(false);  
+  };
+
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
     if (user && user.role === "admin") {
@@ -34,6 +39,7 @@ const SideBar = () => {
         !buttonRef.current.contains(event.target)
       ) {
         setIsOpen(false);
+        setIsProfileOpen(false); 
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -111,7 +117,7 @@ const SideBar = () => {
           <div
             title="Click To Logo"
             className="flex items-center justify-center bg-gray-300 rounded-full mt-3 hover:bg-gray-400 transition duration-300 px-4.5 py-1.5 cursor-pointer"
-            onClick={() => setIsProfileOpen(true)}  
+            onClick={handleProfileOpen}  
           >
             <Profile isOpen={isProfileOpen} setIsOpen={setIsProfileOpen} />
             <p className="pl-3 text-gray-800 text-lg font-semibold">{name}</p>

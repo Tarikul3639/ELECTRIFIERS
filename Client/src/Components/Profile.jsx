@@ -17,7 +17,7 @@ import Settings from "./Settings.jsx";
 
 const Profile = ({ isOpen, setIsOpen }) => {
     const [showAvatarEditor, setShowAvatarEditor] = useState(false);
-    const [showSettings, setShowSettings] = useState(true);
+    const [showSettings, setShowSettings] = useState(false);
     const profileRef = useRef(null);
     const buttonRef = useRef(null);
     const navigate = useNavigate();
@@ -63,6 +63,7 @@ const Profile = ({ isOpen, setIsOpen }) => {
             ) {
                 setIsOpen(false);
                 setShowAvatarEditor(false);
+                setShowSettings(false);
             }
         };
 
@@ -83,6 +84,7 @@ const Profile = ({ isOpen, setIsOpen }) => {
     const handleClose = () => {
         setShowAvatarEditor(false);
         setIsOpen(false);
+        setShowSettings(false);
         const profileDropdown = document.getElementById("PROFILE");
         if (profileDropdown) {
             profileDropdown.style.display = "none";
@@ -109,7 +111,7 @@ const Profile = ({ isOpen, setIsOpen }) => {
                         </div>
                     </div>
 
-                    {showSettings ? (
+                    {!showSettings ? (
                         <>
                             <div className="flex flex-col items-center mt-3">
                                 <div className="relative w-24 h-24">
@@ -126,11 +128,11 @@ const Profile = ({ isOpen, setIsOpen }) => {
                                 <p className="text-gray-700 text-sm">{user.email}</p>
                             </div>
                             <div className="mt-4 space-y-1">
-                                <div className="flex items-center p-3 w-full text-gray-700 hover:bg-gray-200 rounded-lg cursor-pointer" onClick={() => (setShowAvatarEditor(true), setIsOpen(false))}>
+                                <div className="flex items-center p-3 w-full text-gray-700 hover:bg-gray-200 rounded-lg cursor-pointer" onClick={() => (setShowAvatarEditor(!showAvatarEditor), setIsOpen(!isOpen))}>
                                     <FontAwesomeIcon icon={faUserPen} className="text-lg pr-3" />
                                     <span className="text-sm font-semibold">Edit Profile</span>
                                 </div>
-                                <div className="flex items-center p-3 w-full text-gray-700 hover:bg-gray-200 rounded-lg cursor-pointer" onClick={() => setShowSettings(false)}>
+                                <div className="flex items-center p-3 w-full text-gray-700 hover:bg-gray-200 rounded-lg cursor-pointer" onClick={() => setShowSettings(!showSettings)}>
                                     <FontAwesomeIcon icon={faGears} className="text-lg pr-3" />
                                     <span className="text-sm font-semibold">Settings</span>
                                 </div>

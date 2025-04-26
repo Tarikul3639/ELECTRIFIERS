@@ -6,6 +6,7 @@ const LoadAllSchedule = require("./LoadAllSchedule.js");
 const ProfileImageCustom = require("./ProfileImageCustom.js");
 const UpdateSchedule = require("./UpdateSchedule.js");
 const User = require("../models/User.js");
+const DeleteAccount = require("./DeleteAccount.js");
 
 let io = null;
 
@@ -60,6 +61,9 @@ const Socket = (server) => {
 
     // Delete a schedule
     DeleteSchedule(socket, io);
+
+    // Delete account
+    DeleteAccount(socket, io);
 
     // When a user disconnects
     socket.on("disconnect", async () => {
