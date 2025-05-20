@@ -6,8 +6,8 @@ import Registration from "../pages/auth/Registration.jsx";
 import ForgotPassword from "../pages/auth/ForgotPassword.jsx";
 import Admin from "../pages/admin/Admin.jsx";
 
-import MainLayout from "../components/layouts/MainLayout.jsx";
-import AuthLayout from "../components/layouts/AuthLayout.jsx";
+import MainLayout from "../Components/layouts/MainLayout.jsx";
+import AuthLayout from "../Components/layouts/AuthLayout.jsx";
 import ToastContainer from "../Components/ui/ToastContainer.jsx";
 import PrivateRoute from "../Components/routes/PrivateRoute.jsx";
 import AdminRoute from "../Components/routes/AdminRoute.jsx";
