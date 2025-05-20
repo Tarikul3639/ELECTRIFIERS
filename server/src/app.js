@@ -12,10 +12,6 @@ app.use(cors({
 
 app.use(express.json()); 
 
-app.get('/', (req, res) => {
-    res.json({ message: 'API is running...' });
-  });
-
 // Routes
 app.use('/api', Router);
 app.use("/", (req, res) => {
