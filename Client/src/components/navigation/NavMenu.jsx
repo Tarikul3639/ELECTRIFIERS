@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from "react";
 import { Link } from "react-scroll";
 import Logo from "../../assets/Image/logo.png";
-import Profile from "../Profile.jsx";
+import Profile from "../../components/Profile.jsx";
 import Notification from "../Notifications.jsx";
 import SideBar from "./SideBar.jsx";
 
