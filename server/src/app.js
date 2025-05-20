@@ -18,5 +18,13 @@ app.get('/', (req, res) => {
 
 // Routes
 app.use('/api', Router);
+app.use("/", (req, res) => {
+    res.send({
+        activeStatus: true,
+        message: "Server is running",
+        version: process.env.VERSION || "1.0.0",
+        Error: false,
+    })
+});
 
 module.exports = app;
