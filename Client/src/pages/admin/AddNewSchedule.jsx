@@ -1,9 +1,9 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import Button from "../../components/ui/Button.jsx";
-import DatePicker from "../../components/ui/DatePicker.jsx";
-import CustomSelect from "../../components/ui/Select.jsx";
+import Button from "../../Components/ui/Button.jsx";
+import DatePicker from "../../Components/ui/DatePicker.jsx";
+import CustomSelect from "../../Components/ui/Select.jsx";
 import socket from "../../Components/socket/Socket.jsx";
 import { toast } from "react-toastify";
 import { format } from "date-fns";
