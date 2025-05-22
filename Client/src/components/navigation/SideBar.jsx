@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHome, faInfoCircle, faEnvelope, faBars, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { RiCalendarScheduleFill } from "react-icons/ri";
-import Profile from "../../Components/Profile.jsx";
+import Profile from "../Profile.jsx";
 
 const SideBar = () => {
   const [isOpen, setIsOpen] = useState(false);

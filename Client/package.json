@@ -2,12 +2,12 @@
   "name": "electrifiers",
   "private": true,
   "version": "0.0.0",
-  "type": "module",  "scripts": {
+  "type": "module",
+  "scripts": {
     "start": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview",
-    "ci": "npm install --legacy-peer-deps && npm run build"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -22,8 +22,9 @@
     "classnames": "^2.5.1",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.13",
-    "lightningcss": "^1.29.3",    "react": "^19.0.0",
-    "react-avatar-editor": "^14.0.0-beta.6",
+    "lightningcss": "^1.29.3",
+    "react": "^19.0.0",
+    "react-avatar-editor": "^13.0.2",
     "react-circular-progressbar": "^2.2.0",
     "react-data-table-component": "^7.7.0",
     "react-datepicker": "^8.2.1",
