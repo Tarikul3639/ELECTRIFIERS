@@ -2,7 +2,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faFilter, faCalendar } from "@fortawesome/free-solid-svg-icons";
 import { useState, useEffect, useRef } from "react";
 import "react-datepicker/dist/react-datepicker.css";
-import Button from "../../Components/ui/Button.jsx";
+import Button from "../../components/ui/Button.jsx";
 import socket from "../../Components/socket/Socket.jsx";
 import LocationFilter from "./LocationFilter.jsx";
 import AddNewSchedule from "./AddNewSchedule.jsx";
