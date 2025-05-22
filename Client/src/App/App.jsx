@@ -6,13 +6,14 @@ import Registration from "@pages/auth/Registration.jsx";
 import ForgotPassword from "@pages/auth/ForgotPassword.jsx";
 import Admin from "@pages/admin/Admin.jsx";
 
-// Using relative imports for layouts and components
+// Using direct import from react-toastify to avoid path issues
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import MainLayout from "../components/layouts/MainLayout.jsx";
 import AuthLayout from "../components/layouts/AuthLayout.jsx";
-import ToastContainer from "../components/ui/ToastContainer.jsx";
-import PrivateRoute from "../components/routes/PrivateRoute.jsx";
-import AdminRoute from "../components/routes/AdminRoute.jsx";
-import PublicRoute from "../components/routes/PublicRoute.jsx";
+import PrivateRoute from "../Components/routes/PrivateRoute.jsx";
+import AdminRoute from "../Components/routes/AdminRoute.jsx";
+import PublicRoute from "../Components/routes/PublicRoute.jsx";
 
 
 function App() {  return (
