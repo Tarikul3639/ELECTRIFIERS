@@ -1,7 +1,7 @@
 import { useState, useEffect, memo } from "react";
 import LoadSheddingList from "./LoadSheddingList.jsx";
 import TimerCircle from "./TimerCircle.jsx";
-import socket from "../../Components/socket/Socket.jsx";
+import socket from "../../components/socket/Socket.jsx";
 import dayjs from "dayjs";
 
 const Home = memo(() => {
