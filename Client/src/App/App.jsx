@@ -8,12 +8,12 @@ import ForgotPassword from "@pages/auth/ForgotPassword.jsx";
 import Admin from "@pages/admin/Admin.jsx";
 
 // Using path aliases to avoid case sensitivity issues
-import MainLayout from "@components/layouts/MainLayout.jsx";
-import AuthLayout from "@components/layouts/AuthLayout.jsx";
-import ToastContainer from "@components/ui/ToastContainer.jsx";
-import PrivateRoute from "@components/routes/PrivateRoute.jsx";
-import AdminRoute from "@components/routes/AdminRoute.jsx";
-import PublicRoute from "@components/routes/PublicRoute.jsx";
+import MainLayout from "../components/layouts/MainLayout.jsx";
+import AuthLayout from "../components/layouts/AuthLayout.jsx";
+import ToastContainer from "../components/ui/ToastContainer.jsx";
+import PrivateRoute from "../components/routes/PrivateRoute.jsx";
+import AdminRoute from "../components/routes/AdminRoute.jsx";
+import PublicRoute from "../components/routes/PublicRoute.jsx";
 
 
 function App() {  return (
