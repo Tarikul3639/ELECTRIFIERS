@@ -11,10 +11,9 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   build: {
     outDir: 'build',
-  },
-  resolve: {
+  },  resolve: {
     alias: {
-      '@components': resolve(__dirname, './src/Components'),
+      '@components': resolve(__dirname, './src/components'),
       '@pages': resolve(__dirname, './src/pages'),
       '@assets': resolve(__dirname, './src/assets'),
       '@app': resolve(__dirname, './src/App')
