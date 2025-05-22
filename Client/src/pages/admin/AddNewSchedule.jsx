@@ -1,14 +1,14 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import Button from "../../Components/ui/Button.jsx";
-import DatePicker from "../../Components/ui/DatePicker.jsx";
+import Button from "../../components/ui/Button.jsx";
+import DatePicker from "../../components/ui/DatePicker.jsx";
 import CustomSelect from "../../Components/ui/Select.jsx";
-import socket from "../../Components/socket/Socket.jsx";
+import socket from "../../components/socket/Socket.jsx";
 import { toast } from "react-toastify";
 import { format } from "date-fns";
 import "react-toastify/dist/ReactToastify.css";
-import TimeRangePicker from "../../Components/ui/TimeRangePicker.jsx";
+import TimeRangePicker from "../../components/ui/TimeRangePicker.jsx";
 
 const AddNewSchedule = ({ setShowEdit, locationData }) => {
   const [loading, setLoading] = React.useState(false);

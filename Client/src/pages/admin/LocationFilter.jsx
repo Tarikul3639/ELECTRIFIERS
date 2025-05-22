@@ -1,8 +1,8 @@
 import React from "react";
-import CustomSelect from "../../Components/ui/Select.jsx";
+import CustomSelect from "../../components/ui/Select.jsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendar, faFilter } from "@fortawesome/free-solid-svg-icons";
-import Button from "../../Components/ui/Button.jsx";
+import Button from "../../components/ui/Button.jsx";
 
 const LocationFilter = ({onChangeLocation,locationData, loading}) => {
     const [location, setLocation] = React.useState({

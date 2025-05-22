@@ -3,7 +3,7 @@ import { useNavigate,useLocation } from "react-router-dom";
 import { useState } from "react";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Loader from '../../Components/ui/Loader.jsx';
+import Loader from '../../components/ui/Loader.jsx';
 
 const Login = () => {
   const navigate = useNavigate();
