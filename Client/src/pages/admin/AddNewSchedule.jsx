@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import Button from "../../components/ui/Button.jsx";
 import DatePicker from "../../components/ui/DatePicker.jsx";
-import CustomSelect from "../../Components/ui/Select.jsx";
+import CustomSelect from "../../components/ui/Select.jsx";
 import socket from "../../components/socket/Socket.jsx";
 import { toast } from "react-toastify";
 import { format } from "date-fns";
