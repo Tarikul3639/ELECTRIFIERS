@@ -4,7 +4,7 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import Button from "../../components/ui/Button.jsx";
 import DatePicker from "../../components/ui/DatePicker.jsx";
 import CustomSelect from "../../components/ui/Select.jsx";
-import socket from "../../Components/socket/Socket.jsx";
+import socket from "../../components/socket/Socket.jsx";
 import { toast } from "react-toastify";
 import { format } from "date-fns";
 import "react-toastify/dist/ReactToastify.css";

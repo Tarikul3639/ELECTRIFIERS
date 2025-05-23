@@ -8,8 +8,7 @@ import SideBar from "./SideBar.jsx";
 
 const NavMenu = () => {
   const [isAdmin, setIsAdmin] = useState(false);
-  const [isProfileOpen, setIsProfileOpen] = useState(false); // state for controlling Profile open/close
-
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
     if (user && user.role === "admin") {

@@ -1,4 +1,4 @@
-import TimeRangePicker from "../../../Components/ui/TimeRangePicker.jsx";
+import TimeRangePicker from "../../../components/ui/TimeRangePicker.jsx";
 
 const TimeRangeColumn = ({ showEdit, startTime, endTime, _id, setUpdateSchedule, updateSchedule }) => {
     return (

@@ -8,10 +8,10 @@ import Admin from "../pages/admin/Admin.jsx";
 
 import MainLayout from "../components/layouts/MainLayout.jsx";
 import AuthLayout from "../components/layouts/AuthLayout.jsx";
-import ToastContainer from "../Components/ui/ToastContainer.jsx";
-import PrivateRoute from "../Components/routes/PrivateRoute.jsx";
-import AdminRoute from "../Components/routes/AdminRoute.jsx";
-import PublicRoute from "../Components/routes/PublicRoute.jsx";
+import ToastContainer from "../components/ui/ToastContainer.jsx";
+import PrivateRoute from "../components/routes/PrivateRoute.jsx";
+import AdminRoute from "../components/routes/AdminRoute.jsx";
+import PublicRoute from "../components/routes/PublicRoute.jsx";
 
 
 function App() {
