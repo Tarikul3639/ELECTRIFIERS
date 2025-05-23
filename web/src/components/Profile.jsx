@@ -21,10 +21,23 @@ const Profile = ({ isOpen, setIsOpen }) => {
     const profileRef = useRef(null);
     const buttonRef = useRef(null);
     const navigate = useNavigate();
-    const [user, setUser] = useState({
-        email: JSON.parse(localStorage.getItem("user"))?.email || "support@loadshedder.com",
-        name: JSON.parse(localStorage.getItem("user"))?.name || "Support",
-        profileImage: JSON.parse(localStorage.getItem("user"))?.profileImage || Logo,
+    const [user, setUser] = useState(() => {
+        const userData = localStorage.getItem("user");
+        try {
+            const parsedUser = userData ? JSON.parse(userData) : null;
+            return {
+                email: parsedUser?.email || "support@loadshedder.com",
+                name: parsedUser?.name || "Support",
+                profileImage: parsedUser?.profileImage || Logo,
+            };
+        } catch (error) {
+            console.error("Error parsing user data:", error);
+            return {
+                email: "support@loadshedder.com",
+                name: "Support",
+                profileImage: Logo,
+            };
+        }
     });
 
     const handleAvatarSave = (newAvatarUrl) => {
@@ -39,18 +52,28 @@ const Profile = ({ isOpen, setIsOpen }) => {
             email: user.email,
             profileImage: newAvatarUrl,
         };
-        socket.emit("update-profile-image", updatedUser, (response) => {
-            if (response.status === "success") {
-                toast.success("Profile image updated successfully!");
-                const storedUser = JSON.parse(localStorage.getItem("user"));
-                localStorage.setItem("user", JSON.stringify({
-                    ...storedUser,
-                    profileImage: newAvatarUrl,
-                }));
-            } else {
-                toast.error(response.message);
-            }
-        });
+        
+        try {
+            socket.emit("update-profile-image", updatedUser, (response) => {
+                if (response.status === "success") {
+                    toast.success("Profile image updated successfully!");
+                    try {
+                        const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+                        localStorage.setItem("user", JSON.stringify({
+                            ...storedUser,
+                            profileImage: newAvatarUrl,
+                        }));
+                    } catch (error) {
+                        console.error("Error updating local storage:", error);
+                    }
+                } else {
+                    toast.error(response.message || "Failed to update profile image");
+                }
+            });
+        } catch (error) {
+            console.error("Socket error:", error);
+            toast.error("Connection error. Please try again later.");
+        }
     };
 
     useEffect(() => {
