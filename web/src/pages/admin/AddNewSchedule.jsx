@@ -8,7 +8,7 @@ import socket from "../../components/socket/Socket.jsx";
 import { toast } from "react-toastify";
 import { format } from "date-fns";
 import "react-toastify/dist/ReactToastify.css";
-import TimeRangePicker from "../../Components/ui/TimeRangePicker.jsx";
+import TimeRangePicker from "../../components/ui/TimeRangePicker.jsx";
 
 const AddNewSchedule = ({ setShowEdit, locationData }) => {
   const [loading, setLoading] = React.useState(false);

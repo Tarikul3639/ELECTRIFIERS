@@ -3,7 +3,7 @@ import { faPlus, faFilter, faCalendar } from "@fortawesome/free-solid-svg-icons"
 import { useState, useEffect, useRef } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import Button from "../../components/ui/Button.jsx";
-import socket from "../../Components/socket/Socket.jsx";
+import socket from "../../components/socket/Socket.jsx";
 import LocationFilter from "./LocationFilter.jsx";
 import AddNewSchedule from "./AddNewSchedule.jsx";
 import { toast } from "react-toastify";
