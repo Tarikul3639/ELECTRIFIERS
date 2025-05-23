@@ -5,7 +5,6 @@ require('dotenv').config();
 
 const app = express();
 app.use(cors({
-    origin: 'https://electrifiers.netlify.app',
     origin: process.env.FRONTEND_URL,
     methods: ['GET', 'POST'],
     credentials: true
