@@ -1,7 +1,8 @@
 [build]
-  publish = "build"
   command = "npm run build"
+  publish = "build"
 
-[build.environment]
-  NODE_VERSION = "22.16.0"
-  NPM_FLAGS = "--legacy-peer-deps"
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
