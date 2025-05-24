@@ -79,7 +79,7 @@ const Home = memo(() => {
   }, [userEmail]);
 
   return (
-    <div className="max-w-6xl flex flex-col items-center mx-auto my-10 p-8 bg-white rounded-lg shadow-sm">
+    <div className="max-w-6xl flex flex-col items-center mx-auto my-10 p-8 bg-white dark:bg-background-dark rounded-lg shadow-sm">
       <TimerCircle fullSchedule={fullSchedule} />
 
       <svg xmlns="http://www.w3.org/2000/svg" style={{ position: "absolute", width: 0, height: 0 }}>
@@ -96,7 +96,7 @@ const Home = memo(() => {
         </defs>
       </svg>
 
-      <div className="mt-8 w-full sm:p-6 bg-gray-100 rounded-lg shadow-md">
+      <div className="mt-8 w-full sm:p-6 bg-gray-100 dark:bg-background-light/5 rounded-lg">
         <LoadSheddingList fullSchedule={fullSchedule} />
       </div>
     </div>

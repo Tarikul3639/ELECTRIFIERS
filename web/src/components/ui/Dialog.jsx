@@ -5,14 +5,14 @@ const Dialog = ({ isOpen, title, message, onClose, onConfirm }) => {
 
     return (
         <div className="fixed h-[100vh] w-[100vw] inset-0 bg-black/70 z-50 flex items-center justify-center">
-            <div className="flex flex-col space-y-2 bg-white rounded-lg shadow-2xl w-full max-w-lg px-4 py-3">
+            <div className="flex flex-col space-y-2 bg-white dark:bg-background-dark dark:border-2 dark:border-gray-700 rounded-lg shadow-2xl w-full max-w-lg px-4 py-3">
                 {/* Title */}
-                <h2 className="text-left text-gray-800 text-lg font-semibold text-center mb-3">
+                <h2 className="text-left text-gray-800 dark:text-gray-300 text-lg font-semibold text-center mb-3">
                     {title}
                 </h2>
 
                 {/* Content */}
-                <div className="text-left text-gray-700 text-center mb-6 ">
+                <div className="text-left text-gray-700 dark:text-gray-400 text-center mb-6 ">
                     {message}
                 </div>
 
@@ -26,7 +26,7 @@ const Dialog = ({ isOpen, title, message, onClose, onConfirm }) => {
                     </button>
                     <button
                         onClick={onConfirm}
-                        className="px-4 py-2 rounded-sm text-blue-600 font-[600] tracking-[-0.01em] hover:bg-blue-200 transition"
+                        className="px-4 py-2 rounded-sm text-blue-600 font-[600] tracking-[-0.01em] hover:bg-red-200 transition"
                     >
                         AGREE
                     </button>

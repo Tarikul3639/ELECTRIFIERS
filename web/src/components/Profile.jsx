@@ -16,6 +16,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Settings from "./Settings.jsx";
 
 const Profile = ({ isOpen, setIsOpen }) => {
+    const ITEM_CLASS = 'flex items-center p-3 py-4 w-full text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-background-light/10 rounded cursor-pointer';
     const [showAvatarEditor, setShowAvatarEditor] = useState(false);
     const [showSettings, setShowSettings] = useState(false);
     const profileRef = useRef(null);
@@ -119,7 +120,7 @@ const Profile = ({ isOpen, setIsOpen }) => {
             <button
                 ref={buttonRef}
                 title="Profile"
-                className="bg-transparent rounded-full hover:bg-gray-100"
+                className="bg-transparent rounded-full"
                 onClick={() => setIsOpen(!isOpen)}
             >
                 <img src={user.profileImage} alt="Profile" className="w-9 h-9 object-contain cursor-pointer rounded-full" />
@@ -127,10 +128,10 @@ const Profile = ({ isOpen, setIsOpen }) => {
 
             {/* Profile Dropdown */}
             {isOpen && (
-                <div id="PROFILE" className="fixed top-16 right-0 md:absolute md:top-auto md:right-0 md:mt-3 mt-3 w-80 bg-white shadow-lg rounded-lg p-4 border border-gray-200 z-50">
-                    <div className="flex justify-end items-center border-b pb-2">
+                <div id="PROFILE" className="fixed top-16 right-0 md:absolute md:top-auto md:right-0 md:mt-3 mt-3 w-80 bg-white dark:bg-background-dark shadow-lg rounded-lg p-4 border border-gray-200 dark:border-gray-600 z-50">
+                    <div className="flex justify-end items-center border-b dark:border-gray-700 pb-2">
                         <div onClick={handleClose} title="Close" className="cursor-pointer">
-                            <FontAwesomeIcon icon={faXmark} className="text-gray-600 hover:text-gray-800 text-xl" />
+                            <FontAwesomeIcon icon={faXmark} className="text-gray-400 hover:text-gray-800 dark:hover:text-gray-300 text-xl" />
                         </div>
                     </div>
 
@@ -147,20 +148,20 @@ const Profile = ({ isOpen, setIsOpen }) => {
                                         <FontAwesomeIcon icon={faPencil} className="text-sm text-gray-800" />
                                     </span>
                                 </div>
-                                <h2 className="mt-3 text-xl text-[#1E2939] font-bold">{user.name}</h2>
-                                <p className="text-gray-700 text-sm">{user.email}</p>
+                                <h2 className="mt-3 text-xl text-[#1E2939] dark:text-gray-300 font-bold">{user.name}</h2>
+                                <p className="text-gray-700 dark:text-gray-500 text-sm">{user.email}</p>
                             </div>
                             <div className="mt-4 space-y-1">
-                                <div className="flex items-center p-3 w-full text-gray-700 hover:bg-gray-200 rounded-lg cursor-pointer" onClick={() => (setShowAvatarEditor(!showAvatarEditor), setIsOpen(!isOpen))}>
+                                <div className={`${ITEM_CLASS}`} onClick={() => (setShowAvatarEditor(!showAvatarEditor), setIsOpen(!isOpen))}>
                                     <FontAwesomeIcon icon={faUserPen} className="text-lg pr-3" />
                                     <span className="text-sm font-semibold">Edit Profile</span>
                                 </div>
-                                <div className="flex items-center p-3 w-full text-gray-700 hover:bg-gray-200 rounded-lg cursor-pointer" onClick={() => setShowSettings(!showSettings)}>
+                                <div className={`${ITEM_CLASS}`} onClick={() => setShowSettings(!showSettings)}>
                                     <FontAwesomeIcon icon={faGears} className="text-lg pr-3" />
                                     <span className="text-sm font-semibold">Settings</span>
                                 </div>
 
-                                <div className="flex items-center p-3 w-full text-gray-700 hover:bg-gray-200 rounded-lg cursor-pointer" onClick={handleSignOut}>
+                                <div className={`${ITEM_CLASS}`} onClick={handleSignOut}>
                                     <FontAwesomeIcon icon={faArrowRightFromBracket} className="text-lg pr-3" />
                                     <span className="text-sm font-semibold">Sign Out</span>
                                 </div>

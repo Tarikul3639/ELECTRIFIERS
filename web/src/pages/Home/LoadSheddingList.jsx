@@ -11,19 +11,19 @@ const LoadSheddingList = React.memo(({ fullSchedule }) => {
     const [viewToday, setViewToday] = useState(true); // Default to show today's schedule
     const displayedSchedule = viewToday ? getTodaysSchedule(fullSchedule) : fullSchedule;
     return (
-        <div className="rounded-lg bg-gray-100 sm:p-6 w-full mt-6">
-            <h2 className="text-2xl text-slate-700 text-center font-bold mb-4 uppercase">
+        <div className="rounded-lg bg-gray-100 dark:bg-background-dark sm:p-6 w-full mt-6">
+            <h2 className="text-2xl text-slate-700 dark:text-primary-text-light/80 text-center font-bold mb-4 uppercase">
                 Load-Shedding Schedule
             </h2>
 
-            <div className="mt-8 w-full rounded-xl bg-gray-200 p-2 sm:p-6">
-                <h3 className="TITLE-SECONDARY mb-4 text-slate-700">
+            <div className="mt-8 w-full rounded-xl bg-gray-200 dark:bg-background-dark p-2 sm:p-6">
+                <h3 className="TITLE-SECONDARY mb-4 text-slate-700 dark:text-primary-text-light">
                     {viewToday ? "Today's Load-Shedding Schedule" : "Monthly Load-Shedding Schedule"}
                 </h3>
 
                 <div className="space-y-4">
                     {displayedSchedule.map((item, index) => (
-                        <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-white">
+                        <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-white dark:bg-background-dark ">
                             <div className="flex items-center gap-4">
                                 <div
                                     className={`w-2.5 h-2.5 rounded-full ${item.status === "Active"
@@ -34,11 +34,11 @@ const LoadSheddingList = React.memo(({ fullSchedule }) => {
                                         }`}
                                 />
                                 <div>
-                                    <div className="TEXT-CONTENT font-medium text-slate-700">
+                                    <div className="TEXT-CONTENT font-medium text-slate-700 dark:text-primary-text-light">
                                         {dayjs(`2000-01-01T${item.startTime}`).format("h:mm A")} -{" "}
                                         {dayjs(`2000-01-01T${item.endTime}`).format("h:mm A")}
                                     </div>
-                                    <div className="TEXT-CONTENT text-sm text-slate-500">
+                                    <div className="TEXT-CONTENT text-sm text-slate-500 dark:text-primary-text-light/80">
                                         {item.date} - {item.day}
                                     </div>
                                 </div>

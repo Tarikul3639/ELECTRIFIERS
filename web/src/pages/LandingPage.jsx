@@ -5,19 +5,19 @@ import NavMenu from "../components/navigation/NavMenu.jsx";
 import Footer from "../components/navigation/Footer.jsx";
 const MainPage = () => {
   return (
-    <div className="scroll-smooth h-screen">
+    <div className="scroll-smooth h-screen ">
       <NavMenu />
 
       {/* Content Area */}
-      <section id="home" className="bg-white ">
+      <section id="home" className="bg-white dark:bg-background-dark">
         <HomeSection/>
       </section>
 
-      <section id="about" className="bg-white ">
+      <section id="about" className="bg-white dark:bg-background-dark">
         <AboutSection />
       </section>
 
-      <section id="contact" className="bg-white">
+      <section id="contact" className="bg-white dark:bg-background-dark">
         <ContactSection />
       </section>
 

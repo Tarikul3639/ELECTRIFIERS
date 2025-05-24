@@ -1,28 +1,58 @@
 @import "tailwindcss";
+/* Custom Variant */
+@custom-variant dark (&:where(.dark, .dark *));
+/* Theme Configuration */
 @theme {
-    --color-primary-light: #467c63;
+  --color-background-dark: #000000;
+  --color-background-light: #fafafa;
+
+  --color-secondary: #a8e524;
+  --color-primary: #00c896;
+  --color-primary-dark: #ffffff;
+  --color-primary-light: #0f172b;
+
+  --color-primary-text-light: #cbcbcb;
+  --color-secondary-light-text: #a1a1aa;
 }
 
-html,
+/* Define theme variables */
+:root {
+  --background: var(--color-background-light);
+}
+
+.dark {
+  --background: var(--color-background-dark);
+}
+
+/* HTML Style */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Root Styles */
+:root {
+  padding: 0;
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: var(--background, var(--color-background-light));
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 body {
-    background-color: black;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background-color: var(--background, var(--color-background-light));
 }
-
-#root {
-    color: white;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
 
 input[type="time"].no-border {
   border: none;
@@ -36,26 +66,17 @@ input[type="time"].no-border:focus {
   box-shadow: none;
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-    width: 5px;
-    height: 5px;
-  }
-  
-  ::-webkit-scrollbar-track {
-    background: #d5cbcb;
-    margin-top: 40vh;
-    margin-right: 35vw;
-    margin-bottom: 40vh;
-    margin-left: 35vw;
-  }
-  
-  ::-webkit-scrollbar-thumb {
-    background-color: var(--color-primary-light);
-  }
-  
-  .break-word {
-    word-wrap: break-word;
-    hyphens: auto;
-  }
-  
+/* Scrollbar Hide */
+*::-webkit-scrollbar {
+  display: none;
+}
+
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.break-word {
+  word-wrap: break-word;
+  hyphens: auto;
+}

@@ -55,7 +55,7 @@ const SideBar = () => {
         ref={buttonRef}
         title="Toggle Menu"
         onClick={() => setIsOpen(!isOpen)}
-        className="md:hidden p-2 rounded-full text-xl text-black z-50 cursor-pointer"
+        className="md:hidden p-2 rounded-full text-xl text-black dark:text-primary-text-light z-50 cursor-pointer"
       >
         <FontAwesomeIcon icon={isOpen ? faXmark : faBars} />
       </button>
@@ -64,12 +64,12 @@ const SideBar = () => {
       {isOpen && (
         <div
           ref={sidebarRef}
-          className="absolute right-[-1.5rem] md:right-0 mt-4 w-80 bg-white shadow-lg rounded-lg p-4 border border-gray-200 z-50 max-h-[80vh] overflow-y-auto"
+          className="absolute right-[-1.5rem] md:right-0 mt-4 w-80 bg-white dark:bg-background-dark shadow-lg rounded-lg p-4 border border-gray-200 dark:border-gray-700 z-50 max-h-[80vh] overflow-y-auto"
         >
-          <div className="flex justify-between items-center border-b pb-2">
-            <h3 className="text-lg font-semibold text-gray-800">Menu</h3>
+          <div className="flex justify-between items-center border-b dark:border-gray-700 pb-2">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-primary-text-light">Menu</h3>
             <button title="Close" onClick={() => setIsOpen(false)}>
-              <FontAwesomeIcon icon={faXmark} className="text-gray-600 hover:text-gray-800 text-xl cursor-pointer" />
+              <FontAwesomeIcon icon={faXmark} className="text-gray-600 dark:text-primary-text-light hover:text-gray-800 dark:hover:text-primary-text-light/60 text-xl cursor-pointer" />
             </button>
           </div>
 
@@ -79,7 +79,7 @@ const SideBar = () => {
             smooth={true}
             offset={-70}
             duration={500}
-            className="flex items-center p-2 rounded-lg hover:bg-gray-300 text-gray-800 text-lg font-semibold transition duration-300"
+            className="flex items-center p-2 rounded-lg hover:bg-gray-300 dark:hover:bg-background-light/10 text-gray-800 dark:text-primary-text-light text-lg font-semibold transition duration-300 mt-3"
           >
             <FontAwesomeIcon icon={faHome} className="mr-3 text-lg" /> Home
           </Link>
@@ -89,7 +89,7 @@ const SideBar = () => {
             smooth={true}
             offset={-70}
             duration={500}
-            className="flex items-center p-2 rounded-lg hover:bg-gray-300 text-gray-800 text-lg font-semibold transition duration-300"
+            className="flex items-center p-2 rounded-lg hover:bg-gray-300 dark:hover:bg-background-light/10 text-gray-800 dark:text-primary-text-light text-lg font-semibold transition duration-300"
           >
             <FontAwesomeIcon icon={faInfoCircle} className="mr-3 text-lg" /> About
           </Link>
@@ -99,7 +99,7 @@ const SideBar = () => {
             smooth={true}
             offset={-70}
             duration={500}
-            className="flex items-center p-2 rounded-lg hover:bg-gray-300 text-gray-800 text-lg font-semibold transition duration-300"
+            className="flex items-center p-2 rounded-lg hover:bg-gray-300 dark:hover:bg-background-light/10 text-gray-800 dark:text-primary-text-light text-lg font-semibold transition duration-300"
           >
             <FontAwesomeIcon icon={faEnvelope} className="mr-3 text-lg" /> Contact
           </Link>
@@ -107,7 +107,7 @@ const SideBar = () => {
             <button
               title="Update"
               onClick={handleUpdate}
-              className="flex w-full items-center p-2 rounded-lg hover:bg-gray-300 text-gray-800 text-lg font-semibold transition duration-300"
+              className="flex w-full items-center p-2 rounded-lg hover:bg-gray-300 dark:hover:bg-background-light/10 text-gray-800 dark:text-primary-text-light text-lg font-semibold transition duration-300"
             >
               <RiCalendarScheduleFill className="mr-3 text-xl" /> Update
             </button>
@@ -116,7 +116,7 @@ const SideBar = () => {
           {/* Profile Section */}
           <div
             title="Click To Logo"
-            className="flex items-center justify-center bg-gray-300 rounded-full mt-3 hover:bg-gray-400 transition duration-300 px-4.5 py-1.5 cursor-pointer"
+            className="flex items-center justify-center bg-gray-300 dark:bg-background-light/80 rounded-full mt-3 hover:bg-gray-400 transition duration-300 px-4.5 py-1.5 cursor-pointer"
             onClick={handleProfileOpen}  
           >
             <Profile isOpen={isProfileOpen} setIsOpen={setIsProfileOpen} />
@@ -129,3 +129,17 @@ const SideBar = () => {
 };
 
 export default SideBar;
+
+
+// dark:bg-background-light
+// dark:bg-background-dark
+// dark:bg-background-light/5
+// dark:bg-background-dark/5
+// dark:hover:bg-background-light/10
+// dark:hover:bg-background-dark/10
+// dark:text-primary-text-light
+// dark:text-primary-text-light/5
+// dark:text-primary-text-light/10
+// dark:text-primary-text-light/20
+// dark:hover:text-primary-text-light/10
+// dark:hover:text-primary-text-light/20

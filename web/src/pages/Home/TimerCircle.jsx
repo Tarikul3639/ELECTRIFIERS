@@ -111,7 +111,7 @@ const TimerCircle = memo(({ fullSchedule }) => {
   }, [currentSchedule, nextSchedule]);
 
   return (
-    <div className="bg-white shadow-[-2px_-2px_10px_2px_rgba(104,58,183,0.53),_2px_2px_10px_2px_rgba(104,58,183,0.53)] mt-15 rounded-lg p-6 w-full text-center">
+    <div className="bg-white dark:bg-background-dark shadow-[-2px_-2px_10px_2px_rgba(104,58,183,0.53),_2px_2px_10px_2px_rgba(104,58,183,0.53)] mt-15 rounded-lg p-6 w-full text-center">
       <div className="relative w-32 h-32 mx-auto mb-4 font-bold">
         <CircularProgressbar
           value={timeLeft.progress}
@@ -132,10 +132,10 @@ const TimerCircle = memo(({ fullSchedule }) => {
           })}
         />
       </div>
-      <h2 className="text-lg font-semibold text-black">
+      <h2 className="text-lg font-semibold text-black dark:text-primary-text-light">
         {currentSchedule ? "Current Load Shedding" : "Next Load Shedding"}
       </h2>
-      <p className="text-2xl font-bold text-gray-800">
+      <p className="text-2xl font-bold text-gray-800 dark:text-primary-text-light">
         {currentSchedule
           ? `${formatTime(currentSchedule.start)} - ${formatTime(currentSchedule.end)}`
           : nextSchedule

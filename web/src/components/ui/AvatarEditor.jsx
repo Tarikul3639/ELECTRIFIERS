@@ -33,10 +33,10 @@ const AvatarEditor = ({ imageSrc, onClose, onSave }) => {
 
   return (
     <div className="fixed h-[100vh] w-[100vw] inset-0 bg-black/70 z-50 flex items-center justify-center">
-      <div className="bg-white rounded-xl shadow-2xl p-6 w-[90vw] max-w-[600px] border border-gray-200">
-        <div className="flex justify-between items-center mb-4 border-b pb-2">
-          <h2 className="text-lg font-semibold text-gray-800">Edit Profile Picture</h2>
-          <button onClick={onClose} className="text-gray-600 hover:text-black text-xl" title="Close">
+      <div className="bg-white dark:bg-background-dark rounded-xl shadow-2xl p-6 w-[90vw] max-w-[600px] border border-gray-200 dark:border-gray-700">
+        <div className="flex justify-between items-center mb-4 border-b dark:border-gray-600 pb-2">
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-300">Edit Profile Picture</h2>
+          <button onClick={onClose} className="text-gray-600 hover:text-black dark:hover:text-gray-300 text-xl" title="Close">
             <FontAwesomeIcon icon={faXmark} />
           </button>
         </div>
@@ -54,7 +54,7 @@ const AvatarEditor = ({ imageSrc, onClose, onSave }) => {
             onZoomChange={setZoom}
           />
         </div>
-        <div className="flex items-center justify-between text-sm text-gray-600 mb-4 ">
+        <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-300 mb-4 ">
           <span>Zoom</span>
           <input
             type="range"
@@ -79,13 +79,13 @@ const AvatarEditor = ({ imageSrc, onClose, onSave }) => {
             text="UPLOAD" 
             type="button"
             icon={<FontAwesomeIcon icon={faCloudArrowUp} />}
-            className="bg-gray-200 text-black rounded-sm font-semibold shadow-xs px-4 py-2 text-sm hover:bg-gray-300"
+            className="px-4 py-3 rounded-md bg-gray-200 dark:bg-background-light/20 dark:hover:bg-background-light/15 text-gray-800 dark:text-gray-300 hover:bg-gray-300 rounded"
             onClick={() => document.querySelector('input[type="file"]').click()}
           />
         </div>
 
         <div className="flex justify-end space-x-3">
-          <button onClick={onClose} className="px-4 py-2 rounded-md bg-gray-200 text-gray-800 hover:bg-gray-300">
+          <button onClick={onClose} className="px-4 py-2 rounded-md bg-gray-200 dark:bg-background-light/10 dark:hover:bg-background-light/15 text-gray-800 dark:text-gray-300 hover:bg-gray-300">
             Cancel
           </button>
           <button onClick={handleSave} className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700">

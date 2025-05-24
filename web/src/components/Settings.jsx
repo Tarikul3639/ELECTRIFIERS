@@ -4,15 +4,19 @@ import { faVolumeHigh, faTrashCan } from '@fortawesome/free-solid-svg-icons';
 import Switch from './ui/Switch.jsx';
 import Dialog from './ui/Dialog.jsx';
 import socket from './socket/Socket.jsx';
-import { useNavigate } from 'react-router-dom';
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
 
 const Settings = () => {
+  const ITEM_CLASS = 'flex justify-between items-center p-3 py-4 w-full text-sm font-semibold text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-background-light/5 dark:hover:bg-background-light/10 hover:bg-gray-200 rounded cursor-pointer transition duration-300 ease-in-out';
+
   const [switchOn, setSwitchOn] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user")) || " ";
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem("theme") || "light";
+  });
 
   // Settings.jsx
   useEffect(() => {
@@ -60,21 +64,55 @@ const Settings = () => {
       }
     });
 
+  };  // Handle dark/light mode
+  useEffect(() => {
+    const root = document.documentElement;
+    
+    if (theme === "light") {
+      root.classList.remove("dark");
+      root.style.backgroundColor = "var(--color-background-light)";
+    } else {
+      root.classList.add("dark");
+      root.style.backgroundColor = "var(--color-background-dark)";
+    }
+    
+    // Save theme preference to localStorage whenever it changes
+    localStorage.setItem("theme", theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === "light" ? "dark" : "light"));
   };
 
   return (
     <>
       <div className="settings space-y-2">
-        <div className="flex justify-between items-center p-3 w-full text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-lg cursor-pointer transition duration-300 ease-in-out">
+        {/* Theme Toggle */}
+        <div onClick={toggleTheme} className={`mt-2`}>
+          <div className={`${ITEM_CLASS} mt-2`}>
+            {theme === "dark" ? (
+              <div className="flex items-center">
+                <i className="bi bi-brightness-high text-lg pr-3"></i>
+                <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">Light</span>
+              </div>
+            ) : (
+              <div className="flex items-center">
+                <i className="bi bi-moon text-lg pr-3"></i>
+                <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">Dark</span>
+              </div>
+            )}
+          </div>
+        </div>
+        <div className={`${ITEM_CLASS}`}>
           <div className="flex items-center">
-            <FontAwesomeIcon icon={faVolumeHigh} className="text-lg pr-3" />
+            <FontAwesomeIcon icon={faVolumeHigh} className="text-sm pr-3" />
             <span className="text-sm font-semibold">Notifications</span>
           </div>
           <Switch isOn={switchOn} handleToggle={handleToggle} />
         </div>
-        <div className="flex justify-between items-center p-3 w-full text-red-600 bg-gray-200 hover:bg-gray-300 rounded-lg cursor-pointer transition duration-300 ease-in-out" onClick={() => setIsDialogOpen(true)}>
+        <div className={`${ITEM_CLASS} text-red-800 dark:text-red-800`} onClick={() => setIsDialogOpen(true)}>
           <div className="flex items-center">
-            <FontAwesomeIcon icon={faTrashCan} className="text-lg pr-3" />
+            <FontAwesomeIcon icon={faTrashCan} className="text-sm pr-3" />
             <span className="text-sm font-semibold">Account Delete</span>
           </div>
         </div>

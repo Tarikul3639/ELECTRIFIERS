@@ -1,5 +1,6 @@
 // src/App.jsx
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { useEffect } from "react";
 import LandingPage from "../pages/LandingPage.jsx";
 import Login from "../pages/auth/Login.jsx";
 import Registration from "../pages/auth/Registration.jsx";
@@ -15,6 +16,20 @@ import PublicRoute from "../components/routes/PublicRoute.jsx";
 
 
 function App() {
+  // Initialize theme on app load
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme") || "light";
+    const root = document.documentElement;
+    
+    if (savedTheme === "light") {
+      root.classList.remove("dark");
+      root.style.backgroundColor = "var(--color-background-light)";
+    } else {
+      root.classList.add("dark");
+      root.style.backgroundColor = "var(--color-background-dark)";
+    }
+  }, []);
+  
   return (
     <BrowserRouter>
       <ToastContainer />
