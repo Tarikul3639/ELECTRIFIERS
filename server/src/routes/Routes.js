@@ -9,6 +9,7 @@ const verifyToken = require("../middlewares/verifyToken.js");
 router.post("/login", Login);
 router.post("/registration", Registration);
 router.get("/location", Location);
+// router.post('/contact',Contact)
 
 // verifyToken must run before AdminVerify
 router.get("/verify-admin", verifyToken, AdminVerify);

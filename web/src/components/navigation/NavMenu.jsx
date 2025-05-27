@@ -48,13 +48,13 @@ const NavMenu = () => {
             </button>
           )}
 
-          <Link title='Home' to="home" smooth={true} offset={-70} duration={500} className="text-gray-800 dark:text-primary-text-light text-lg hover:text-blue-600">
+          <Link title='Home' to="home" smooth={true} offset={-70} duration={500} className="text-gray-800 dark:text-primary-text-light text-lg hover:text-blue-600 hover:cursor-pointer">
             Home
           </Link>
-          <Link title='About' to="about" smooth={true} offset={-70} duration={500} className="text-gray-800 dark:text-primary-text-light text-lg hover:text-blue-600">
+          <Link title='About' to="about" smooth={true} offset={-70} duration={500} className="text-gray-800 dark:text-primary-text-light text-lg hover:text-blue-600 hover:cursor-pointer">
             About
           </Link>
-          <Link title='Contact' to="contact" smooth={true} offset={-70} duration={500} className="text-gray-800 dark:text-primary-text-light text-lg hover:text-blue-600">
+          <Link title='Contact' to="contact" smooth={true} offset={-70} duration={500} className="text-gray-800 dark:text-primary-text-light text-lg hover:text-blue-600 hover:cursor-pointer">
             Contact
           </Link>
           {/* Profile Component with controlled state */}

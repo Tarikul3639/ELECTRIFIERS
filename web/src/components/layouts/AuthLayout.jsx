@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import background from "../../assets/Image/background.jpg";
 import { Outlet } from "react-router-dom";
 const AuthLayout = () => {
@@ -21,9 +20,6 @@ const AuthLayout = () => {
       </main>
     </div>
   );
-};
-AuthLayout.propTypes = {
-  children: PropTypes.node.isRequired,
 };
 
 export default AuthLayout;

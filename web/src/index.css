@@ -24,11 +24,6 @@
   --background: var(--color-background-dark);
 }
 
-/* HTML Style */
-html {
-  scroll-behavior: smooth;
-}
-
 /* Root Styles */
 :root {
   padding: 0;
